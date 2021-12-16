@@ -26,8 +26,8 @@ use PDOException;
  */
 class Connection
 {
-    private static $_conn;
-    private static $_instance = null;
+    protected static $conn;
+    protected static $instance = null;
     /**
      * Override constructor
      */
@@ -42,10 +42,10 @@ class Connection
      */
     public static function getInstance()
     {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new Connection;
+        if (is_null(self::$instance)) {
+            self::$instance = new Connection;
         }
-        return self::$_instance;
+        return self::$instance;
     }
     /**
      * Override clone
@@ -78,7 +78,9 @@ class Connection
     public static function connect($host,$dbName,$username,$password)
     {
         try {
-            self::$_conn = new PDO("mysql:host=".$host.";dbname=".$dbName, $username, $password);
+            self::$conn = new PDO(
+                "mysql:host=".$host.";dbname=".$dbName, $username, $password
+            );
         }catch(PDOException $e){
             return false;
         }
@@ -90,7 +92,7 @@ class Connection
      */   
     public static function getConn()
     {
-        return self::$_conn;
+        return self::$conn;
     }
 }
 ?>
