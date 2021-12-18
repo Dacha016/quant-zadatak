@@ -13,13 +13,22 @@
 
 require_once realpath('../vendor/autoload.php');
 use App\Config\Connection;
+use App\Controllers\UserController;
+use App\Models\User;
 use Dotenv\Dotenv;
+
 $dotenv = Dotenv::createImmutable(dirname(__DIR__, 1));
 $dotenv->load();
- Connection::connect($_ENV["HOST"], $_ENV["DATABASE"], $_ENV["USERNAME"], $_ENV["PASSWORD"]);
- $db= Connection::getInstance();
-$dbc=$db->getConn();
 
-var_dump($dbc);
+
+
+$db= Connection::connect();
+//   $conn=$db->getConn();
+//  var_dump($db);
+$user= new User($db);
+$cUser= new UserController($user);
+var_dump($cUser->show(1));
+// ;
+
 
 ?>

@@ -15,6 +15,8 @@
 use PDO;
 use PDOException;
 
+
+
 /**
  * Connection to base
  *
@@ -28,6 +30,7 @@ class Connection
 {
     private static $_conn;
     private static $_instance = null;
+
     /**
      * Override constructor
      */
@@ -68,17 +71,16 @@ class Connection
     /**
      * Make database connection
      * 
-     * @param $host     Host name we use to connect
-     * @param $dbName   Data base name
-     * @param $username Username we use to connect
-     * @param $password Password we use to connect 
-     *
      * @return object
      */
-    public static function connect($host,$dbName,$username,$password)
+    public static function connect()
     {
         try {
-            self::$_conn = new PDO("mysql:host=".$host.";dbname=".$dbName, $username, $password);
+            self::$_conn = new PDO(
+                "mysql:host=".$_ENV["HOST"].";dbname=".$_ENV["DATABASE"],
+                $_ENV["USERNAME"], $_ENV["PASSWORD"]
+            );
+            return self::$_conn;
         }catch(PDOException $e){
             return false;
         }
