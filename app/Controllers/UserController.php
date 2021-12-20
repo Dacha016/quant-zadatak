@@ -40,18 +40,27 @@ class UserController
     /**
      * Connection to base
      * 
-     * @param $id int
+     * @param 1 int
      * 
      * @return string
      */
-    public function show($id)
+    public function show()
     {
-        $result = $this->user->read($id);
+        // $data=[
+        //     "username"=>"",
+        //    .
+        // ];
+        // if($_SERVER["REQUEST_METHOD"]==="POST"){
+
+        // }
+        // $result = $this->user->read(1);
         
-        $row= $result->fetch(PDO::FETCH_ASSOC);
-        if (!$row) {
-            return $response= "Not found";
-        }
-        return $response = $row;
+        // $row= $result->fetch(PDO::FETCH_ASSOC);
+        // if (!$row) {
+        //     return $response= "Not found";
+        // }
+        // return $response = $row;
+        // include "/";
+        echo"radi";
     }
 }
