@@ -23,7 +23,7 @@ $router = new Router;
 //         $u->show();
 // );
 $router->get(
-    'about', function () { 
+    '/', function () { 
         // echo 'About Page Contents';
         echo $_SERVER["REQUEST_URI"];
     }
