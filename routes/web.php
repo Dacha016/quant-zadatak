@@ -11,17 +11,29 @@
  * @link     http://github.com/Dacha016/quant-zadatak
  */
 
-$router->get('/', function() {
-	echo '<h1>bramus/router</h1><p>Try these routes:<p><ul><li>/hello/<em>name</em></li><li>/blog</li><li>/blog/<em>year</em></li><li>/blog/<em>year</em>/<em>month</em></li><li>/blog/<em>year</em>/<em>month</em>/<em>day</em></li></ul>';
-});
+use App\Controllers\UserController;
+use App\Models\User;
+use Bramus\Router\Router;
+
+$router = new Router;
+
 // $router->get(
-//     '/about', function () { 
-//         echo 'About Page Contents';
-//     }
+//     '/', function () {
+//         $u= new UserController;
+//         $u->show();
+// );
+$router->get(
+    'about', function () { 
+        // echo 'About Page Contents';
+        echo $_SERVER["REQUEST_URI"];
+    }
+);
+// $router->get(
+//     "/", "\App\Controllers\UserController@show" 
 // );
 // $router->get(
-//     "/", "App\Controllers\UserController@show" 
+//     "/", "\App\Controllers\UserController@show" 
 // );
 
+$router->run();
 
-?>

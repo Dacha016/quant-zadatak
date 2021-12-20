@@ -12,7 +12,7 @@
  */
 namespace App\Controllers;
 
-use App\Models\User;
+
 use PDO;
 /**
  * Connection to base
@@ -27,7 +27,7 @@ use PDO;
  */
 class UserController
 {
-    protected $user;
+     protected $user;
     /**
      * Connection to base
      *
@@ -35,7 +35,7 @@ class UserController
      */
     public function __construct($user)
     {
-        $this->user=$user;
+        $this->user= $user;
     }
     /**
      * Connection to base
@@ -44,7 +44,7 @@ class UserController
      * 
      * @return string
      */
-    public function show()
+    public function show($id)
     {
         // $data=[
         //     "username"=>"",
@@ -53,14 +53,15 @@ class UserController
         // if($_SERVER["REQUEST_METHOD"]==="POST"){
 
         // }
-        // $result = $this->user->read(1);
+        $result = $this->user->read($id);
         
-        // $row= $result->fetch(PDO::FETCH_ASSOC);
-        // if (!$row) {
-        //     return $response= "Not found";
-        // }
-        // return $response = $row;
+        $row= $result->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return $response= "Not found";
+        }
+        return $response = $row;
         // include "/";
         echo"radi";
+
     }
 }

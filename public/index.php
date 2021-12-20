@@ -16,21 +16,19 @@ use App\Config\Connection;
 use App\Controllers\UserController;
 use App\Models\User;
 use Dotenv\Dotenv;
-use Bramus\Router\Router;
+
 
 $dotenv = Dotenv::createImmutable(dirname(__DIR__, 1));
 $dotenv->load();
 
-$router= new Router;
 
-// $router->get('/', function() {
-//     echo 'About Page Contents';
-// });
-require_once realpath('../routes/web.php');
-$router->run();
+require realpath('../routes/web.php');
 
 
-
+// $c=Connection::connect();
+// $u= new User($c);
+// $cont= new UserController($u);
+// var_dump($cont->show(1))
 
 
 ?>
