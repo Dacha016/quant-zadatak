@@ -62,8 +62,10 @@ class UserController
         //     return $response= "Not found";
         // }
         // return $response = $row;
-          include __DIR__ . "../../resource/views/index.php";
-        // echo "mozda";
+        // header("Location:../../resource/views/index.php");
+       
+        include "../resource/views/index.php";
+        //  echo "mozda";
     }
 
 }

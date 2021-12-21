@@ -15,12 +15,9 @@ use Bramus\Router\Router;
 
 $router = new Router;
 
-// $router->get(
-//     '/', function () {
-//         echo "radi index";
-//         echo $_SERVER["REQUEST_URI"];
-//     }
-// );
+$router->get(
+    "/", "\App\Controllers\UserController@show" 
+);
 
 $router->get(
     '/about', function () { 
@@ -29,9 +26,7 @@ $router->get(
     }
 );
 
-$router->get(
-    "/show", "App\Controllers\UserController@show" 
-);
+
 $router->get(
     "/test", "\App\Controllers\UserController@show" 
 );
