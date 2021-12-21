@@ -12,7 +12,7 @@
  */
 namespace App\Controllers;
 
-
+use App\Models\User;
 use PDO;
 /**
  * Connection to base
@@ -28,23 +28,25 @@ use PDO;
 class UserController
 {
      protected $user;
+     protected $conn;
     /**
      * Connection to base
      *
-     * @param $user Connection base connection
+     * @param $conn Connection to base
      */
-    public function __construct($user)
-    {
-        $this->user= $user;
-    }
+    // public function __construct($conn)
+    // {
+    //     $this->user= new User($conn);
+    // }
+
     /**
      * Connection to base
      * 
-     * @param 1 int
+     * @param $id int
      * 
      * @return string
      */
-    public function show($id)
+    public function show()
     {
         // $data=[
         //     "username"=>"",
@@ -53,15 +55,15 @@ class UserController
         // if($_SERVER["REQUEST_METHOD"]==="POST"){
 
         // }
-        $result = $this->user->read($id);
+        // $result = $this->user->read($id);
         
-        $row= $result->fetch(PDO::FETCH_ASSOC);
-        if (!$row) {
-            return $response= "Not found";
-        }
-        return $response = $row;
-        // include "/";
-        echo"radi";
-
+        // $row= $result->fetch(PDO::FETCH_ASSOC);
+        // if (!$row) {
+        //     return $response= "Not found";
+        // }
+        // return $response = $row;
+          include __DIR__ . "../../resource/views/index.php";
+        // echo "mozda";
     }
+
 }

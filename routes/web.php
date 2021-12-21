@@ -11,29 +11,30 @@
  * @link     http://github.com/Dacha016/quant-zadatak
  */
 
-use App\Controllers\UserController;
-use App\Models\User;
 use Bramus\Router\Router;
 
 $router = new Router;
 
 // $router->get(
 //     '/', function () {
-//         $u= new UserController;
-//         $u->show();
+//         echo "radi index";
+//         echo $_SERVER["REQUEST_URI"];
+//     }
 // );
+
 $router->get(
-    '/', function () { 
-        // echo 'About Page Contents';
-        echo $_SERVER["REQUEST_URI"];
+    '/about', function () { 
+         echo $_SERVER["REQUEST_URI"];
+        echo "radi bez public";
     }
 );
-// $router->get(
-//     "/", "\App\Controllers\UserController@show" 
-// );
-// $router->get(
-//     "/", "\App\Controllers\UserController@show" 
-// );
+
+$router->get(
+    "/show", "App\Controllers\UserController@show" 
+);
+$router->get(
+    "/test", "\App\Controllers\UserController@show" 
+);
 
 $router->run();
 
