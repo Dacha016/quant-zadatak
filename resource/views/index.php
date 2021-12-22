@@ -1,7 +1,7 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . "quant-zadatak/resource/components/header.php";
-include $_SERVER['DOCUMENT_ROOT'] . "quant-zadatak/resource/components/form.php";
-include $_SERVER['DOCUMENT_ROOT'] . "quant-zadatak/resource/components/footer.php";
+include "../resource/components/header.php";
+include "../resource/components/form.php";
+include "../resource/components/footer.php";
 
 
 ?>
