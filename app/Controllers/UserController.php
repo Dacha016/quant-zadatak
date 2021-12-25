@@ -93,7 +93,7 @@ class UserController
         if (empty($_POST["username"]) || empty($_POST["password"])) {
             showError("login", "Fill out all fields");
         }
-        if($this->user->findByUsernameAndPassword()) {
+        if($this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
             $loggedUser = $this->user->login($userData["username"],$userData["password"]);
             if ($loggedUser) {
                 $this->createSession($loggedUser);
