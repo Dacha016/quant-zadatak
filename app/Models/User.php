@@ -12,7 +12,10 @@
  */
 namespace App\Models;
 
+use App\Config\Connection;
 use PDOException;
+
+
 /**
  * User
  *
@@ -24,53 +27,57 @@ use PDOException;
  */
 class User
 {
-    protected string $table="user";
-    protected $conn;
+    protected Connection $conn;
+
     /**
      * Constructor
-     *
-     * @param $conn Connection to base
      */
-    public function __construct($conn)
+    public function __construct()
     {
-        $this->conn=$conn;
-
+        $this->conn = new Connection;
     }
-    /**
-     * Read all users
-     *
-     * @return object
-     */
-    public function readAll(): object
+
+    public function find($username): bool
     {
-        $sql = "SELECT username, email, role, password FROM ".$this->table;
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
+        $this->conn->bindParam(":username", $username);
+        $this->conn->execute();
+        $result = $this->conn->single();
+        if ($result){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function register($userData)
+    {
         try {
-            $stmt=$this->conn->prepare($sql);
-            $stmt->execute();
-            return $stmt;
-        }catch(PDOException $e){
+            $this->conn->queryPrepare("INSERT INTO user (username, email, password, role, api_key) VALUES (:username, :email, :password, :role, :api_key)");
+            $this->conn->bindParam(":username", $userData["username"]);
+            $this->conn->bindParam(":email", $userData["email"]);
+            $this->conn->bindParam(":password", $userData["password"]);
+            $this->conn->bindParam(":role", $userData["role"]);
+            $this->conn->bindParam(":api_key", $userData["api_key"]);
+            $this->conn->execute();
+        } catch (PDOException $e) {
             exit($e->getMessage());
         }
     }
-    /**
-     * Read only one user
-     *
-     * @param $id User Id
-     *
-     * @return object
-     */
-    public function read(int $id): object
+    public function index()
     {
-        $sql = "SELECT username, email, role, password FROM "
-            .$this->table." WHERE id = :id";
-        try {
-            $stmt=$this->conn->prepare($sql);
-            $stmt->bindParam(":id", $id);
-            $stmt->execute();
-            return $stmt;
-        }catch(PDOException $e){
-            exit($e->getMessage());
-        }
-    }
+        $this->conn->queryPrepare("SELECT * FROM user LIMIT 10");
+        $this->conn->execute();
+        return $this->conn->multy();
 
+    }
+    public function show($id)
+    {
+        $this->conn->queryPrepare("SELECT * FROM user WHERE id = :id");
+        $this->conn->bindParam(":id", $_GET["id"]);
+        $this->conn->execute();
+        $result = $this->conn->single();
+
+            var_dump($result);
+
+    }
 }

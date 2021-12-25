@@ -14,8 +14,7 @@
 
 use PDO;
 use PDOException;
-
-
+use PDOStatement;
 
 /**
  * Connection to base
@@ -26,73 +25,44 @@ use PDOException;
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
+
+
 class Connection
 {
-    private static $_conn;
-    private static $_instance = null;
+    protected $conn;
+    protected $stmt;
+    protected $error;
 
     /**
-     * Override constructor
+     * Constructor
      */
-    private function __construct()
+    public function __construct()
     {
-
-    }
-    /**
-     * If instance is null, create self
-     *
-     * @return object
-     */
-    public static function getInstance()
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new Connection;
-        }
-        return self::$_instance;
-    }
-    /**
-     * Override clone
-     * 
-     * @return object
-     */
-    private function __clone()
-    {
-
-    }
-    /**
-     * Override wakeup
-     * 
-     * @return object
-     */
-    private function __wakeup()
-    {
-        
-    }
-    /**
-     * Make database connection
-     * 
-     * @return object
-     */
-    public static function connect()
-    {
-        try {
-            self::$_conn = new PDO(
-                "mysql:host=".$_ENV["HOST"].";dbname=".$_ENV["DATABASE"],
-                $_ENV["USERNAME"], $_ENV["PASSWORD"]
-            );
-            return self::$_conn;
+        try{
+            $this->conn = new PDO("mysql:host=".$_ENV["HOST"].";dbname=".$_ENV["DATABASE"], $_ENV["USERNAME"], $_ENV["PASSWORD"], array(PDO::ATTR_PERSISTENT=>true));
         }catch(PDOException $e){
-            return false;
+            $this->error = $e->getMessage();
+            echo $this->error;
         }
-    } 
-    /**
-     * Get variable conn
-     * 
-     * @return object
-     */   
-    public static function getConn()
+
+    }    
+    public function queryPrepare($sql)
     {
-        return self::$_conn;
+        return $this->stmt = $this->conn-> prepare($sql);
+    }
+    public function bindParam($param, $value)
+    {
+        $this->stmt->bindValue($param, $value);
+    }
+    public function execute(){
+        return $this->stmt->execute();
+    }
+    public function single()
+    {
+        return $this->stmt->fetch(PDO::FETCH_OBJ);
+    }
+    public function multy()
+    {
+        return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }
-?>

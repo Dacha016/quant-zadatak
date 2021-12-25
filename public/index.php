@@ -1,24 +1,11 @@
 <?php
-/**
- * Index
- *
- * PHP version 8
- *
- * @category Index
- * @package  Index
- * @author   DaliborMarinkovic <dalibor.marinkovic@quantoxtechnology.com>
- * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
- * @link     http://github.com/Dacha016/quant-zadatak
- */
 
+use Bramus\Router\Router;
+use Dotenv\Dotenv;
 require_once realpath('../vendor/autoload.php');
 
-use Dotenv\Dotenv;
-$dotenv = Dotenv::createImmutable(dirname(__DIR__, 1));
-
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+$router = new Router();
 require realpath('../routes/web.php');
-
-
-
-
-?>
+$router->run();

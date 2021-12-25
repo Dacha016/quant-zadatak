@@ -13,23 +13,16 @@
 
 use Bramus\Router\Router;
 
+
 $router = new Router;
+$router->get('/', function () {include "../resource/views/home.php";});
+$router->get('/signup', function () {include "../resource/views/signup.php";});
+$router->setNamespace("App\Controllers");
+$router->post('/signup', "UserController@registration");
+$router->get('/users', "UserController@index");
+$router->get('/login', function () {include "../resource/views/login.php";});
+$router->get('/user/id', "User@show");
+//$router->post('/signup', "User@registration");
+$router->get('/users',"User@index");
 
-$router->get(
-    "/", "\App\Controllers\UserController@show" 
-);
-
-$router->get(
-    '/about', function () { 
-         echo $_SERVER["REQUEST_URI"];
-        echo "radi bez public";
-    }
-);
-
-
-$router->get(
-    "/test", "\App\Controllers\UserController@show" 
-);
-
-$router->run();
 

@@ -4,6 +4,7 @@
     },
     "require": {
         "vlucas/phpdotenv": "^5.4",
-        "bramus/router": "^1.6"
+        "bramus/router": "~1.6",
+      "ext-pdo": "*"
     }
 }

@@ -13,7 +13,9 @@
 namespace App\Controllers;
 
 use App\Models\User;
-use PDO;
+
+require dirname(__DIR__,1). "/helpers/helper.php";
+
 /**
  * Connection to base
  *
@@ -27,45 +29,75 @@ use PDO;
  */
 class UserController
 {
-     protected $user;
-     protected $conn;
+     protected $apiKey;
+     protected $role = "user";
     /**
-     * Connection to base
-     *
-     * @param $conn Connection to base
+     * Constructor
      */
-    // public function __construct($conn)
-    // {
-    //     $this->user= new User($conn);
-    // }
-
-    /**
-     * Connection to base
-     * 
-     * @param $id int
-     * 
-     * @return string
-     */
-    public function show()
+    public function __construct()
     {
-        // $data=[
-        //     "username"=>"",
-        //    .
-        // ];
-        // if($_SERVER["REQUEST_METHOD"]==="POST"){
-
-        // }
-        // $result = $this->user->read($id);
-        
-        // $row= $result->fetch(PDO::FETCH_ASSOC);
-        // if (!$row) {
-        //     return $response= "Not found";
-        // }
-        // return $response = $row;
-        // header("Location:../../resource/views/index.php");
-       
-        include "../resource/views/index.php";
-        //  echo "mozda";
+        $this->user= new User();
     }
 
+    /**
+     * @return void
+     */
+    public function registration()
+    {
+
+
+      $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+      $userData = [
+          "username" => trim($_POST["username"]),
+          "password" => trim($_POST["password"]),
+          "rPassword" => trim($_POST["rPassword"]),
+          "email" => trim($_POST["email"]),
+      ];
+
+
+      if (empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["email"])) {
+            showError("register", "Fill out all fields");
+
+      }
+      if (!preg_match("/^[a-zA-Z0-9]*$/",$userData["username"])) {
+          showError("register", "Invalid username");
+      }
+      if ( !filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
+           showError("register", "Invalid email");
+      }
+      if (strlen($userData["password"])<6) {
+          showError("register", "Password must have 6 characters");
+      } else if ($userData["password"] !== $userData["rPassword"]) {
+          showError("register", "Passwords do not match");
+      }
+
+      if ($this->user->find($userData["username"])){
+          showError("register", "User exist!!");
+      }
+      $userData["password"] = password_hash($userData["password"], PASSWORD_DEFAULT);
+      $userData["role"] = $this->role;
+      $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 30), 6));
+
+      if ($this->user->register($userData)) {
+          header("Location:" .dirname(__DIR__,2). "/resource/views/login.php");
+      }
+      die("Something went wrong");
+    }
+    public function index()
+    {
+      $result = $this->user->index();
+      foreach ($result as $row){
+          var_dump($row);
+
+      }
+
+
+    }
 }
+$user = new UserController;
+if ($_SERVER["REQUEST_METHOD"]==="post") {
+    if ($_POST["type"] === "register") {
+        $user->registration();
+        exit();
+    }
+} 
