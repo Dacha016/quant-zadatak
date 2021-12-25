@@ -27,6 +27,7 @@ use PDOException;
  */
 class User
 {
+    protected string $table = "user";
     protected Connection $conn;
 
     /**
@@ -37,10 +38,24 @@ class User
         $this->conn = new Connection;
     }
 
-    public function find($username): bool
+    public function find($username, $email): bool
     {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
+        $this->conn->queryPrepare("SELECT * FROM ".$this->table." WHERE username = :username or email = :email");
         $this->conn->bindParam(":username", $username);
+        $this->conn->bindParam(":email", $email);
+        $this->conn->execute();
+        $result = $this->conn->single();
+        if ($result){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function findByUsernameAndPassword($username, $password): bool
+    {
+        $this->conn->queryPrepare("SELECT * FROM ".$this->table." WHERE username = :username or password = :password");
+        $this->conn->bindParam(":username", $username);
+        $this->conn->bindParam(":password", $password);
         $this->conn->execute();
         $result = $this->conn->single();
         if ($result){
@@ -61,6 +76,15 @@ class User
             $this->conn->execute();
         } catch (PDOException $e) {
             exit($e->getMessage());
+        }
+    }
+    public function login($username, $password) {
+        $result = $this->findByUsernameAndPassword($username, $password);
+        $hashedPassword = $result->password;
+        if (password_verify($password, $hashedPassword)) {
+            return $result;
+        } else {
+            return false;
         }
     }
     public function index()

@@ -13,8 +13,9 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use JetBrains\PhpStorm\NoReturn;
 
-require dirname(__DIR__,1). "/helpers/helper.php";
+require dirname(__DIR__). "/helpers/helper.php";
 
 /**
  * Connection to base
@@ -29,8 +30,8 @@ require dirname(__DIR__,1). "/helpers/helper.php";
  */
 class UserController
 {
-     protected $apiKey;
-     protected $role = "user";
+    protected User $user;
+    protected string $role= "user";
     /**
      * Constructor
      */
@@ -44,8 +45,6 @@ class UserController
      */
     public function registration()
     {
-
-
       $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
       $userData = [
           "username" => trim($_POST["username"]),
@@ -53,36 +52,62 @@ class UserController
           "rPassword" => trim($_POST["rPassword"]),
           "email" => trim($_POST["email"]),
       ];
-
-
       if (empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["email"])) {
             showError("register", "Fill out all fields");
-
       }
+      // signed characters are allowed
       if (!preg_match("/^[a-zA-Z0-9]*$/",$userData["username"])) {
           showError("register", "Invalid username");
       }
+      // check email
       if ( !filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
            showError("register", "Invalid email");
       }
+      //password length and password mach
       if (strlen($userData["password"])<6) {
           showError("register", "Password must have 6 characters");
       } else if ($userData["password"] !== $userData["rPassword"]) {
           showError("register", "Passwords do not match");
       }
-
-      if ($this->user->find($userData["username"])){
+      //check if user exist
+      if ($this->user->find($userData["username"], $userData["email"])){
           showError("register", "User exist!!");
       }
       $userData["password"] = password_hash($userData["password"], PASSWORD_DEFAULT);
       $userData["role"] = $this->role;
       $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 30), 6));
-
+      // insert into database
       if ($this->user->register($userData)) {
-          header("Location:" .dirname(__DIR__,2). "/resource/views/login.php");
+          header("Location:http://localhost/login");
       }
       die("Something went wrong");
     }
+
+    public function login()
+    {
+        $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+        $userData = [
+            "username" => trim($_POST["username"]),
+            "password" => trim($_POST["password"]),
+            ];
+        if (empty($_POST["username"]) || empty($_POST["password"])) {
+            showError("login", "Fill out all fields");
+        }
+        if($this->user->findByUsernameAndPassword()) {
+            $loggedUser = $this->user->login($userData["username"],$userData["password"]);
+            if ($loggedUser) {
+                $this->createSession($loggedUser);
+            }
+        } else {
+              showError("login", "User not found");
+        }
+    }
+    public function  createSession($user) {
+        $_SESSION["usersId"] = $user->userId;
+        $_SESSION["userUsername"] = $user->usersUsername;
+        $_SESSION["usersEmail"] = $user->usersEmail;
+    }
+
     public function index()
     {
       $result = $this->user->index();
@@ -98,6 +123,7 @@ $user = new UserController;
 if ($_SERVER["REQUEST_METHOD"]==="post") {
     if ($_POST["type"] === "register") {
         $user->registration();
-        exit();
+    } elseif ($_POST["type"] === "login") {
+        $user->login();
     }
 } 
