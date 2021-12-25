@@ -73,15 +73,16 @@ class UserController
       if ($this->user->find($userData["username"], $userData["email"])){
           showError("register", "User exist!!");
       }
-      $userData["password"] = password_hash($userData["password"], PASSWORD_DEFAULT);
+      $userData["password"] = md5($userData["password"]);
       $userData["role"] = $this->role;
       $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 30), 6));
       // insert into database
       if ($this->user->register($userData)) {
-          header("Location:http://localhost/login");
+          header("Location: http://localhost/login");
       }
       die("Something went wrong");
     }
+
 
     public function login()
     {
@@ -94,18 +95,26 @@ class UserController
             showError("login", "Fill out all fields");
         }
         if($this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
-            $loggedUser = $this->user->login($userData["username"],$userData["password"]);
+
+            $loggedUser = $this->user->login($userData["username"], $userData["password"]);
             if ($loggedUser) {
-                $this->createSession($loggedUser);
+                $_SESSION["id"] = $loggedUser->id;
+                $_SESSION["username"] = $loggedUser->username;
+                header("Location: http://localhost/profile");
             }
         } else {
               showError("login", "User not found");
         }
     }
-    public function  createSession($user) {
-        $_SESSION["usersId"] = $user->userId;
-        $_SESSION["userUsername"] = $user->usersUsername;
-        $_SESSION["usersEmail"] = $user->usersEmail;
+    public function logout()
+    {
+        if(isset($_SESSION["id"])) {
+            $_SESSION = [];
+            session_destroy();
+            $_SESSION["username"] = "";
+            $_SESSION["id"] = "";
+        }
+        header("Location: http://localhost/");
     }
 
     public function index()

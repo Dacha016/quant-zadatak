@@ -53,7 +53,7 @@ class User
     }
     public function findByUsernameAndPassword($username, $password): bool
     {
-        $this->conn->queryPrepare("SELECT * FROM ".$this->table." WHERE username = :username or password = :password");
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or password = :password");
         $this->conn->bindParam(":username", $username);
         $this->conn->bindParam(":password", $password);
         $this->conn->execute();
@@ -73,13 +73,17 @@ class User
             $this->conn->bindParam(":password", $userData["password"]);
             $this->conn->bindParam(":role", $userData["role"]);
             $this->conn->bindParam(":api_key", $userData["api_key"]);
-            $this->conn->execute();
+            return $this->conn->execute();
         } catch (PDOException $e) {
             exit($e->getMessage());
         }
     }
     public function login($username, $password) {
-        $result = $this->findByUsernameAndPassword($username, $password);
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or password = :password");
+        $this->conn->bindParam(":username", $username);
+        $this->conn->bindParam(":password", $password);
+        $this->conn->execute();
+        $result = $this->conn->single();
         $hashedPassword = $result->password;
         if (password_verify($password, $hashedPassword)) {
             return $result;

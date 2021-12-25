@@ -1,5 +1,5 @@
 <?php include_once dirname(__DIR__, 2) . "/app/helpers/helper.php";?>
-<form action="/" method="post" class="p-2 align-self-center" style="margin:10px auto; margin-top:30Vh; border:black 1px solid;
+<form action="login" method="post" class="p-2 align-self-center" style="margin:10px auto; margin-top:30Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
   <h2 class="mb-5 pt-4" style="text-align:center">Login</h2>
     <?php showError("login");?>
