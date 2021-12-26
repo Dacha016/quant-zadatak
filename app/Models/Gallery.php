@@ -17,7 +17,8 @@ class Gallery
     {
         $this->conn->queryPrepare("select name from gallery where hidden = 0 and nsfw = 0 limit 20") ;
         $this->conn->execute();
-        var_dump( $this->conn->multy());
+        return $this->conn->multy();
+
     }
 
 }

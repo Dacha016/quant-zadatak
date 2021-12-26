@@ -3,8 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\Gallery;
-//use Jenssegers\Blade\Blade;
 use App\Blade\Blade;
+
 
 class GalleryController
 {
@@ -19,6 +19,12 @@ class GalleryController
 
     public function index()
     {
-        Blade::render("pb");
+
+  $result =$this->gallery->index();
+  foreach ($result as $row) {
+      var_dump($row);
+  }
+
+//        Blade::render("pb", );
     }
 }

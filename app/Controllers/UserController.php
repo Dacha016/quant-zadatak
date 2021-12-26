@@ -123,11 +123,3 @@ class UserController
       }
     }
 }
-$user = new UserController;
-if ($_SERVER["REQUEST_METHOD"]==="post") {
-    if ($_POST["type"] === "register") {
-        $user->registration();
-    } elseif ($_POST["type"] === "login") {
-        $user->login();
-    }
-} 

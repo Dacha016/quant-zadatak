@@ -25,11 +25,12 @@ $router->get('/login', function () {
     include "../resources/views/login.php";});
 $router->get('/profile', function () {
     include "../resources/views/profile.php";});
+$router->get('/pb', "GalleryController@index");
 $router->setNamespace("App\Controllers");
 $router->post('/signup', "UserController@registration");
 $router->post('/login', "UserController@login");
 $router->get('/logout', "UserController@logout");
-$router->get('/pb', "GalleryController@index");
+
 
 
 
