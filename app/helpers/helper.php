@@ -17,3 +17,10 @@ function showError($name = "", $msg = "", $class = "form-message, bg-danger text
         }
     }
 }
+function showPicturesOnHome($name,$data)
+{
+    foreach ($data as $pic) {
+        print_r($pic);
+    }
+
+}

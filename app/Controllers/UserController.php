@@ -13,7 +13,6 @@
 namespace App\Controllers;
 
 use App\Models\User;
-use JetBrains\PhpStorm\NoReturn;
 
 require dirname(__DIR__). "/helpers/helper.php";
 
@@ -83,7 +82,6 @@ class UserController
       die("Something went wrong");
     }
 
-
     public function login()
     {
         $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
@@ -122,10 +120,7 @@ class UserController
       $result = $this->user->index();
       foreach ($result as $row){
           var_dump($row);
-
       }
-
-
     }
 }
 $user = new UserController;
