@@ -79,9 +79,8 @@ class User
         }
     }
     public function login($username, $password) {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or password = :password");
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
         $this->conn->bindParam(":username", $username);
-        $this->conn->bindParam(":password", $password);
         $this->conn->execute();
         $result = $this->conn->single();
         $hashedPassword = $result->password;

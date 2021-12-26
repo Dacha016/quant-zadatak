@@ -15,21 +15,19 @@ use Bramus\Router\Router;
 
 
 $router = new Router;
-$router->get('/', function () {
-    include "../resources/views/home.php";});
-$router->post('/',  function () {
-    include "../resources/views/home.php";});
-$router->get('/signup', function () {
-    include "../resources/views/signup.php";});
-$router->get('/login', function () {
-    include "../resources/views/login.php";});
-$router->get('/profile', function () {
-    include "../resources/views/profile.php";});
-$router->get('/pb', "GalleryController@index");
 $router->setNamespace("App\Controllers");
-$router->post('/signup', "UserController@registration");
-$router->post('/login', "UserController@login");
-$router->get('/logout', "UserController@logout");
+$router->get('/profile', "ProfileController@index");
+$router->get('/home', "HomeController@index");
+$router->get('/registration', "AuthController@registration");
+$router->post('/registration', "AuthController@registration");
+$router->get('/login', "AuthController@login");
+$router->post('/login', "AuthController@login");
+$router->get('/logout', "AuthController@logout");
+
+
+
+
+
 
 
 
