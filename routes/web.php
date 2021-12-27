@@ -22,7 +22,8 @@ $router->get('/registration', "AuthController@registration");
 $router->post('/registration', "AuthController@registration");
 $router->get('/login', "AuthController@login");
 $router->post('/login', "AuthController@login");
-$router->get('/logout', "AuthController@logout");
+$router->post('/logout', "AuthController@logout");
+$router->post('/profile/{slug}', "ProfileController@deleteImage");
 
 
 

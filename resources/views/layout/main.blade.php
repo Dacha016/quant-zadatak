@@ -1,6 +1,4 @@
-<?php
-session_start()
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +16,7 @@ session_start()
                 <h3><?php echo $_SESSION["username"]; ?></h3>
 
                 <li class="nav-item active" >
-                    <a class="nav-link" href="/logout">Logout </a>
+                    <a class="nav-link" href="/home">Logout </a>
                 </li>
                 <?php } else{?>
                     <h3>Welcome Guest</h3>

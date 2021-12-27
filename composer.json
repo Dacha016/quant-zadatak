@@ -6,6 +6,8 @@
         "vlucas/phpdotenv": "^5.4",
         "bramus/router": "~1.6",
       "ext-pdo": "*",
-        "jenssegers/blade": "^1.4"
+        "jenssegers/blade": "^1.4",
+        "devcoder-xyz/php-session-manager": "^1.0"
+
     }
 }

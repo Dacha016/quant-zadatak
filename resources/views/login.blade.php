@@ -1,6 +1,6 @@
 @extends("layout.main")
 @section("content")
-    <form action="/login" method="post" class="p-2 align-self-center" style="margin:10px auto; margin-top:30Vh; border:black 1px solid;
+    <form action="login" method="post" class="p-2 align-self-center" style="margin:10px auto; margin-top:30Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
       <h2 class="mb-5 pt-4" style="text-align:center">Login</h2>
       <?php

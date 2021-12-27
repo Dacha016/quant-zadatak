@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Blade\Blade;
 use App\Models\User;
+use DevCoder\SessionManager;
 
 class AuthController
 {
@@ -54,13 +55,14 @@ class AuthController
             }
             //Check if user exist
             if ($this->user->find($userData["username"], $userData["email"])) {
-
+                $error = "User already exists";
                 die(Blade::render("/registration", compact("error")));
             }
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
             $userData["role"] = $this->role;
             $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 30), 6));
-
+var_dump($userData["password"]);
+die();
             // Insert into database
             if ($this->user->register($userData)) {
                 header("Location: http://localhost/login");
@@ -94,13 +96,12 @@ class AuthController
 
             if($this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
                 $loggedUser = $this->user->login($userData["username"], $userData["password"]);
-                if ($loggedUser) {
-                    session_start();
-                    $_SESSION["id"] = $loggedUser->id;
-                    $_SESSION["username"] = $loggedUser->username;
-                    $_SESSION["role"] = $loggedUser->role;
+                if (isset($loggedUser)) {
+                    $session = new SessionManager;
+                    $session->set("id",$loggedUser->id);
+                    $session->set("username", $loggedUser->username);
                     header("Location: http://localhost/profile");
-                    Blade::render("/profile" );
+                    Blade::render("/profile","session");
                 } else {
                     $error = "Username and username do not match";
                     die(Blade::render("/login", compact("error")));
@@ -110,14 +111,21 @@ class AuthController
     }
     public function logout()
     {
-        if(isset($_SESSION["id"])) {
-            session_unset();
-            $_SESSION["username"] = "";
-            $_SESSION["id"] = "";
-            $_SESSION["role"] = "";
+//        if(ini_get("session.use_cookies")) {
+//            $params=session_get_cookie_params();
+//            setcookie(session_name(), '', time() - 42000,
+//                $params["path"], $params["domain"],
+//                $params["secure"], $params["httponly"]
+//            );
+//        }
+//        session_destroy();
+//        header("Location: http://localhost/home");
+        if(isset($_GET['logout'])) {
             session_destroy();
+            unset($_SESSION["id"]);
+            unset($_SESSION['username']);
             header("Location: http://localhost/home");
-            Blade::render("/home");
         }
+
     }
 }
