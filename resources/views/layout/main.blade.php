@@ -13,10 +13,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto" >
                 <?php if (isset($_SESSION["id"])) {?>
-                <h3><?php echo $_SESSION["username"]; ?></h3>
+                <h3><a href="/profile"><?php echo $_SESSION["username"]; ?></a></h3>
 
                 <li class="nav-item active" >
                     <a class="nav-link" href="/home">Logout </a>
+                </li>
+                <li class="nav-item active" >
+                    <a class="nav-link" href="/users">Users </a>
                 </li>
                 <?php } else{?>
                     <h3>Welcome Guest</h3>

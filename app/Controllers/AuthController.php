@@ -122,6 +122,7 @@ die();
 //        header("Location: http://localhost/home");
         if(isset($_GET['logout'])) {
             session_destroy();
+           setcookie("PHPSESSID","");
             unset($_SESSION["id"]);
             unset($_SESSION['username']);
             header("Location: http://localhost/home");

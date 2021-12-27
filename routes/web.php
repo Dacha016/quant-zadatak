@@ -24,17 +24,10 @@ $router->get('/login', "AuthController@login");
 $router->post('/login', "AuthController@login");
 $router->post('/logout', "AuthController@logout");
 $router->post('/profile/{slug}', "ProfileController@deleteImage");
+$router->get("/users", "UserController@index");
+$router->get("/users/{username}", "UserController@show");
 
 
 
 
-
-
-
-
-
-
-
-
-$router->get('/users', "UserController@index");  //test
 

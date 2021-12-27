@@ -12,8 +12,11 @@ if (!isset($_SESSION["id"])) {
             <div class="d-inline-block m-2">
                 <img src=<?php echo e($row->file_name); ?>  alt="pictures" >
                 <div>
-                    <a href="">Update picture</a>
-                    <form action ="profile/<?php echo e($row->slug); ?>" method="post">
+                    <form action ="profile/image/update/<?php echo e($row->slug); ?>" method="post" class="d-inline-block m-1">
+                        <input type="hidden" value="<?php echo e($row->slug); ?>" name="update">
+                        <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
+                    </form>
+                    <form action ="profile/image/delete/<?php echo e($row->slug); ?>" method="post" class="d-inline-block m-1">
                         <input type="hidden" value="<?php echo e($row->slug); ?>" name="delete">
                         <button class="btn btn-danger" type="submit">DELETE</button>
                     </form>

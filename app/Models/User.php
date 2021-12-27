@@ -90,21 +90,18 @@ class User
             return false;
         }
     }
-    public function index()
+    public function indexUsers()
     {
-        $this->conn->queryPrepare("SELECT * FROM user LIMIT 10");
+        $this->conn->queryPrepare("SELECT * FROM user LIMIT 50");
         $this->conn->execute();
         return $this->conn->multy();
 
     }
-    public function show($id)
+    public function showUser($username)
     {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE id = :id");
-        $this->conn->bindParam(":id", $_GET["id"]);
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
+        $this->conn->bindParam(":username", $username);
         $this->conn->execute();
-        $result = $this->conn->single();
-
-            var_dump($result);
-
+        return $this->conn->single();
     }
 }

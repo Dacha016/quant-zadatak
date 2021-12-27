@@ -24,10 +24,5 @@ class Image
         $this->conn->execute();
         return $this->conn->multy();
     }
-    public function deleteImage($slug)
-    {
-        $this->conn->queryPrepare("DELETE FROM image WHERE slug =:slug");
-        $this->conn->bindParam(":slug", $slug);
-        $this->conn->execute();
-    }
+
 }

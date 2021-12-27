@@ -20,16 +20,10 @@ class ProfileController
         Blade::render("/profile", compact("result"));
     }
     public function deleteImage(){
-        $result = $this->deleteImage($_POST["delete"]);
+        $result = $this->image->deleteImage($_POST["delete"]);
         header("Location: http://localhost/profile");
         Blade::render("/profile");
 
     }
 }
-$image = new Image;
-if ($_SERVER["REQUEST_METHOD"]==="post") {
-    if ($_POST["name"] === "delete") {
-       $image->deleteImage();
-        exit();
-    }
-}
+

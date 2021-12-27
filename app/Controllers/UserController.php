@@ -44,15 +44,18 @@ class UserController
      * @return void
      */
 
-
-
-
-
     public function index()
     {
-      $result = $this->user->index();
-      foreach ($result as $row){
-          var_dump($row);
-      }
+      $result = $this->user->indexUsers();
+      Blade::render("/users", compact("result"));
+    }
+    public function show()
+    {
+        $username=$_SERVER["REQUEST_URI"];
+        $username = explode("/",$username);
+        $n = count($username);
+        $username = $username[$n-1];
+        $result = $this->user->showUser($username);
+        Blade::render("/users", compact("result"));
     }
 }
