@@ -12,8 +12,16 @@ if (!isset($_SESSION["id"])) {
             <div class="d-inline-block m-2">
                 <img src={{$row->file_name}}  alt="pictures" >
                 <div>
-                    <form action ="profile/image/update/{{$row->slug}}" method="post" class="d-inline-block m-1">
+                    <form action ="moderator/{{$row->slug}}" method="post" class="d-inline-block m-1">
                         <input type="hidden" value="{{$row->slug}}" name="update">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value="1">
+                            <label class="form-check-label" for="hidden">Hidden</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="1">
+                            <label class="form-check-label" for="nsfw">Nsfw</label>
+                        </div>
                         <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                     </form>
                     <form action ="profile/image/delete/{{$row->slug}}" method="post" class="d-inline-block m-1">

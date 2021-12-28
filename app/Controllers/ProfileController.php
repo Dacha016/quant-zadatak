@@ -19,8 +19,20 @@ class ProfileController
         $result =$this->image->indexProfile($_SESSION["id"]);
         Blade::render("/profile", compact("result"));
     }
+    public function updatePicture()
+    {
+
+        $this->image->updatePicture($_POST["hidden"], $_POST["nsfw"], $_POST["update"]);
+
+header("Location: http://localhost/profile");
+
+
+
+
+    }
+
     public function deleteImage(){
-        $result = $this->image->deleteImage($_POST["delete"]);
+        $this->image->deleteImage($_POST["delete"]);
         header("Location: http://localhost/profile");
         Blade::render("/profile");
 

@@ -14,22 +14,18 @@
             <ul class="navbar-nav mr-auto" >
                 <?php if (isset($_SESSION["id"])) {?>
                 <h3><a href="/profile"><?php echo $_SESSION["username"]; ?></a></h3>
-
-                <li class="nav-item active" >
+                    <li class="nav-item active align-self-center" >
                     <a class="nav-link" href="/home">Logout </a>
                 </li>
-                <li class="nav-item active" >
+                <li class="nav-item active align-self-center" >
                     <a class="nav-link" href="/users">Users </a>
                 </li>
                 <?php } else{?>
-                    <h3>Welcome Guest</h3>
-                    <li class="nav-item active" >
-                        <a class="nav-link" href="/home">Home </a>
-                    </li>
-                <li class="nav-item active" >
-                    <a class="nav-link" href="/registration">Registration </a>
+                    <h3><a href="/home">Welcome Guest</a></h3>
+                <li class="nav-item active align-self-center" >
+                    <a class="nav-link " href="/registration">Registration </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item align-self-center">
                     <a class="nav-link" href="/login">Login</a>
                 </li>
                 <?php }?>

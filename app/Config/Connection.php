@@ -45,7 +45,7 @@ class Connection
             echo $this->error;
         }
 
-    }    
+    }
     public function queryPrepare($sql)
     {
         return $this->stmt = $this->conn-> prepare($sql);

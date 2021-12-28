@@ -95,13 +95,19 @@ class User
         $this->conn->queryPrepare("SELECT * FROM user LIMIT 50");
         $this->conn->execute();
         return $this->conn->multy();
-
     }
-    public function showUser($username)
+    public function showUserImages($id)
     {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
-        $this->conn->bindParam(":username", $username);
+        $this->conn->queryPrepare("SELECT file_name FROM image INNER JOIN user u on image.user_id =:id WHERE  hidden = 0 AND nsfw = 0 LIMIT 50");
+        $this->conn->bindParam(":id", $id);
         $this->conn->execute();
-        return $this->conn->single();
+        return $this->conn->multy();
+    }
+    public function showAllUserImages($id)
+    {
+        $this->conn->queryPrepare("SELECT * FROM image INNER JOIN user u on image.user_id =:id LIMIT 50");
+        $this->conn->bindParam(":id", $id);
+        $this->conn->execute();
+        return $this->conn->multy();
     }
 }

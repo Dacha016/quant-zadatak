@@ -100,6 +100,7 @@ die();
                     $session = new SessionManager;
                     $session->set("id",$loggedUser->id);
                     $session->set("username", $loggedUser->username);
+                    $session->set("role", $loggedUser->role);
                     header("Location: http://localhost/profile");
                     Blade::render("/profile","session");
                 } else {
@@ -111,22 +112,11 @@ die();
     }
     public function logout()
     {
-//        if(ini_get("session.use_cookies")) {
-//            $params=session_get_cookie_params();
-//            setcookie(session_name(), '', time() - 42000,
-//                $params["path"], $params["domain"],
-//                $params["secure"], $params["httponly"]
-//            );
-//        }
-//        session_destroy();
-//        header("Location: http://localhost/home");
         if(isset($_GET['logout'])) {
-            session_destroy();
-           setcookie("PHPSESSID","");
             unset($_SESSION["id"]);
             unset($_SESSION['username']);
-            header("Location: http://localhost/home");
         }
-
+        session_destroy();
+        header("Location: http://localhost/home");
     }
 }

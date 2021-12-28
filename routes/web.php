@@ -23,11 +23,12 @@ $router->post('/registration', "AuthController@registration");
 $router->get('/login', "AuthController@login");
 $router->post('/login', "AuthController@login");
 $router->post('/logout', "AuthController@logout");
-$router->post('/profile/{slug}', "ProfileController@deleteImage");
+$router->post('/profile/image/delete/{slug}', "ProfileController@deleteImage");
 $router->get("/users", "UserController@index");
 $router->get("/users/{username}", "UserController@show");
+$router->get("/moderator/users/{username}", "UserController@showAll");
 
-
+$router->post("/moderator/{slug}", "ProfileController@updatePicture");
 
 
 
