@@ -47,25 +47,31 @@ class UserController
     public function index()
     {
       $result = $this->user->indexUsers();
+
       Blade::render("/users", compact("result"));
     }
-    public function show()
+    public function showGalleries()
     {
-        $username=$_SERVER["REQUEST_URI"];
-        $username = explode("/",$username);
-        $n = count($username);
-        $username = $username[$n-1];
-        $result = $this->user->showUserImages($username);
-        Blade::render("/user", compact("result"));
+       $username = $_SERVER["REQUEST_URI"];
+       $username = explode("/", $username);
+       $n = count($username);
+       $username = $username[$n - 1];
+
+       if ($_SESSION["role"] === "user") {
+           $result = $this->user->showUserGalleries($username);
+       } else {
+           $result = $this->user->showUserGalleriesAll($username);
+       }
+        Blade::render("/gallery", compact("result"));
     }
-    public function showAll()
-    {
-        $username=$_SERVER["REQUEST_URI"];
-        $username = explode("/",$username);
-        $n = count($username);
-        $username = $username[$n-1];
-        $result = $this->user->showAllUserImages($username);
-        Blade::render("/user", compact("result"));
-    }
+//    public function showAll()
+//    {
+//        $username=$_SERVER["REQUEST_URI"];
+//        $username = explode("/",$username);
+//        $n = count($username);
+//        $username = $username[$n-1];
+//        $result = $this->user->showAllUserImages($username);
+//        Blade::render("/user", compact("result"));
+//    }
 
 }

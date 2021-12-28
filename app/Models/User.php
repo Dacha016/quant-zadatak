@@ -96,13 +96,35 @@ class User
         $this->conn->execute();
         return $this->conn->multy();
     }
-    public function showUserImages($id)
+
+
+        public function showUserGalleries($username)
     {
-        $this->conn->queryPrepare("SELECT file_name FROM image INNER JOIN user u on image.user_id =:id WHERE  hidden = 0 AND nsfw = 0 LIMIT 50");
-        $this->conn->bindParam(":id", $id);
+        $this->conn->queryPrepare("
+        SELECT *, username FROM gallery 
+        INNER JOIN user u on gallery.user_id = u.id 
+        WHERE username =:username AND hidden = 0 AND nsfw = 0 LIMIT 50");
+        $this->conn->bindParam(":username", $username);
         $this->conn->execute();
         return $this->conn->multy();
     }
+    public function showUserGalleriesAll($username)
+    {
+        $this->conn->queryPrepare("
+        SELECT *, username FROM gallery 
+        INNER JOIN user u on gallery.user_id = u.id 
+        WHERE username =:username AND hidden = 0 AND nsfw = 0 LIMIT 50");
+        $this->conn->bindParam(":username", $username);
+        $this->conn->execute();
+        return $this->conn->multy();
+    }
+//    public function showUserImages($id)
+//    {
+//        $this->conn->queryPrepare("SELECT file_name FROM image INNER JOIN user u on image.user_id =:id WHERE  hidden = 0 AND nsfw = 0 LIMIT 50");
+//        $this->conn->bindParam(":id", $id);
+//        $this->conn->execute();
+//        return $this->conn->multy();
+//    }
     public function showAllUserImages($id)
     {
         $this->conn->queryPrepare("SELECT * FROM image INNER JOIN user u on image.user_id =:id LIMIT 50");

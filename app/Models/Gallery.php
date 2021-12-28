@@ -13,6 +13,7 @@ class Gallery
         $this->conn= new Connection;
     }
 
+
     public function index()
     {
         $this->conn->queryPrepare("select name from gallery where hidden = 0 and nsfw = 0 limit 20") ;
@@ -20,7 +21,13 @@ class Gallery
         return $this->conn->multy();
 
     }
-    public function indexProfile($id)
+
+    /**
+     * List of users galleries
+     * @param $id $id Users id
+     * @return mixed
+     */
+    public function indexGalleries($id)
     {
         $this->conn->queryPrepare("select * from gallery inner join user u on gallery.user_id = u.id where gallery.user_id = :id limit 50");
         $this->conn->bindParam(":id",$id);

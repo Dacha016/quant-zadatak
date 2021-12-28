@@ -17,20 +17,48 @@ class ProfileController
         $this->gallery = new Gallery;
     }
 
-    public function index()
+    public function imagesOnTheMainPage()
     {
-        $result = $this->gallery->indexProfile($_SESSION["id"]);
+        $result = $this->image->imagesOnTheMainPage();
         Blade::render("/profile", compact("result"));
     }
-    public function galleryImage()
+    /**
+     * List of users gallery
+     * @return void
+     */
+    public function indexGalleries()
     {
-        $result = $this->image->indexProfile($_SESSION["id"]);
-        Blade::render("/image", compact("result"));
+        $result = $this->gallery->indexGalleries($_SESSION["id"]);
+        Blade::render("/gallery", compact("result"));
     }
-    public function updatePicture()
+
+    /**
+     * List of gallery images
+     * @return void
+     */
+    public function showGalleries()
     {
-        $this->image->updatePicture($_POST["hidden"], $_POST["nsfw"], $_POST["update"]);
+        $result = $this->image->showGalleries($_SESSION["id"]);
+        Blade::render("/images", compact("result"));
+    }
+
+    /**
+     * Get only one image to update
+     * @return void
+     */
+    public function getImage()
+    {
+        $result = $this->image->getImage($_POST["adminModeratorUpdate"]);
+        Blade::render("/image", compact("result") );
+    }
+    public function updateImage()
+    {
+        $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
+        $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
+        $slug = $_POST["update"];
+        $this->image->updateImage($slug, $hidden, $nsfw);
         header("Location: http://localhost/profile");
+
     }
 
     public function deleteImage(){

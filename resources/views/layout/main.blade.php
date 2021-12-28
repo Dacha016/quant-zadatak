@@ -18,8 +18,11 @@
                     <a class="nav-link" href="/home">Logout </a>
                 </li>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="/users">Users </a>
+                    <a class="nav-link" href="/profile/users">Users </a>
                 </li>
+                    <li class="nav-item active align-self-center" >
+                        <a class="nav-link" href="/profile/galleries">Galleries </a>
+                    </li>
                 <?php } else{?>
                     <h3><a href="/home">Welcome Guest</a></h3>
                 <li class="nav-item active align-self-center" >
