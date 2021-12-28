@@ -17,18 +17,19 @@ use Bramus\Router\Router;
 $router = new Router;
 $router->setNamespace("App\Controllers");
 $router->get('/profile', "ProfileController@index");
+$router->get('/profile/gallery/{id}', "ProfileController@galleryImage");
 $router->get('/home', "HomeController@index");
 $router->get('/registration', "AuthController@registration");
 $router->post('/registration', "AuthController@registration");
 $router->get('/login', "AuthController@login");
 $router->post('/login', "AuthController@login");
 $router->post('/logout', "AuthController@logout");
-$router->post('/profile/image/delete/{slug}', "ProfileController@deleteImage");
+$router->post('/delete/image{slug}', "ProfileController@deleteImage");
 $router->get("/users", "UserController@index");
 $router->get("/users/{username}", "UserController@show");
 $router->get("/moderator/users/{username}", "UserController@showAll");
-
 $router->post("/moderator/{slug}", "ProfileController@updatePicture");
-
+$router->get("/admin/users/{username}", "UserController@showAll");
+$router->post("/admin/{slug}", "ProfileController@updatePicture");
 
 

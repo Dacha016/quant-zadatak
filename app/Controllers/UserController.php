@@ -64,7 +64,7 @@ class UserController
         $username = explode("/",$username);
         $n = count($username);
         $username = $username[$n-1];
-        $result = $this->user->showUserImages($username);
+        $result = $this->user->showAllUserImages($username);
         Blade::render("/user", compact("result"));
     }
 
