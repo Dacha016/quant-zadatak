@@ -3,7 +3,6 @@ if (!isset($_SESSION["id"])) {
     header("Location: http://localhost/home");
 }
 ?>
-
 @extends("layout.main")
 @section("content")
     <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
@@ -31,10 +30,6 @@ if (!isset($_SESSION["id"])) {
                     <label class="form-check-label" for="nsfw">Nsfw</label>
                 </div>
                 <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
-            </form>
-            <form action ="delete/image/{{$result->slug}}" method="post" class="d-inline-block m-1">
-                <input type="hidden" value="{{$result->slug}}" name="delete">
-                <button class="btn btn-danger" type="submit">DELETE</button>
             </form>
         </div>
     </div>

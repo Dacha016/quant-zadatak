@@ -17,6 +17,10 @@ class ProfileController
         $this->gallery = new Gallery;
     }
 
+    /**
+     * List of users image on profile page
+     * @return void
+     */
     public function imagesOnTheMainPage()
     {
         $result = $this->image->imagesOnTheMainPage();
@@ -36,7 +40,7 @@ class ProfileController
      * List of gallery images
      * @return void
      */
-    public function showGalleries()
+    public function showImages()
     {
         $result = $this->image->showGalleries($_SESSION["id"]);
         Blade::render("/images", compact("result"));
@@ -51,6 +55,11 @@ class ProfileController
         $result = $this->image->getImage($_POST["adminModeratorUpdate"]);
         Blade::render("/image", compact("result") );
     }
+
+    /**
+     * Update image
+     * @return void
+     */
     public function updateImage()
     {
         $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');

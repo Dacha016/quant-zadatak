@@ -14,14 +14,5 @@ class GalleryController
     {
         $this->gallery = new Gallery;
     }
-
-    public function index()
-    {
-        $result =$this->gallery->index();
-        foreach ($result as $row) {
-        var_dump($row);
-        }
-//        Blade::render("pb", );
-    }
 }
 

@@ -90,6 +90,11 @@ class User
             return false;
         }
     }
+
+    /**
+     * Get users from table
+     * @return mixed
+     */
     public function indexUsers()
     {
         $this->conn->queryPrepare("SELECT * FROM user LIMIT 50");
@@ -97,21 +102,31 @@ class User
         return $this->conn->multy();
     }
 
-
+    /**
+     * Get galleries for users with role user
+     * @param $username $username username of current user
+     * @return mixed
+     */
         public function showUserGalleries($username)
     {
         $this->conn->queryPrepare("
-        SELECT *, username FROM gallery 
+        SELECT * FROM gallery 
         INNER JOIN user u on gallery.user_id = u.id 
         WHERE username =:username AND hidden = 0 AND nsfw = 0 LIMIT 50");
         $this->conn->bindParam(":username", $username);
         $this->conn->execute();
         return $this->conn->multy();
     }
+
+    /**
+     * Get galleries for other users
+     * @param $username $username username of current user
+     * @return mixed
+     */
     public function showUserGalleriesAll($username)
     {
         $this->conn->queryPrepare("
-        SELECT *, username FROM gallery 
+        SELECT * FROM gallery 
         INNER JOIN user u on gallery.user_id = u.id 
         WHERE username =:username AND hidden = 0 AND nsfw = 0 LIMIT 50");
         $this->conn->bindParam(":username", $username);

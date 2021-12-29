@@ -41,22 +41,26 @@ class UserController
     }
 
     /**
+     * List of users in users tab
      * @return void
      */
-
     public function index()
     {
       $result = $this->user->indexUsers();
 
       Blade::render("/users", compact("result"));
     }
+
+    /**
+     * Show different permissions for different user
+     * @return void
+     */
     public function showGalleries()
     {
        $username = $_SERVER["REQUEST_URI"];
        $username = explode("/", $username);
        $n = count($username);
        $username = $username[$n - 1];
-
        if ($_SESSION["role"] === "user") {
            $result = $this->user->showUserGalleries($username);
        } else {
@@ -64,14 +68,6 @@ class UserController
        }
         Blade::render("/gallery", compact("result"));
     }
-//    public function showAll()
-//    {
-//        $username=$_SERVER["REQUEST_URI"];
-//        $username = explode("/",$username);
-//        $n = count($username);
-//        $username = $username[$n-1];
-//        $result = $this->user->showAllUserImages($username);
-//        Blade::render("/user", compact("result"));
-//    }
+
 
 }

@@ -1,7 +1,7 @@
 @extends("layout.main")
 @section("content")
-    <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
-    <div style="margin: 20px auto; max-width: 1000px; text-align: center">
+    <h1 class="d-block " style="text-align:center">Users</h1>
+    <div style="margin: 20px auto; max-width: 1000px; display: flex; flex-wrap: wrap; justify-content: space-between">
         <?php $role = $_SESSION["role"] ?>
             @if($role === "admin")
                 @foreach($result as $row)
@@ -25,7 +25,7 @@
                 @foreach($result as $row)
                     <div class="d-inline-block m-2">
                         <p>
-                            <a href="/profile/users/{{$row->username}}" > {{$row->username}}</a>
+                            <a href="/profile/users/{{$row->username}}"  style="display: inline-block; padding: 10px; background: azure; justify-content: stretch" > {{$row->username}}</a>
                         </p>
                     </div>
                 @endforeach
