@@ -28,8 +28,8 @@
                         <div class="d-inline-block m-2">
                             <img src=<?php echo e($row->file_name); ?>  alt="pictures" >
                             <div>
-                                <form action ="/profile/gallery/<?php echo e($row->slug); ?>" method="post" class="d-inline-block m-1">
-                                    <input type="hidden" value="<?php echo e($row->slug); ?>" name="adminModeratorUpdate">
+                                <form action ="/profile/gallery/<?php echo e($row->id); ?>" method="post" class="d-inline-block m-1">
+                                    <input type="hidden" value="<?php echo e($row->id); ?>" name="adminModeratorUpdate">
                                     <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                                 </form>
                             </div>
@@ -40,21 +40,21 @@
             <?php if($role === "user"): ?>
                 <div style="margin: 20px auto; max-width: 1000px;">
                 <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php if($_SESSION["id"] ===$row->user_id): ?>
-                        <div class="d-inline-block m-2">
-                            <img src=<?php echo e($row->file_name); ?>  alt="pictures" >
+                    <div class="d-inline-block m-2">
+                        <img src=<?php echo e($row->file_name); ?>  alt="pictures" >
+                        <?php if($_SESSION["id"] ===$row->userId): ?>
                             <div>
-                                <form action ="/profile/gallery/<?php echo e($row->slug); ?>" method="post" class="d-inline-block m-1">
-                                    <input type="hidden" value="<?php echo e($row->slug); ?>" name="adminModeratorUpdate">
+                                <form action ="/profile/gallery/<?php echo e($row->id); ?>" method="post" class="d-inline-block m-1">
+                                    <input type="hidden" value="<?php echo e($row->id); ?>" name="adminModeratorUpdate">
                                     <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                                 </form>
-
-
+    
+    
                                     <button class="btn btn-danger" type="submit">DELETE</button>
-
+    
                             </div>
-                         </div>
-                    <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             <?php endif; ?>

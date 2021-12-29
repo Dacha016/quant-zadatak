@@ -6,7 +6,7 @@
                 <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="d-inline-block m-2">
                         <p>
-                            <a href="/admin/users/<?php echo e($row->username); ?>" > <?php echo e($row->username); ?></a>
+                            <a href="/admin/users/<?php echo e($row->id); ?>" > <?php echo e($row->username); ?></a>
                         </p>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -15,7 +15,7 @@
                 <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="d-inline-block m-2">
                     <p>
-                        <a href="/profile/moderator/users/<?php echo e($row->username); ?>" > <?php echo e($row->username); ?></a>
+                        <a href="/profile/moderator/users/<?php echo e($row->id); ?>" > <?php echo e($row->username); ?></a>
                     </p>
                 </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -24,7 +24,7 @@
                 <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="d-inline-block m-2">
                         <p>
-                            <a href="/profile/users/<?php echo e($row->username); ?>"  style="display: inline-block; padding: 10px; background: azure; justify-content: stretch" > <?php echo e($row->username); ?></a>
+                            <a href="/profile/users/<?php echo e($row->id); ?>"  style="display: inline-block; padding: 10px; background: azure; justify-content: stretch" > <?php echo e($row->username); ?></a>
                         </p>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

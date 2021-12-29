@@ -28,3 +28,6 @@ ALTER TABLE user
 
 //change to pictures
 UPDATE image SET file_name = concat('https://picsum.photos/200/300?random=', id);
+
+ALTER TABLE user
+    CHANGE id id INT AUTO_INCREMENT;

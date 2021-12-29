@@ -42,7 +42,11 @@ class ProfileController
      */
     public function showImages()
     {
-        $result = $this->image->showGalleries($_SESSION["id"]);
+        $id = $_SERVER["REQUEST_URI"];
+        $id = explode("/", $id);
+        $n = count($id);
+        $id = $id[$n - 1];
+        $result = $this->image->showImages($id);
         Blade::render("/images", compact("result"));
     }
 

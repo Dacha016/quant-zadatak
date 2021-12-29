@@ -35,17 +35,20 @@ class Image
      * @param $id $id of logged user
      * @return mixed
      */
-    public function showGalleries($id)
+    public function showImages($id)
     {
-        $this->conn->queryPrepare("select * from image inner join user u on image.user_id = u.id where image.user_id = :id limit 50");
+        $this->conn->queryPrepare(
+            "select i.id as 'id', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId'  from image_gallery
+                inner join image i on image_gallery.image_id = i.id
+                where image_gallery.gallery_id =:id");
         $this->conn->bindParam(":id",$id);
         $this->conn->execute();
         return $this->conn->multy();
     }
-    public function getImage ($slug)
+    public function getImage ($id)
     {
-        $this->conn->queryPrepare("select * from image where slug =:slug");
-        $this->conn->bindParam(":slug",$slug);
+        $this->conn->queryPrepare("select * from image where id =:id");
+        $this->conn->bindParam(":id", $id);
         $this->conn->execute();
         return $this->conn->single();
     }

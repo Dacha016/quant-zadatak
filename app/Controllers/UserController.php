@@ -57,14 +57,14 @@ class UserController
      */
     public function showGalleries()
     {
-       $username = $_SERVER["REQUEST_URI"];
-       $username = explode("/", $username);
-       $n = count($username);
-       $username = $username[$n - 1];
+       $id = $_SERVER["REQUEST_URI"];
+       $id = explode("/", $id);
+       $n = count($id);
+       $id = $id[$n - 1];
        if ($_SESSION["role"] === "user") {
-           $result = $this->user->showUserGalleries($username);
+           $result = $this->user->showUserGalleries($id);
        } else {
-           $result = $this->user->showUserGalleriesAll($username);
+           $result = $this->user->showUserGalleriesAll($id);
        }
         Blade::render("/gallery", compact("result"));
     }

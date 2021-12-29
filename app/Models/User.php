@@ -107,15 +107,15 @@ class User
      * @param $username $username username of current user
      * @return mixed
      */
-        public function showUserGalleries($username)
+        public function showUserGalleries($id)
     {
-        $this->conn->queryPrepare("
-        SELECT * FROM gallery 
-        INNER JOIN user u on gallery.user_id = u.id 
-        WHERE username =:username AND hidden = 0 AND nsfw = 0 LIMIT 50");
-        $this->conn->bindParam(":username", $username);
-        $this->conn->execute();
-        return $this->conn->multy();
+        $this->conn->queryPrepare(
+            "SELECT gallery.id as 'galleryId', gallery.description, gallery.name, gallery.user_id FROM gallery 
+            INNER JOIN user u on gallery.user_id = u.id 
+            WHERE gallery.user_id =:id AND hidden = 0 AND nsfw = 0");
+            $this->conn->bindParam(":id", $id);
+            $this->conn->execute();
+            return $this->conn->multy();
     }
 
     /**
@@ -123,13 +123,13 @@ class User
      * @param $username $username username of current user
      * @return mixed
      */
-    public function showUserGalleriesAll($username)
+    public function showUserGalleriesAll($id)
     {
         $this->conn->queryPrepare("
-        SELECT * FROM gallery 
+        SELECT  gallery.id as 'galleryId', gallery.description, gallery.name, gallery.user_id FROM gallery 
         INNER JOIN user u on gallery.user_id = u.id 
-        WHERE username =:username AND hidden = 0 AND nsfw = 0 LIMIT 50");
-        $this->conn->bindParam(":username", $username);
+        WHERE gallery.user_id =:id AND hidden = 0 AND nsfw = 0");
+        $this->conn->bindParam(":id", $id);
         $this->conn->execute();
         return $this->conn->multy();
     }

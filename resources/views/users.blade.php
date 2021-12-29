@@ -7,7 +7,7 @@
                 @foreach($result as $row)
                     <div class="d-inline-block m-2">
                         <p>
-                            <a href="/admin/users/{{$row->username}}" > {{$row->username}}</a>
+                            <a href="/admin/users/{{$row->id}}" > {{$row->username}}</a>
                         </p>
                     </div>
                 @endforeach
@@ -16,7 +16,7 @@
                 @foreach($result as $row)
                 <div class="d-inline-block m-2">
                     <p>
-                        <a href="/profile/moderator/users/{{$row->username}}" > {{$row->username}}</a>
+                        <a href="/profile/moderator/users/{{$row->id}}" > {{$row->username}}</a>
                     </p>
                 </div>
                 @endforeach
@@ -25,7 +25,7 @@
                 @foreach($result as $row)
                     <div class="d-inline-block m-2">
                         <p>
-                            <a href="/profile/users/{{$row->username}}"  style="display: inline-block; padding: 10px; background: azure; justify-content: stretch" > {{$row->username}}</a>
+                            <a href="/profile/users/{{$row->id}}"  style="display: inline-block; padding: 10px; background: azure; justify-content: stretch" > {{$row->username}}</a>
                         </p>
                     </div>
                 @endforeach

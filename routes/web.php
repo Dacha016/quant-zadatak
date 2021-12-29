@@ -25,8 +25,8 @@ $router->post('/logout', "AuthController@logout");
 
 $router->get('/profile', "ProfileController@imagesOnTheMainPage"); // images on the main page
 $router->get('/profile/galleries', "ProfileController@indexGalleries"); // galleries in profile
-$router->get('/gallery/{slug}', "ProfileController@showImages");  //images from gallery
-$router->post("/profile/gallery/{slug}", "ProfileController@getImage");//get single picture
+$router->get('/gallery/{id}', "ProfileController@showImages");  //images from gallery
+$router->post("/profile/gallery/{id}", "ProfileController@getImage");//get single picture
 $router->post("/update/{slug}", "ProfileController@updateImage");  //update image from logged user gallery
 $router->get("/profile/users", "UserController@index");// other users
 $router->get("/profile/users/{slug}", "UserController@showGalleries"); // Not logged user galleries
@@ -35,7 +35,7 @@ $router->get("/profile/users/{slug}", "UserController@showGalleries"); // Not lo
 $router->post('/delete/image{slug}', "ProfileController@deleteImage");
 
 
-$router->get("/profile/moderator/users/{slug}", "UserController@showGalleries"); // Not logged user galleries
+$router->get("/profile/moderator/users/{id}", "UserController@showGalleries"); // Not logged user galleries
 
 
 
