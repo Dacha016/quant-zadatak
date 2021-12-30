@@ -27,7 +27,6 @@ use PDOException;
  */
 class User
 {
-    protected string $table = "user";
     protected Connection $conn;
 
     /**
@@ -40,7 +39,7 @@ class User
 
     public function find($username, $email): bool
     {
-        $this->conn->queryPrepare("SELECT * FROM ".$this->table." WHERE username = :username or email = :email");
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or email = :email");
         $this->conn->bindParam(":username", $username);
         $this->conn->bindParam(":email", $email);
         $this->conn->execute();
@@ -99,52 +98,22 @@ class User
     {
         $this->conn->queryPrepare("SELECT * FROM user LIMIT 50");
         $this->conn->execute();
-        return $this->conn->multy();
+        return $this->conn->multi();
     }
 
-    /**
-     * Get galleries for users with role user
-     * @param $username $username username of current user
-     * @return mixed
-     */
-        public function showUserGalleries($id)
-    {
-        $this->conn->queryPrepare(
-            "SELECT gallery.id as 'galleryId', gallery.description, gallery.name, gallery.user_id FROM gallery 
-            INNER JOIN user u on gallery.user_id = u.id 
-            WHERE gallery.user_id =:id AND hidden = 0 AND nsfw = 0");
-            $this->conn->bindParam(":id", $id);
-            $this->conn->execute();
-            return $this->conn->multy();
-    }
 
-    /**
-     * Get galleries for other users
-     * @param $username $username username of current user
-     * @return mixed
-     */
-    public function showUserGalleriesAll($id)
-    {
-        $this->conn->queryPrepare("
-        SELECT  gallery.id as 'galleryId', gallery.description, gallery.name, gallery.user_id FROM gallery 
-        INNER JOIN user u on gallery.user_id = u.id 
-        WHERE gallery.user_id =:id AND hidden = 0 AND nsfw = 0");
-        $this->conn->bindParam(":id", $id);
-        $this->conn->execute();
-        return $this->conn->multy();
-    }
 //    public function showUserImages($id)
 //    {
 //        $this->conn->queryPrepare("SELECT file_name FROM image INNER JOIN user u on image.user_id =:id WHERE  hidden = 0 AND nsfw = 0 LIMIT 50");
 //        $this->conn->bindParam(":id", $id);
 //        $this->conn->execute();
-//        return $this->conn->multy();
+//        return $this->conn->multi();
 //    }
     public function showAllUserImages($id)
     {
-        $this->conn->queryPrepare("SELECT * FROM image INNER JOIN user u on image.user_id =:id LIMIT 50");
+        $this->conn->queryPrepare("SELECT * FROM image WHERE image.user_id =:id LIMIT 50");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
-        return $this->conn->multy();
+        return $this->conn->multi();
     }
 }

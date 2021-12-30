@@ -12,10 +12,12 @@
  */
 namespace App\Controllers;
 
+if (!session_start()) {
+    session_start();
+}
+
 use App\Blade\Blade;
 use App\Models\User;
-
-require dirname(__DIR__). "/helpers/helper.php";
 
 /**
  * Connection to base
@@ -51,23 +53,7 @@ class UserController
       Blade::render("/users", compact("result"));
     }
 
-    /**
-     * Show different permissions for different user
-     * @return void
-     */
-    public function showGalleries()
-    {
-       $id = $_SERVER["REQUEST_URI"];
-       $id = explode("/", $id);
-       $n = count($id);
-       $id = $id[$n - 1];
-       if ($_SESSION["role"] === "user") {
-           $result = $this->user->showUserGalleries($id);
-       } else {
-           $result = $this->user->showUserGalleriesAll($id);
-       }
-        Blade::render("/gallery", compact("result"));
-    }
+
 
 
 }

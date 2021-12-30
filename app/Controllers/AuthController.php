@@ -6,6 +6,10 @@ use App\Blade\Blade;
 use App\Models\User;
 use DevCoder\SessionManager;
 
+if (!session_start()) {
+    session_start();
+}
+
 class AuthController
 {
     protected User $user;
@@ -61,8 +65,6 @@ class AuthController
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
             $userData["role"] = $this->role;
             $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 30), 6));
-var_dump($userData["password"]);
-die();
             // Insert into database
             if ($this->user->register($userData)) {
                 header("Location: http://localhost/login");
@@ -97,12 +99,12 @@ die();
             if($this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
                 $loggedUser = $this->user->login($userData["username"], $userData["password"]);
                 if (isset($loggedUser)) {
-                    $session = new SessionManager;
-                    $session->set("id",$loggedUser->id);
-                    $session->set("username", $loggedUser->username);
-                    $session->set("role", $loggedUser->role);
+                    session_start();
+                    $_SESSION["id"] = $loggedUser->id;
+                    $_SESSION["username"] = $loggedUser->username;
+                    $_SESSION["role"] = $loggedUser->role;
                     header("Location: http://localhost/profile");
-                    Blade::render("/profile","session");
+                    Blade::render("/profile");
                 } else {
                     $error = "Username and username do not match";
                     die(Blade::render("/login", compact("error")));
@@ -112,11 +114,9 @@ die();
     }
     public function logout()
     {
-        if(isset($_GET['logout'])) {
-            unset($_SESSION["id"]);
-            unset($_SESSION['username']);
-        }
+        session_unset();
         session_destroy();
+        setcookie("PHPSESSID","",time()-3600,"/");
         header("Location: http://localhost/home");
     }
 }

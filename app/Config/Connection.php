@@ -61,7 +61,7 @@ class Connection
     {
         return $this->stmt->fetch(PDO::FETCH_OBJ);
     }
-    public function multy()
+    public function multi()
     {
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }

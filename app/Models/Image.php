@@ -20,14 +20,14 @@ class Image
     {
         $this->conn->queryPrepare("select file_name from image where hidden = 0 and nsfw = 0 limit 50") ;
         $this->conn->execute();
-        return $this->conn->multy();
+        return $this->conn->multi();
     }
 
     public function imagesOnTheMainPage()
     {
         $this->conn->queryPrepare("select file_name from image limit 50") ;
         $this->conn->execute();
-        return $this->conn->multy();
+        return $this->conn->multi();
     }
 
     /**
@@ -38,32 +38,26 @@ class Image
     public function showImages($id)
     {
         $this->conn->queryPrepare(
-            "select i.id as 'id', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId'  from image_gallery
-                inner join image i on image_gallery.image_id = i.id
+            "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', g.id as 'galleryId'  from image_gallery
+                inner join image i on image_gallery.image_id = i.id     
+                inner join gallery g on image_gallery.gallery_id = g.id
                 where image_gallery.gallery_id =:id");
         $this->conn->bindParam(":id",$id);
         $this->conn->execute();
-        return $this->conn->multy();
+        return $this->conn->multi();
     }
     public function getImage ($id)
     {
-        $this->conn->queryPrepare("select * from image where id =:id");
+        $this->conn->queryPrepare(
+            "select i.id as 'imageId', i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden', i.file_name as 'file_name', i.user_id as 'userId', g.id as 'galleryId' 
+            from image_gallery 
+            inner join image i on image_gallery.image_id = i.id
+            inner join gallery g on image_gallery.gallery_id = g.id
+            where i.id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
         return $this->conn->single();
     }
-//    public function imageUpdate($slug)
-//    {
-//        $this->conn->queryPrepare("
-//            select i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden',i.file_name as 'file_name', g.slug as 'gallerySlug'   from image_gallery
-//            inner join image i on image_gallery.image_id = i.id
-//            inner join gallery g on image_gallery.gallery_id = g.id
-//            inner join user u on g.user_id = u.id
-//            where i.slug =:slug");
-//        $this->conn->bindParam(":slug",$slug);
-//        $this->conn->execute();
-//        return $this->conn->single();
-//    }
 
     /**
      * Change values of image

@@ -1,16 +1,13 @@
-<?php
-if (!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
-}
-?>
-
 <?php $__env->startSection("content"); ?>
     <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
     <div style="margin: 20px auto; max-width: 1000px; text-align: center">
         <img src=<?php echo e($result->file_name); ?> alt="pictures" >
         <div>
-            <form action ="/update/<?php echo e($result->slug); ?>" method="post" class="d-inline-block m-1">
-                <input type="hidden" value="<?php echo e($result->slug); ?>" name="update">
+            <form action ="/update/<?php echo e($result->galleryId); ?>/<?php echo e($result->imageId); ?>" method="post" class="d-inline-block m-1">
+                <input type="hidden" value="<?php echo e($result->slug); ?>" name="slug">
+                <input type="hidden" value="<?php echo e($result->userId); ?>" name="userId">
+                <input type="hidden" value="<?php echo e($result->galleryId); ?>" name="galleryId">
+                <input type="hidden" value="<?php echo e($result->imageId); ?>" name="galleryId">
                 <div class="form-check">
                     <?php if($result->hidden): ?>
                         <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value=<?php echo e($result->hidden); ?> checked>
