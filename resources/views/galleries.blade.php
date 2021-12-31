@@ -171,5 +171,31 @@
                 </tr>
             @endforeach
         </table>
+        @if($row->user_id !== $_SESSION["id"])
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ">
+                        <a class="page-link" href="?page= {{abs($_GET["page"]-1) }}" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page= {{abs($_GET["page"]+1) }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        @endif
+
+
+        @if($row->user_id === $_SESSION["id"])
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ">
+                        <a class="page-link" href="/profile/galleries?page= {{abs($_GET["page"]-1) }}" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="/profile/galleries?page={{$_GET["page"]+1 }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        @endif
     </div>
 @endsection

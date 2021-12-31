@@ -29,7 +29,7 @@ use PDOStatement;
 
 class Connection
 {
-    protected $conn;
+    protected PDO $conn;
     protected $stmt;
     protected $error;
 

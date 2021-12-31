@@ -1,14 +1,80 @@
-
 @extends("layout.main")
 @section("content")
-    <h1 class="d-block " style="text-align:center">Users</h1>
-    <div style="margin: 20px auto; max-width: 1000px; display: flex; flex-wrap: wrap; justify-content: space-between">
-        @foreach($result as $row)
-            <div class="d-inline-block m-2">
-                <p>
-                    <a href="/profile/users/{{$row->id}}"  style="display: inline-block; padding: 10px; background: azure; justify-content: stretch" > {{$row->username}}</a>
-                </p>
-            </div>
-        @endforeach
+    <h1 class="d-block " style="text-align:center">Galleries</h1>
+    <div style="margin: 20px auto; max-width: 1000px;" >
+        @if($_SESSION["role"] === "user" )
+            <table style="text-align: center;">
+                <tr>
+                    <th style=" border: 1px solid black ">Username</th>
+                    <th style="border: 1px solid black">Email</th>
+                </tr>
+                @foreach($result as $row)
+                    <tr>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <a href="/profile/users/{{$row->id}}?page=0"> {{$row->username}}</a>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p>{{$row->username}}</p>
+                        </td>
+                    </tr>
+                @endforeach
+            </table>
+        @endif
+            @if($_SESSION["role"] === "admin" || $_SESSION["role"] === "moderator")
+                <table style="text-align: center;">
+                    <tr>
+                        <th style=" border: 1px solid black ">Username</th>
+                        <th style="border: 1px solid black">Email</th>
+                        <th style="border: 1px solid black">Role</th>
+                        <th style="border: 1px solid black">Nsfw</th>
+                        <th style="border: 1px solid black">Actice</th>
+                    </tr>
+                    @foreach($result as $row)
+                        <tr>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <a href="/profile/update/users/{{$row->id}}?page=0"> {{$row->username}}</a>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->username}}</p>
+                            </td>
+                            <form action="/profile/update/users/{{$row->id}}" method="post" >
+                                <input type="hidden" name = "userId" value={{$row->id}}>
+                                <td style="text-align: center; border: 1px solid black ">
+                                    <input name="role" value="{{$row->role}}">
+                                </td>
+                                <td style="text-align: center; border: 1px solid black ">
+                                    @if($row->nsfw)
+                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value={{$row->nsfw}} checked>
+                                    @endif
+                                    @if(!$row->nsfw)
+                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="{{$row->nsfw}}">
+                                    @endif
+                                </td>
+                                <td style="text-align: center; border: 1px solid black ">
+                                    @if($row->active)
+                                        <input class="form-check-input" type="checkbox" id="active" name="active" value={{$row->active}} checked>
+                                    @endif
+                                    @if(!$row->active)
+                                        <input class="form-check-input" type="checkbox" id="active" name="active" value="{{$row->active}}">
+                                    @endif
+                                </td>
+                                <td>
+                                    <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
+                                </td>
+                            </form>
+                        </tr>
+                    @endforeach
+                </table>
+            @endif
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item ">
+                    <a class="page-link" href="?page= {{abs($_GET["page"]-1) }}" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page= {{abs($_GET["page"]+1) }}">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 @endsection

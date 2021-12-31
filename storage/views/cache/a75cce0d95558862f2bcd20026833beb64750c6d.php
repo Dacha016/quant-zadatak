@@ -170,6 +170,32 @@
                 </tr>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </table>
+        <?php if($row->user_id !== $_SESSION["id"]): ?>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ">
+                        <a class="page-link" href="?page= <?php echo e(abs($_GET["page"]-1)); ?>" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page= <?php echo e(abs($_GET["page"]+1)); ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
+
+
+        <?php if($row->user_id === $_SESSION["id"]): ?>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ">
+                        <a class="page-link" href="/profile/galleries?page= <?php echo e(abs($_GET["page"]-1)); ?>" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="/profile/galleries?page=<?php echo e($_GET["page"]+1); ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
     </div>
 <?php $__env->stopSection(); ?>
 

@@ -46,6 +46,32 @@ class GalleryController
         }
         Blade::render("/galleries", compact("result"));
     }
+
+    public function createGallery()
+    {
+        if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
+            Blade::render("/createGallery");
+
+        } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
+            $error ="";
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $userId = trim($_POST["user_id"]);
+            $name = trim($_POST["name"]);
+            $description = trim($_POST["description"]);
+            $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
+            $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
+            if (!preg_match("/^[0-9]*$/", $userId)) {
+                $error = "The user_id may contain only numbers";
+                die(Blade::render("/registration", compact("error")));
+            }
+            $slug = str_replace(" ","-", $name);
+            $slug = strtolower($slug);
+            $this->gallery->createGallery($userId, $name, $nsfw, $hidden, $description, $slug);
+            header("Location: http://localhost/profile/galleries");
+        }
+
+    }
+
     public function updateGallery()
     {
         $_POST["hidden"] = (isset($_POST['hidden']) == '1' ? '1' : '0');

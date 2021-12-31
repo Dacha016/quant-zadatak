@@ -96,24 +96,53 @@ class User
      */
     public function indexUsers()
     {
-        $this->conn->queryPrepare("SELECT * FROM user LIMIT 50");
+        $limit =50;
+        $this->conn->queryPrepare("select count(*) as 'row' from user");
+        $this->conn->execute();
+        $result = $this->conn->single();
+        $rows = $result->row;
+        $pages = ceil($rows/$limit);
+        $page = $_GET["page"];
+        $offset = abs($page * $limit);
+        $this->conn->queryPrepare("select * from user limit $limit offset $offset");
         $this->conn->execute();
         return $this->conn->multi();
     }
-
-
-//    public function showUserImages($id)
-//    {
-//        $this->conn->queryPrepare("SELECT file_name FROM image INNER JOIN user u on image.user_id =:id WHERE  hidden = 0 AND nsfw = 0 LIMIT 50");
-//        $this->conn->bindParam(":id", $id);
-//        $this->conn->execute();
-//        return $this->conn->multi();
-//    }
-    public function showAllUserImages($id)
+    public function show($id)
     {
-        $this->conn->queryPrepare("SELECT * FROM image WHERE image.user_id =:id LIMIT 50");
+        $this->conn->queryPrepare(
+            "select * from user where id = :id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
-        return $this->conn->multi();
+        return $this->conn->single();
     }
+    public function updateAccount($userData,$id)
+    {
+        $this->conn->queryPrepare(
+            "update user set 
+                username = :username,
+                email = :email,
+                password = :password
+                where id =:id");
+        $this->conn->bindParam(":username", $userData["username"]);
+        $this->conn->bindParam(":email", $userData["email"]);
+        $this->conn->bindParam(":password", $userData["password"]);
+        $this->conn->bindParam(":id", $id);
+        return $this->conn->execute();
+    }
+    public function updateUser($updateData)
+    {
+        $this->conn->queryPrepare(
+            "update user set 
+                role = :role,
+                nsfw = :nsfw,
+                active = :active
+                where id =:id");
+        $this->conn->bindParam(":role", $updateData["role"]);
+        $this->conn->bindParam(":nsfw", $updateData["nsfw"]);
+        $this->conn->bindParam(":active", $updateData["active"]);
+        $this->conn->bindParam(":id", $updateData["userId"]);
+        return $this->conn->execute();
+    }
+
 }

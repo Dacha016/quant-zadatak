@@ -26,8 +26,27 @@ ALTER TABLE user
 ALTER TABLE user
     CHANGE role role VARCHAR(20) DEFAULT 'user';
 
+// add nsfw
+ALTER TABLE user
+ADD nsfw int DEFAULT 0
+
+// add active
+ALTER TABLE user
+ADD active int DEFAULT 0
 //change to pictures
 UPDATE image SET file_name = concat('https://picsum.photos/200/300?random=', id);
 
 ALTER TABLE user
     CHANGE id id INT AUTO_INCREMENT;
+
+// create table moderators_logging
+create table moderator_logging
+(
+    id int primary key not null,
+    moderators_username varchar(50) unique not null,
+    users_username varchar(50) unique not null,
+    gallery_id int null,
+    image_path varchar(150) null,
+    hidden int null,
+    nsfw int null
+)
