@@ -50,3 +50,55 @@ create table moderator_logging
     hidden int null,
     nsfw int null
 )
+
+
+//drop image_gallery constrains
+alter table image_gallery
+drop constraint FK_D23B2FE63DA5256D
+
+alter table image_gallery
+drop constraint FK_D23B2FE64E7AF8F
+
+// alter table image_gallery
+
+alter table image_gallery
+add constraint FK_D23B2FE64E7AF8F
+foreign key (gallery_id)
+references gallery(id)
+on delete cascade
+
+alter table image_gallery
+add constraint FK_D23B2FE63DA5256D
+foreign key (image_id)
+references image(id)
+on delete cascade
+
+// drop image constrain
+alter table image
+drop constraint FK_C53D045FA76ED395
+//
+alter table image
+add constraint FK_C53D045FA76ED395
+foreign key (user_id)
+references user(id)
+on delete cascade
+
+
+alter table comment
+drop constraint FK_9474526C3DA5256D
+
+alter table comment
+add constraint FK_9474526C3DA5256D
+foreign key (image_id)
+references image(id)
+on delete cascade
+
+
+alter table comment
+drop constraint FK_9474526C4E7AF8F
+
+alter table comment
+add constraint FK_9474526C4E7AF8F
+foreign key (gallery_id)
+references gallery(id)
+on delete cascade

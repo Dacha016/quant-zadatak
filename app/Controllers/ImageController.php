@@ -9,8 +9,6 @@ if (!session_start()) {
 use App\Blade\Blade;
 use App\Models\Image;
 
-
-
 class ImageController
 {
     protected Image $image;
@@ -18,12 +16,10 @@ class ImageController
     public function __construct()
     {
         $this->image = new Image;
-
     }
     public function index()
     {
         $result =$this->image->index();
-
         Blade::render("/home", compact("result"));
     }
 
@@ -33,7 +29,6 @@ class ImageController
      */
     public function imagesOnTheMainPage()
     {
-
         $result = $this->image->imagesOnTheMainPage();
         Blade::render("/profile", compact("result"));
     }
@@ -45,15 +40,18 @@ class ImageController
     public
     function showImages()
     {
-
         $id = $_SERVER["REQUEST_URI"];
         $id = explode("/", $id);
         $n = count($id);
         $id = $id[$n - 1];
-
         $result = $this->image->showImages($id);
         Blade::render("/images", compact("result"));
     }
+
+    /**
+     * Show not logged users images
+     * @return void
+     */
     public function showNotLoggedUserImages()
     {
         $id = $_SERVER["REQUEST_URI"];
@@ -81,21 +79,31 @@ class ImageController
     {
         $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
         $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
-        $slug = $_POST["slug"];
-        $this->image->updateImage($slug, $hidden, $nsfw);
+        $imageId = $_POST["imageId"];
+        $this->image->updateImage($imageId, $hidden, $nsfw);
         $galleryId = $_POST["galleryId"];
         $userId=$_POST["userId"];
         if ($_POST["userId"] === $_SESSION["id"]) {
-            header("Location: http://localhost/profile/galleries/".$galleryId);
+            header("Location: http://localhost/profile/galleries/".$galleryId."page=0");
         }else{
-            header("Location: http://localhost/profile/users/".$userId ."/" . $galleryId);
+            header("Location: http://localhost/profile/users/".$userId ."/" . $galleryId."page=0");
         }
     }
-    public function deleteImage(){
-        $this->image->deleteImage($_POST["delete"]);
-        header("Location: http://localhost/profile");
-        Blade::render("/profile");
 
+    /**
+     * Delete image
+     * @return void
+     */
+    public function deleteImage(){
+        $galleryId = $_POST["galleryId"];
+        $userId=$_POST["userId"];
+        $imageId = $_POST["imageId"];
+        $this->image->deleteImage($imageId);
+        if ($userId === $_SESSION["id"]) {
+            header("Location: http://localhost/profile/galleries/".$galleryId."?page=0");
+        }else{
+            header("Location: http://localhost/profile/users/".$userId ."/" . $galleryId."?page=0");
+        }
     }
 
 }

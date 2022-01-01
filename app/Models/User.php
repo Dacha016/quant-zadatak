@@ -94,17 +94,13 @@ class User
      * Get users from table
      * @return mixed
      */
-    public function indexUsers()
+    public function indexUsers($id)
     {
         $limit =50;
-        $this->conn->queryPrepare("select count(*) as 'row' from user");
-        $this->conn->execute();
-        $result = $this->conn->single();
-        $rows = $result->row;
-        $pages = ceil($rows/$limit);
         $page = $_GET["page"];
         $offset = abs($page * $limit);
-        $this->conn->queryPrepare("select * from user limit $limit offset $offset");
+        $this->conn->queryPrepare("select * from user where id != :id limit $limit offset $offset");
+        $this->conn->bindParam(":id", $id);
         $this->conn->execute();
         return $this->conn->multi();
     }
@@ -144,5 +140,13 @@ class User
         $this->conn->bindParam(":id", $updateData["userId"]);
         return $this->conn->execute();
     }
-
+    public function getPages()
+    {
+        $limit =50;
+        $this->conn->queryPrepare("select count(*) as 'row' from user");
+        $this->conn->execute();
+        $result = $this->conn->single();
+        $rows = $result->row;
+        return $pages = floor($rows/$limit);
+    }
 }

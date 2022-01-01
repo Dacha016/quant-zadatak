@@ -48,9 +48,9 @@ class UserController
      */
     public function index()
     {
-      $result = $this->user->indexUsers();
-
-      Blade::render("/users", compact("result"));
+        $pages = $this->user->getPages();
+        $result = $this->user->indexUsers($_SESSION["id"]);
+        Blade::render("/users", compact("result", "pages"));
     }
     public function show()
     {
@@ -111,8 +111,4 @@ class UserController
         $this->user->updateUser($updateData);
         header("Location: http://localhost/profile/users?page=0");
     }
-
-
-
-
 }

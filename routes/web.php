@@ -39,7 +39,8 @@ $router->get("/profile/updateAccount","UserController@updateAccount");
 $router->post("/profile/update/users/{id}","UserController@updateUser");
 $router->post("/profile/updateAccount","UserController@updateAccount");
 
-$router->post('/delete/image{slug}', "ImageController@deleteImage");
+$router->post('/delete/image/{id}', "ImageController@deleteImage");
+$router->post('/delete/gallery/{id}', "GalleryController@deleteGallery");
 
 
 

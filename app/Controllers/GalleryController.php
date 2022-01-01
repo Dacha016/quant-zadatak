@@ -25,8 +25,9 @@ class GalleryController
      */
     public function indexGalleries()
     {
+        $pages = $this->gallery->getPages($_SESSION["id"]);
         $result = $this->gallery->indexGalleries($_SESSION["id"]);
-        Blade::render("/galleries", compact("result"));
+        Blade::render("/galleries", compact("result","pages"));
     }
 
     /**
@@ -40,13 +41,19 @@ class GalleryController
         $n = count($id);
         $id = $id[$n - 1];
         if ($_SESSION["role"] === "user") {
+            $pages = $this->gallery->getPagesVisible($id);
             $result = $this->gallery->showUserGalleries($id);
         } else {
             $result = $this->gallery->showUserGalleriesAll($id);
+            $pages = $this->gallery->getPages($id);
         }
-        Blade::render("/galleries", compact("result"));
+        Blade::render("/galleries", compact("result", "pages"));
     }
 
+    /**
+     * Create new gallery
+     * @return void
+     */
     public function createGallery()
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
@@ -55,33 +62,52 @@ class GalleryController
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $error ="";
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $userId = trim($_POST["user_id"]);
+            $userId = $_SESSION["id"];
             $name = trim($_POST["name"]);
             $description = trim($_POST["description"]);
             $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
             $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
-            if (!preg_match("/^[0-9]*$/", $userId)) {
-                $error = "The user_id may contain only numbers";
-                die(Blade::render("/registration", compact("error")));
-            }
             $slug = str_replace(" ","-", $name);
             $slug = strtolower($slug);
             $this->gallery->createGallery($userId, $name, $nsfw, $hidden, $description, $slug);
-            header("Location: http://localhost/profile/galleries");
+            header("Location: http://localhost/profile/galleries?page=0");
         }
 
     }
 
+    /**
+     * Update gallery of logger user and other users
+     * @return void
+     */
     public function updateGallery()
     {
-        $_POST["hidden"] = (isset($_POST['hidden']) == '1' ? '1' : '0');
-        $_POST["nsfw"] = (isset($_POST['nsfw']) == '1' ? '1' : '0');
-        $this->gallery->updateGallery($_POST["description"], $_POST["hidden"], $_POST["nsfw"],$_POST["galleryId"]);
-        if ($_POST["user_id"] === $_SESSION["id"]) {
-            header("Location: http://localhost/profile/galleries");
+        $userId = $_POST["userId"];
+        $galleryId = $_POST["galleryId"];
+        $description = trim($_POST["description"]);
+        $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
+        $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
+        $this->gallery->updateGallery($description, $hidden, $nsfw,$galleryId);
+        if ($userId == $_SESSION["id"]) {
+            header("Location: http://localhost/profile/galleries?page=0");
         }
-        if ($_POST["user_id"] !== $_SESSION["id"]) {
-            header("Location: http://localhost/profile/users/". $_POST["user_id"]);
+        if ($userId !== $_SESSION["id"]) {
+            header("Location: http://localhost/profile/users/". $userId."?page=0");
+        }
+    }
+
+    /**
+     * Delete all data from gallery and aly other table with gallery_id
+     * @return void
+     */
+    public function deleteGallery()
+    {
+        $userId=$_POST["userId"];
+        $galleryId = $_POST["galleryId"];
+        $this->gallery->deleteGallery($galleryId);
+        if ($userId === $_SESSION["id"]) {
+            header("Location: http://localhost/profile/galleries?page=0");
+        }else{
+            header("Location: http://localhost/profile/users/".$userId."?page=0");
         }
     }
 }

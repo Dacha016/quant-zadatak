@@ -66,12 +66,12 @@ class Image
      * @param $slug $slug image slug
      * @return mixed
      */
-    public function updateImage($slug, $hidden, $nsfw)
+    public function updateImage($id, $hidden, $nsfw)
     {
-        $this->conn->queryPrepare("UPDATE image SET hidden =:hidden, nsfw = :nsfw WHERE slug = :slug");
+        $this->conn->queryPrepare("UPDATE image SET hidden =:hidden, nsfw = :nsfw WHERE id = :id");
         $this->conn->bindParam(":hidden", $hidden);
         $this->conn->bindParam(":nsfw", $nsfw);
-        $this->conn->bindParam(":slug", $slug);
+        $this->conn->bindParam(":id", $id);
         return $this->conn->execute();
     }
 
@@ -80,10 +80,10 @@ class Image
      * @param $slug $slug Image slug
      * @return void
      */
-    public function deleteImage($slug)
+    public function deleteImage($id)
     {
-        $this->conn->queryPrepare("DELETE FROM image WHERE slug =:slug");
-        $this->conn->bindParam(":slug", $slug);
+        $this->conn->queryPrepare("DELETE FROM image WHERE id =:id");
+        $this->conn->bindParam(":id", $id);
         $this->conn->execute();
     }
 }

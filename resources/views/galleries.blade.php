@@ -12,16 +12,16 @@
             </tr>
             @foreach($result as $row)
                 <tr>
-                    @if($row->user_id === $_SESSION["id"])
+                    @if($row->userId === $_SESSION["id"])
                     <td style="margin: 0 auto; border: 1px solid black"><a href="/profile/galleries/{{$row->galleryId}}">{{$row->name}}</a></td>
                     @endif
-                    @if($row->user_id !== $_SESSION["id"])
-                        <td style="margin: 0 auto; border: 1px solid black"><a href="/profile/users/{{$row->user_id}}/{{$row->galleryId}}">{{$row->name}}</a></td>
+                    @if($row->userId !== $_SESSION["id"])
+                        <td style="margin: 0 auto; border: 1px solid black"><a href="/profile/users/{{$row->userId}}/{{$row->galleryId}}">{{$row->name}}</a></td>
                     @endif
                     @if($_SESSION["role"] === "admin" )
                         <form action="/profile/update/gallery/{{$row->galleryId}}" method="post" >
                             <input type="hidden" name="galleryId" value="{{$row->galleryId}}">
-                            <input type="hidden" name="user_id" value="{{$row->user_id}}">
+                            <input type="hidden" name="userId" value="{{$row->userId}}">
                             <td style="text-align: center; border: 1px solid black ">
                                 <input name="description" value="{{$row->description}}">
                             </td>
@@ -47,16 +47,20 @@
                             <td>
                                 <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                             </td>
+                        </form>
+                        <form action ="/delete/gallery/{{$row->galleryId}}" method="post" class="d-inline-block m-1">
                             <td>
-                                <button class="btn btn-danger d-inline-block" type="submit">DELETE</button>
+                                <input type="hidden" value="{{$row->galleryId}}" name="galleryId">
+                                <input type="hidden" value="{{$row->userId}}" name="userId">
+                                <button class="btn btn-danger" type="submit">DELETE</button>
                             </td>
                         </form>
                     @endif
                     @if($_SESSION["role"] === "moderator" )
-                        <form action="/profile/update/gallery/{{$row->galleryId}}" method="post" >
-                            <input type="hidden" name="galleryId" value="{{$row->galleryId}}">
-                            <input type="hidden" name="user_id" value="{{$row->user_id}}">
-                            @if($row->user_id === $_SESSION["id"])
+                        @if($row->userId === $_SESSION["id"])
+                            <form action="/profile/update/gallery/{{$row->galleryId}}" method="post" >
+                                <input type="hidden" name="galleryId" value="{{$row->galleryId}}">
+                                <input type="hidden" name="userId" value="{{$row->userId}}">
                                 <td style="text-align: center; border: 1px solid black ">
                                     <input name="description" value="{{$row->description}}">
                                 </td>
@@ -82,11 +86,19 @@
                                 <td>
                                     <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                                 </td>
+                            </form>
+                            <form action ="/delete/gallery/{{$row->galleryId}}" method="post" class="d-inline-block m-1">
                                 <td>
-                                    <button class="btn btn-danger d-inline-block" type="submit">DELETE</button>
+                                    <input type="hidden" value="{{$row->galleryId}}" name="galleryId">
+                                    <input type="hidden" value="{{$row->userId}}" name="userId">
+                                    <button class="btn btn-danger" type="submit">DELETE</button>
                                 </td>
-                            @endif
-                            @if($row->user_id != $_SESSION["id"])
+                            </form>
+                        @endif
+                        @if($row->userId != $_SESSION["id"])
+                            <form action="/profile/update/gallery/{{$row->galleryId}}" method="post" >
+                                <input type="hidden" name="galleryId" value="{{$row->galleryId}}">
+                                <input type="hidden" name="userId" value="{{$row->userId}}">
                                 <td style="text-align: center; border: 1px solid black ">
                                     <p>{{$row->description}}</p>
                                     <input type="hidden" name="description" value="{{$row->description}}">
@@ -115,14 +127,14 @@
                                 <td>
                                     <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                                 </td>
-                            @endif
-                        </form>
+                            </form>
+                        @endif
                     @endif
                     @if($_SESSION["role"] === "user")
-                        <form action="/profile/update/gallery/{{$row->galleryId}}" method="post" >
-                            <input type="hidden" name="galleryId" value="{{$row->galleryId}}">
-                            <input type="hidden" name="user_id" value="{{$row->user_id}}">
-                            @if($row->user_id === $_SESSION["id"])
+                        @if($row->userId === $_SESSION["id"])
+                            <form action="/profile/update/gallery/{{$row->galleryId}}" method="post" >
+                                <input type="hidden" name="galleryId" value="{{$row->galleryId}}">
+                                <input type="hidden" name="userId" value="{{$row->userId}}">
                                 <td style="text-align: center; border: 1px solid black ">
                                     <input name="description" value="{{$row->description}}">
                                 </td>
@@ -134,7 +146,7 @@
                                         <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value={{$row->hidden}} checked>
                                     @endif
                                     @if(!$row->hidden)
-                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value="{$row->hidden}}">
+                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value="{{$row->hidden}}">
                                     @endif
                                 </td>
                                 <td style="text-align: center; border: 1px solid black ">
@@ -148,54 +160,76 @@
                                 <td>
                                     <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                                 </td>
+                            </form>
+                            <form action ="/delete/gallery/{{$row->galleryId}}" method="post" class="d-inline-block m-1">
                                 <td>
-                                    <button class="btn btn-danger d-inline-block" type="submit">DELETE</button>
+                                    <input type="hidden" value="{{$row->galleryId}}" name="galleryId">
+                                    <input type="hidden" value="{{$row->userId}}" name="userId">
+                                    <button class="btn btn-danger" type="submit">DELETE</button>
                                 </td>
-                            @endif
-                            @if($row->user_id != $_SESSION["id"])
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <p>{{$row->description}}</p>
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <p>{{$row->description}}</p>
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <p>{{$row->hidden}}</p>
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <p>{{$row->nsfw}}</p>
-                                </td>
-                            @endif
-                        </form>
+                            </form>
+                        @endif
+                        @if($row->userId != $_SESSION["id"])
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->description}}</p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->description}}</p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->hidden}}</p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->nsfw}}</p>
+                            </td>
+                        @endif
                     @endif
                 </tr>
             @endforeach
         </table>
-        @if($row->user_id !== $_SESSION["id"])
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item ">
-                        <a class="page-link" href="?page= {{abs($_GET["page"]-1) }}" tabindex="-1">Previous</a>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                @if($_GET["page"] > 0)
+                    <li class="page-item" >
+                        <a class="page-link" href="?page=0" > << </a>
                     </li>
+                @endif
+                @if($_GET["page"] === 0)
+                    <li class="page-item" disabled>
+                        <a class="page-link" href="?page=0" > << </a>
+                    </li>
+                @endif
+                @if($_GET["page"] < 0)
+                    <li class="page-item disabled">
+                        <a class="page-link" href="?page=0">Previous</a>
+                    </li>
+                @endif
+                @if($_GET["page"] > 0)
                     <li class="page-item">
-                        <a class="page-link" href="?page= {{abs($_GET["page"]+1) }}">Next</a>
+                        <a class="page-link" href="?page= {{$_GET["page"] - 1 }}">Previous</a>
                     </li>
-                </ul>
-            </nav>
-        @endif
-
-
-        @if($row->user_id === $_SESSION["id"])
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item ">
-                        <a class="page-link" href="/profile/galleries?page= {{abs($_GET["page"]-1) }}" tabindex="-1">Previous</a>
-                    </li>
+                @endif
+                @if($_GET["page"] > $pages)
+                <li class="page-item disabled">
+                    <a class="page-link" href="?page= {{$_GET["page"]=$pages }}">Next</a>
+                </li>
+                @endif
+                @if($_GET["page"] < $pages)
                     <li class="page-item">
-                        <a class="page-link" href="/profile/galleries?page={{$_GET["page"]+1 }}">Next</a>
+                        <a class="page-link" href="?page= {{$_GET["page"] + 1 }}">Next</a>
                     </li>
-                </ul>
-            </nav>
-        @endif
+                @endif
+                @if($_GET["page"] < $pages)
+                    <li class="page-item" >
+                        <a class="page-link" href="?page={{$pages}}" > >> </a>
+                    </li>
+                @endif
+                @if($_GET["page"] === $pages)
+                    <li class="page-item" disabled>
+                        <a class="page-link" href="?page={{$pages}}" > >> </a>
+                    </li>
+                @endif
+            </ul>
+        </nav>
     </div>
 @endsection

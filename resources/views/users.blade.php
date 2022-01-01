@@ -20,60 +20,94 @@
                 @endforeach
             </table>
         @endif
-            @if($_SESSION["role"] === "admin" || $_SESSION["role"] === "moderator")
-                <table style="text-align: center;">
+        @if($_SESSION["role"] === "admin" || $_SESSION["role"] === "moderator")
+            <table style="text-align: center;">
+                <tr>
+                    <th style=" border: 1px solid black ">Username</th>
+                    <th style="border: 1px solid black">Email</th>
+                    <th style="border: 1px solid black">Role</th>
+                    <th style="border: 1px solid black">Nsfw</th>
+                    <th style="border: 1px solid black">Active</th>
+                </tr>
+                @foreach($result as $row)
                     <tr>
-                        <th style=" border: 1px solid black ">Username</th>
-                        <th style="border: 1px solid black">Email</th>
-                        <th style="border: 1px solid black">Role</th>
-                        <th style="border: 1px solid black">Nsfw</th>
-                        <th style="border: 1px solid black">Actice</th>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <a href="/profile/users/{{$row->id}}?page=0"> {{$row->username}}</a>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p>{{$row->username}}</p>
+                        </td>
+                        <form action="/profile/update/users/{{$row->id}}" method="post" >
+                            <input type="hidden" name = "userId" value={{$row->id}}>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <input name="role" value="{{$row->role}}">
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                @if($row->nsfw)
+                                    <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value={{$row->nsfw}} checked>
+                                @endif
+                                @if(!$row->nsfw)
+                                    <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="{{$row->nsfw}}">
+                                @endif
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                @if($row->active)
+                                    <input class="form-check-input" type="checkbox" id="active" name="active" value={{$row->active}} checked>
+                                @endif
+                                @if(!$row->active)
+                                    <input class="form-check-input" type="checkbox" id="active" name="active" value="{{$row->active}}">
+                                @endif
+                            </td>
+                            <td>
+                                <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
+                            </td>
+                        </form>
                     </tr>
-                    @foreach($result as $row)
-                        <tr>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <a href="/profile/update/users/{{$row->id}}?page=0"> {{$row->username}}</a>
-                            </td>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <p>{{$row->username}}</p>
-                            </td>
-                            <form action="/profile/update/users/{{$row->id}}" method="post" >
-                                <input type="hidden" name = "userId" value={{$row->id}}>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <input name="role" value="{{$row->role}}">
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    @if($row->nsfw)
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value={{$row->nsfw}} checked>
-                                    @endif
-                                    @if(!$row->nsfw)
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="{{$row->nsfw}}">
-                                    @endif
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    @if($row->active)
-                                        <input class="form-check-input" type="checkbox" id="active" name="active" value={{$row->active}} checked>
-                                    @endif
-                                    @if(!$row->active)
-                                        <input class="form-check-input" type="checkbox" id="active" name="active" value="{{$row->active}}">
-                                    @endif
-                                </td>
-                                <td>
-                                    <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
-                                </td>
-                            </form>
-                        </tr>
-                    @endforeach
-                </table>
-            @endif
+                @endforeach
+            </table>
+        @endif
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
-                <li class="page-item ">
-                    <a class="page-link" href="?page= {{abs($_GET["page"]-1) }}" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page= {{abs($_GET["page"]+1) }}">Next</a>
-                </li>
+                @if($_GET["page"] > 0)
+                    <li class="page-item" >
+                        <a class="page-link" href="?page=0" > << </a>
+                    </li>
+                @endif
+                @if($_GET["page"] === 0)
+                    <li class="page-item" disabled>
+                        <a class="page-link" href="?page=0" > << </a>
+                    </li>
+                @endif
+                @if($_GET["page"] < 0)
+                    <li class="page-item disabled">
+                        <a class="page-link" href="?page=0">Previous</a>
+                    </li>
+                @endif
+                @if($_GET["page"] > 0)
+                    <li class="page-item">
+                        <a class="page-link" href="?page= {{$_GET["page"] - 1 }}">Previous</a>
+                    </li>
+                @endif
+                @if($_GET["page"] > $pages)
+                    <li class="page-item disabled">
+                        <a class="page-link" href="?page= {{$_GET["page"]=$pages }}">Next</a>
+                    </li>
+                @endif
+                @if($_GET["page"] < $pages)
+                    <li class="page-item">
+                        <a class="page-link" href="?page= {{$_GET["page"] + 1 }}">Next</a>
+                    </li>
+                @endif
+                @if($_GET["page"] < $pages)
+                    <li class="page-item" >
+                        <a class="page-link" href="?page={{$pages}}" > >> </a>
+                    </li>
+                @endif
+                @if($_GET["page"] === $pages)
+                    <li class="page-item" disabled>
+                        <a class="page-link" href="?page={{$pages}}" > >> </a>
+                    </li>
+                @endif
             </ul>
         </nav>
     </div>

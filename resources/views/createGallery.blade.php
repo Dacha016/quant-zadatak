@@ -20,11 +20,6 @@
             <input type="text" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" id="description" name="description">
         </div>
 
-        <div class="mb-3">
-            <label for="user_id" class="form-label" style="font-size:18px; margin-left:15px;">User id:</label>
-            <input type="user_id" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="user_id">
-        </div>
-
         <div class="form-check">
             <input class="form-check-input" type="checkbox" value="1" id="hidden" name ="hidden" checked>
             <label class="form-check-label" for="hidden">

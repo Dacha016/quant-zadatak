@@ -14,8 +14,10 @@
                     <input type="hidden" value="<?php echo e($row->imageId); ?>" name="getImage">
                     <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                 </form>
-                <form action ="delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
-                    <input type="hidden" value="<?php echo e($row->imageId); ?>" name="delete">
+                <form action ="/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
+                    <input type="hidden" value="<?php echo e($row->galleryId); ?>" name="galleryId">
+                    <input type="hidden" value="<?php echo e($row->userId); ?>" name="userId">
+                    <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                     <button class="btn btn-danger" type="submit">DELETE</button>
                 </form>
             <?php endif; ?>
@@ -25,8 +27,10 @@
                         <input type="hidden" value="<?php echo e($row->imageId); ?>" name="getImage">
                         <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                     </form>
-                    <form action ="delete/image/<?php echo e($row->slug); ?>" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="delete">
+                    <form action ="/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
+                        <input type="hidden" value="<?php echo e($row->galleryId); ?>" name="galleryId">
+                        <input type="hidden" value="<?php echo e($row->userId); ?>" name="userId">
+                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                         <button class="btn btn-danger" type="submit">DELETE</button>
                     </form>
                 </div>
@@ -45,8 +49,10 @@
                         <input type="hidden" value="<?php echo e($row->imageId); ?>" name="getImage">
                         <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
                     </form>
-                    <form action ="delete/image/<?php echo e($row->slug); ?>" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="delete">
+                    <form action ="/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
+                        <input type="hidden" value="<?php echo e($row->galleryId); ?>" name="galleryId">
+                        <input type="hidden" value="<?php echo e($row->userId); ?>" name="userId">
+                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                         <button class="btn btn-danger" type="submit">DELETE</button>
                     </form>
                 </div>
