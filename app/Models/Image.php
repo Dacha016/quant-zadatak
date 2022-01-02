@@ -49,10 +49,11 @@ class Image
     public function getImage ($id)
     {
         $this->conn->queryPrepare(
-            "select i.id as 'imageId', i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden', i.file_name as 'file_name', i.user_id as 'userId', g.id as 'galleryId' 
+            "select i.id as 'imageId', i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden', i.file_name as 'file_name', i.user_id as 'userId', u.username as 'username', g.id as 'galleryId' 
             from image_gallery 
             inner join image i on image_gallery.image_id = i.id
             inner join gallery g on image_gallery.gallery_id = g.id
+            inner join user u on i.user_id = u.id
             where i.id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
@@ -85,5 +86,18 @@ class Image
         $this->conn->queryPrepare("DELETE FROM image WHERE id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+    }
+    public function createLogg($moderatorUsername,$userUsername, $galleryId, $imageName, $nsfw, $hidden)
+    {
+        $this->conn->queryPrepare(
+            "insert into moderator_logging (moderator_username, user_username,gallery_id, image_name, image_nsfw, image_hidden)
+            values (:moderator_username, :user_username, :image_name, :gallery_id, :image_nsfw, :image_hidden)");
+        $this->conn->bindParam(":moderator_username", $moderatorUsername);
+        $this->conn->bindParam(":user_username", $userUsername);
+        $this->conn->bindParam(":gallery_id", $galleryId);
+        $this->conn->bindParam(":image_name", $imageName);
+        $this->conn->bindParam(":image_nsfw", $nsfw);
+        $this->conn->bindParam(":image_hidden", $hidden);
+        return $this->conn->execute();
     }
 }

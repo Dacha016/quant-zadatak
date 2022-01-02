@@ -40,7 +40,7 @@ class Gallery
         $page = $_GET["page"];
         $offset = abs($page * $limit);
         $this->conn->queryPrepare(
-            "SELECT id as 'galleryId',description, name, user_id as 'userId', slug, nsfw, hidden FROM gallery 
+            "SELECT id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden FROM gallery
             WHERE user_id =:id AND hidden = 0 AND nsfw = 0 limit $limit offset $offset");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
@@ -58,8 +58,9 @@ class Gallery
         $page = $_GET["page"];
         $offset = abs($page * $limit);
         $this->conn->queryPrepare(
-            "SELECT  id as 'galleryId', description, name, user_id as 'userId', slug, nsfw, hidden FROM gallery 
-        WHERE user_id =:id limit $limit offset $offset");
+            "SELECT  gallery.id as 'galleryId', description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden,  u.username as 'username' FROM gallery 
+            inner join user u on gallery.user_id = u.id
+            WHERE u.id =:id limit $limit offset $offset");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
 
@@ -125,5 +126,17 @@ class Gallery
         $this->conn->queryPrepare("DELETE FROM gallery WHERE id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+    }
+    public function createLogg($moderatorUsername,$userUsername, $galleryId, $nsfw, $hidden)
+    {
+        $this->conn->queryPrepare(
+            "insert into moderator_logging (moderator_username, user_username,gallery_id, gallery_nsfw, gallery_hidden)
+            values (:moderator_username, :user_username, :gallery_id, :gallery_nsfw, :gallery_hidden)");
+        $this->conn->bindParam(":moderator_username", $moderatorUsername);
+        $this->conn->bindParam(":user_username", $userUsername);
+        $this->conn->bindParam(":gallery_id", $galleryId);
+        $this->conn->bindParam(":gallery_nsfw", $nsfw);
+        $this->conn->bindParam(":gallery_hidden", $hidden);
+        return $this->conn->execute();
     }
 }

@@ -77,11 +77,20 @@ class ImageController
      */
     public function updateImage()
     {
+//var_dump($_POST);
+//die();
         $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
         $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
         $imageId = $_POST["imageId"];
-        $this->image->updateImage($imageId, $hidden, $nsfw);
         $galleryId = $_POST["galleryId"];
+        $userUsername = $_POST["userUsername"];
+        $imageName = $_POST["imageName"];
+        if($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+            $this->image->createLogg($_SESSION["username"], $userUsername, $imageName,  $galleryId, $nsfw,  $hidden);
+        }
+        $this->image->updateImage($imageId, $hidden, $nsfw);
+
+
         $userId=$_POST["userId"];
         if ($_POST["userId"] === $_SESSION["id"]) {
             header("Location: http://localhost/profile/galleries/".$galleryId."page=0");

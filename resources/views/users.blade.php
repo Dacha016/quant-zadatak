@@ -39,6 +39,7 @@
                         </td>
                         <form action="/profile/update/users/{{$row->id}}" method="post" >
                             <input type="hidden" name = "userId" value={{$row->id}}>
+                            <input type="hidden" name = "username" value={{$row->username}}>
                             <td style="text-align: center; border: 1px solid black ">
                                 <input name="role" value="{{$row->role}}">
                             </td>

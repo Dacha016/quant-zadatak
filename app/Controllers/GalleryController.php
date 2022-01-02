@@ -86,7 +86,11 @@ class GalleryController
         $description = trim($_POST["description"]);
         $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
         $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
-        $this->gallery->updateGallery($description, $hidden, $nsfw,$galleryId);
+        $userUsername = $_POST["userUsername"];
+        if($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+            $this->gallery->createLogg($_SESSION["username"], $userUsername, $galleryId, $nsfw,  $hidden);
+        }
+        $this->gallery->updateGallery($description, $hidden, $nsfw, $galleryId);
         if ($userId == $_SESSION["id"]) {
             header("Location: http://localhost/profile/galleries?page=0");
         }

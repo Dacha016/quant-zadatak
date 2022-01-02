@@ -108,6 +108,11 @@ class UserController
             "active" => (int) $_POST["active"],
             "userId" => (int) $_POST["userId"]
         ];
+        if($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+            $updateData["username"] =$_POST["username"];
+            $updateData["moderatorsUsername"] = $_SESSION["username"];
+            $this->user->createLogg($updateData);
+        }
         $this->user->updateUser($updateData);
         header("Location: http://localhost/profile/users?page=0");
     }

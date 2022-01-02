@@ -7,8 +7,10 @@
     <div>
         <form action ="/update/{{$result->galleryId}}/{{$result->imageId}}" method="post" class="d-inline-block m-1">
             <input type="hidden" value="{{$result->userId}}" name="userId">
+            <input type="hidden" value="{{$result->username}}" name="userUsername">
             <input type="hidden" value="{{$result->galleryId}}" name="galleryId">
             <input type="hidden" value="{{$result->imageId}}" name="imageId">
+            <input type="hidden" value="{{$result->file_name}}" name="imageName">
             <div class="form-check">
                 @if($result->hidden)
                     <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value={{$result->hidden}} checked>

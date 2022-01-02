@@ -149,4 +149,16 @@ class User
         $rows = $result->row;
         return $pages = floor($rows/$limit);
     }
+    public function createLogg($updateData)
+    {
+        $this->conn->queryPrepare(
+            "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)
+            values (:moderator_username, :user_username, :user_active, :user_nsfw, :user_role)");
+        $this->conn->bindParam(":moderator_username", $updateData["moderatorsUsername"]);
+        $this->conn->bindParam(":user_role", $updateData["role"]);
+        $this->conn->bindParam(":user_nsfw", $updateData["nsfw"]);
+        $this->conn->bindParam(":user_active", $updateData["active"]);
+        $this->conn->bindParam(":user_username", $updateData["username"]);
+        return $this->conn->execute();
+    }
 }

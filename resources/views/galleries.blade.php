@@ -99,6 +99,7 @@
                             <form action="/profile/update/gallery/{{$row->galleryId}}" method="post" >
                                 <input type="hidden" name="galleryId" value="{{$row->galleryId}}">
                                 <input type="hidden" name="userId" value="{{$row->userId}}">
+                                <input type="hidden" name="userUsername" value="{{$row->username}}">
                                 <td style="text-align: center; border: 1px solid black ">
                                     <p>{{$row->description}}</p>
                                     <input type="hidden" name="description" value="{{$row->description}}">

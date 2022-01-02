@@ -5,8 +5,10 @@
     <div>
         <form action ="/update/<?php echo e($result->galleryId); ?>/<?php echo e($result->imageId); ?>" method="post" class="d-inline-block m-1">
             <input type="hidden" value="<?php echo e($result->userId); ?>" name="userId">
+            <input type="hidden" value="<?php echo e($result->username); ?>" name="userUsername">
             <input type="hidden" value="<?php echo e($result->galleryId); ?>" name="galleryId">
             <input type="hidden" value="<?php echo e($result->imageId); ?>" name="imageId">
+            <input type="hidden" value="<?php echo e($result->file_name); ?>" name="imageName">
             <div class="form-check">
                 <?php if($result->hidden): ?>
                     <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value=<?php echo e($result->hidden); ?> checked>

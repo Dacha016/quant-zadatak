@@ -38,6 +38,7 @@
                         </td>
                         <form action="/profile/update/users/<?php echo e($row->id); ?>" method="post" >
                             <input type="hidden" name = "userId" value=<?php echo e($row->id); ?>>
+                            <input type="hidden" name = "username" value=<?php echo e($row->username); ?>>
                             <td style="text-align: center; border: 1px solid black ">
                                 <input name="role" value="<?php echo e($row->role); ?>">
                             </td>

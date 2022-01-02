@@ -1,7 +1,5 @@
 <?php $__env->startSection("content"); ?>
     <h1 class="d-block " style="text-align:center">Galleries</h1>
-<?php echo e($pages); ?>
-
     <div style="margin: 20px auto; max-width: 1000px;" >
         <table style="text-align: center;">
             <tr>
@@ -100,6 +98,7 @@
                             <form action="/profile/update/gallery/<?php echo e($row->galleryId); ?>" method="post" >
                                 <input type="hidden" name="galleryId" value="<?php echo e($row->galleryId); ?>">
                                 <input type="hidden" name="userId" value="<?php echo e($row->userId); ?>">
+                                <input type="hidden" name="userUsername" value="<?php echo e($row->username); ?>">
                                 <td style="text-align: center; border: 1px solid black ">
                                     <p><?php echo e($row->description); ?></p>
                                     <input type="hidden" name="description" value="<?php echo e($row->description); ?>">
@@ -188,50 +187,50 @@
                 </tr>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </table>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    <?php if($_GET["page"] > 0): ?>
-                        <li class="page-item" >
-                            <a class="page-link" href="?page=0" > << </a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if($_GET["page"] === 0): ?>
-                        <li class="page-item" disabled>
-                            <a class="page-link" href="?page=0" > << </a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if($_GET["page"] < 0): ?>
-                        <li class="page-item disabled">
-                            <a class="page-link" href="?page=0">Previous</a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if($_GET["page"] > 0): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?page= <?php echo e($_GET["page"] - 1); ?>">Previous</a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if($_GET["page"] > $pages): ?>
-                    <li class="page-item disabled">
-                        <a class="page-link" href="?page= <?php echo e($_GET["page"]=$pages); ?>">Next</a>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <?php if($_GET["page"] > 0): ?>
+                    <li class="page-item" >
+                        <a class="page-link" href="?page=0" > << </a>
                     </li>
-                    <?php endif; ?>
-                    <?php if($_GET["page"] < $pages): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?page= <?php echo e($_GET["page"] + 1); ?>">Next</a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if($_GET["page"] < $pages): ?>
-                        <li class="page-item" >
-                            <a class="page-link" href="?page=<?php echo e($pages); ?>" > >> </a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if($_GET["page"] === $pages): ?>
-                        <li class="page-item" disabled>
-                            <a class="page-link" href="?page=<?php echo e($pages); ?>" > >> </a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
+                <?php endif; ?>
+                <?php if($_GET["page"] === 0): ?>
+                    <li class="page-item" disabled>
+                        <a class="page-link" href="?page=0" > << </a>
+                    </li>
+                <?php endif; ?>
+                <?php if($_GET["page"] < 0): ?>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="?page=0">Previous</a>
+                    </li>
+                <?php endif; ?>
+                <?php if($_GET["page"] > 0): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page= <?php echo e($_GET["page"] - 1); ?>">Previous</a>
+                    </li>
+                <?php endif; ?>
+                <?php if($_GET["page"] > $pages): ?>
+                <li class="page-item disabled">
+                    <a class="page-link" href="?page= <?php echo e($_GET["page"]=$pages); ?>">Next</a>
+                </li>
+                <?php endif; ?>
+                <?php if($_GET["page"] < $pages): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page= <?php echo e($_GET["page"] + 1); ?>">Next</a>
+                    </li>
+                <?php endif; ?>
+                <?php if($_GET["page"] < $pages): ?>
+                    <li class="page-item" >
+                        <a class="page-link" href="?page=<?php echo e($pages); ?>" > >> </a>
+                    </li>
+                <?php endif; ?>
+                <?php if($_GET["page"] === $pages): ?>
+                    <li class="page-item" disabled>
+                        <a class="page-link" href="?page=<?php echo e($pages); ?>" > >> </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
     </div>
 <?php $__env->stopSection(); ?>
 
