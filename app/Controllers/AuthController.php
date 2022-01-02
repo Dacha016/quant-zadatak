@@ -95,20 +95,18 @@ class AuthController
                 $error = "Please enter password!";
                 die(Blade::render("/login", compact("error")));
             }
-
-            if($this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
-                $loggedUser = $this->user->login($userData["username"], $userData["password"]);
-                if (isset($loggedUser)) {
-                    session_start();
-                    $_SESSION["id"] = $loggedUser->id;
-                    $_SESSION["username"] = $loggedUser->username;
-                    $_SESSION["role"] = $loggedUser->role;
-                    header("Location: http://localhost/profile");
-                    Blade::render("/profile");
-                } else {
-                    $error = "Username and username do not match";
-                    die(Blade::render("/login", compact("error")));
-                }
+            if(!$this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
+                $error = "Username and username do not match";
+                die(Blade::render("/login", compact("error")));
+            }
+            $loggedUser = $this->user->login($userData["username"], $userData["password"]);
+            if (isset($loggedUser)) {
+                session_start();
+                $_SESSION["id"] = $loggedUser->id;
+                $_SESSION["username"] = $loggedUser->username;
+                $_SESSION["role"] = $loggedUser->role;
+                header("Location: http://localhost/profile");
+                Blade::render("/profile");
             }
         }
     }

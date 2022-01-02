@@ -1,4 +1,9 @@
 @extends("layout.main")
+<?php
+if(!isset($_SESSION["id"])) {
+    header("Location: http://localhost/home");
+}
+?>
 @section("content")
     <h1 class="d-block " style="text-align:center">Galleries</h1>
     <div style="margin: 20px auto; max-width: 1000px;" >

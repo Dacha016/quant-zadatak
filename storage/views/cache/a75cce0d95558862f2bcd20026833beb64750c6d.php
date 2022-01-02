@@ -1,3 +1,8 @@
+<?php
+if(!isset($_SESSION["id"])) {
+header("Location: http://localhost/home");
+}
+?>
 <?php $__env->startSection("content"); ?>
     <h1 class="d-block " style="text-align:center">Galleries</h1>
     <div style="margin: 20px auto; max-width: 1000px;" >

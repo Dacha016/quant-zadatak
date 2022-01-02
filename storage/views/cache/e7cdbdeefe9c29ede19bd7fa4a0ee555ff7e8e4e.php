@@ -1,17 +1,11 @@
-@extends("layout.main")
-<?php
-if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
-}
-?>
-@section("content")
+<?php $__env->startSection("content"); ?>
     <form action="/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin:10px auto; margin-top:20Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-5 pt-4" style="text-align:center">Update account</h2>
         <?php
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {?>
         <div class="mb-3 mt-3 b">
-            <p>{{$error}}</p>
+            <p><?php echo e($error); ?></p>
             <?php }?>
         </div>
         <div class="mb-3 mt-3 b">
@@ -37,4 +31,6 @@ if(!isset($_SESSION["id"])) {
         <button type="submit" class="btn btn-primary" style="border-radius:10px; width:20%;float:right; margin-right:15px">Update</button>
 
     </form>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make("layout.main", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/quant-zadatak/resources/views//updateAccount.blade.php ENDPATH**/ ?>

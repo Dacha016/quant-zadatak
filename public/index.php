@@ -9,3 +9,4 @@ $dotenv->load();
 $router = new Router();
 require realpath('../routes/web.php');
 $router->run();
+
