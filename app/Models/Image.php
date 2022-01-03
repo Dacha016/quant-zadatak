@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Config\Connection;
+use Illuminate\Support\Facades\Redis;
+
 class Image
 {
     protected Connection $conn;
@@ -18,6 +20,7 @@ class Image
      */
     public function index()
     {
+
         $this->conn->queryPrepare("select file_name from image where hidden = 0 and nsfw = 0 limit 50") ;
         $this->conn->execute();
         return $this->conn->multi();

@@ -26,7 +26,7 @@ if(!isset($_SESSION["id"])) {
 
         <div class="mb-3">
             <label for="password" class="form-label" style="font-size:18px; margin-left:15px;">Password:</label>
-            <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="password" value="{">
+            <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="password" value="">
         </div>
 
         <div class="mb-3">

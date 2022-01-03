@@ -1,3 +1,8 @@
+<?php
+if(!isset($_SESSION["id"])) {
+    header("Location: http://localhost/home");
+}
+?>
 <?php $__env->startSection("content"); ?>
     <form action="/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin:10px auto; margin-top:20Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
@@ -20,7 +25,7 @@
 
         <div class="mb-3">
             <label for="password" class="form-label" style="font-size:18px; margin-left:15px;">Password:</label>
-            <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="password" value="{">
+            <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="password" value="">
         </div>
 
         <div class="mb-3">

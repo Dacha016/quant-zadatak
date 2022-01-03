@@ -41,7 +41,10 @@ class UserController
     {
         $this->user= new User();
     }
-
+    public function indexRedis()
+    {
+         var_dump($this->user->indexRedis());
+    }
     /**
      * List of users in users tab
      * @return void
@@ -49,7 +52,8 @@ class UserController
     public function index()
     {
         $pages = $this->user->getPages();
-        $result = $this->user->indexUsers($_SESSION["id"]);
+        $result = $this->user->indexRedis($_SESSION["id"]);
+//        $result = $this->user->indexUsers();
         Blade::render("/users", compact("result", "pages"));
     }
     public function show()

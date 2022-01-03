@@ -14,6 +14,7 @@ namespace App\Models;
 
 use App\Config\Connection;
 use PDOException;
+use Predis\Client;
 
 
 /**
@@ -89,21 +90,34 @@ class User
             return false;
         }
     }
+     public function indexRedis($id)
+     {
+         $redis = new Client();
 
-    /**
-     * Get users from table
-     * @return mixed
-     */
-    public function indexUsers($id)
-    {
-        $limit =50;
-        $page = $_GET["page"];
-        $offset = abs($page * $limit);
-        $this->conn->queryPrepare("select * from user where id != :id limit $limit offset $offset");
-        $this->conn->bindParam(":id", $id);
-        $this->conn->execute();
-        return $this->conn->multi();
-    }
+         $limit =50;
+         $page = $_GET["page"];
+         $offset = abs($page * $limit);
+         $key = "users_pages_{$offset}";
+         $this->conn->queryPrepare(
+             "select * from user where id != :id limit $limit offset $offset");
+         $this->conn->bindParam(":id", $id);
+         $this->conn->execute();
+         if(!$redis->get($key)) {
+             $users = [];
+             while ( $row = $this->conn->single()) {
+                 $users[] = $row;
+             }
+             $redis->set($key, serialize($users));
+             $redis->expire($key, 3600);
+//             return $this->conn->multi();
+             return $users = unserialize($redis->get($key));
+
+         } else{
+             return $users = unserialize($redis->get($key));
+         }
+     }
+
+
     public function show($id)
     {
         $this->conn->queryPrepare(

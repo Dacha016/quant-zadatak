@@ -1,15 +1,15 @@
 <?php
 /**
- * Connection to base
- *
- * PHP version 8
- *
- * @category Connection
- * @package  DataBaseConnection
- * @author   DaliborMarinkovic <dalibor.marinkovic@quantoxtechnology.com>
- * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
- * @link     http://github.com/Dacha016/quant-zadatak
- */
+// * Connection to base
+// *
+// * PHP version 8
+// *
+// * @category Connection
+// * @package  DataBaseConnection
+// * @author   DaliborMarinkovic <dalibor.marinkovic@quantoxtechnology.com>
+// * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
+// * @link     http://github.com/Dacha016/quant-zadatak
+// */
  namespace App\Config;
 
 use PDO;
