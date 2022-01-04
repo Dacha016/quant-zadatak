@@ -16,178 +16,129 @@ header("Location: http://localhost/home");
             </tr>
             <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
-                    <?php if($row->userId === $_SESSION["id"]): ?>
-                    <td style="margin: 0 auto; border: 1px solid black"><a href="/profile/galleries/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a></td>
-                    <?php endif; ?>
-                    <?php if($row->userId !== $_SESSION["id"]): ?>
-                        <td style="margin: 0 auto; border: 1px solid black"><a href="/profile/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a></td>
-                    <?php endif; ?>
-                    <?php if($_SESSION["role"] === "admin" ): ?>
-                        <form action="/profile/update/gallery/<?php echo e($row->galleryId); ?>" method="post" >
-                            <input type="hidden" name="galleryId" value="<?php echo e($row->galleryId); ?>">
-                            <input type="hidden" name="userId" value="<?php echo e($row->userId); ?>">
-                            <td style="text-align: center; border: 1px solid black ">
-                                <input name="description" value="<?php echo e($row->description); ?>">
-                            </td>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <input name="slug" value="<?php echo e($row->slug); ?>">
-                            </td>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <?php if($row->hidden): ?>
-                                    <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value=<?php echo e($row->hidden); ?> checked>
-                                <?php endif; ?>
-                                <?php if(!$row->hidden): ?>
-                                    <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value="<?php echo e($row->hidden); ?>">
-                                <?php endif; ?>
-                            </td>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <?php if($row->nsfw): ?>
-                                    <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value=<?php echo e($row->nsfw); ?> checked>
-                                <?php endif; ?>
-                                <?php if(!$row->nsfw): ?>
-                                    <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="<?php echo e($row->nsfw); ?>">
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
-                            </td>
-                        </form>
-                        <form action ="/delete/gallery/<?php echo e($row->galleryId); ?>" method="post" class="d-inline-block m-1">
-                            <td>
-                                <input type="hidden" value="<?php echo e($row->galleryId); ?>" name="galleryId">
-                                <input type="hidden" value="<?php echo e($row->userId); ?>" name="userId">
-                                <button class="btn btn-danger" type="submit">DELETE</button>
-                            </td>
-                        </form>
-                    <?php endif; ?>
-                    <?php if($_SESSION["role"] === "moderator" ): ?>
-                        <?php if($row->userId === $_SESSION["id"]): ?>
-                            <form action="/profile/update/gallery/<?php echo e($row->galleryId); ?>" method="post" >
-                                <input type="hidden" name="galleryId" value="<?php echo e($row->galleryId); ?>">
-                                <input type="hidden" name="userId" value="<?php echo e($row->userId); ?>">
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <input name="description" value="<?php echo e($row->description); ?>">
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <input name="slug" value="<?php echo e($row->slug); ?>">
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <?php if($row->hidden): ?>
-                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value=<?php echo e($row->hidden); ?> checked>
-                                    <?php endif; ?>
-                                    <?php if(!$row->hidden): ?>
-                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value="<?php echo e($row->hidden); ?>">
-                                    <?php endif; ?>
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <?php if($row->nsfw): ?>
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value=<?php echo e($row->nsfw); ?> checked>
-                                    <?php endif; ?>
-                                    <?php if(!$row->nsfw): ?>
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="<?php echo e($row->nsfw); ?>">
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
-                                </td>
-                            </form>
-                            <form action ="/delete/gallery/<?php echo e($row->galleryId); ?>" method="post" class="d-inline-block m-1">
-                                <td>
-                                    <input type="hidden" value="<?php echo e($row->galleryId); ?>" name="galleryId">
-                                    <input type="hidden" value="<?php echo e($row->userId); ?>" name="userId">
-                                    <button class="btn btn-danger" type="submit">DELETE</button>
-                                </td>
-                            </form>
-                        <?php endif; ?>
-                        <?php if($row->userId != $_SESSION["id"]): ?>
-                            <form action="/profile/update/gallery/<?php echo e($row->galleryId); ?>" method="post" >
-                                <input type="hidden" name="galleryId" value="<?php echo e($row->galleryId); ?>">
-                                <input type="hidden" name="userId" value="<?php echo e($row->userId); ?>">
-                                <input type="hidden" name="userUsername" value="<?php echo e($row->username); ?>">
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <p><?php echo e($row->description); ?></p>
-                                    <input type="hidden" name="description" value="<?php echo e($row->description); ?>">
-                                </td>
+                    <?php if($_SESSION["role"] === "admin"): ?>
 
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <p><?php echo e($row->slug); ?></p>
-                                    <input type="hidden" name="description" value="<?php echo e($row->slug); ?>">
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <?php if($row->hidden): ?>
-                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value=<?php echo e($row->hidden); ?> checked>
-                                    <?php endif; ?>
-                                    <?php if(!$row->hidden): ?>
-                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value="<?php echo e($row->hidden); ?>">
-                                    <?php endif; ?>
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <?php if($row->nsfw): ?>
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value=<?php echo e($row->nsfw); ?> checked>
-                                    <?php endif; ?>
-                                    <?php if(!$row->nsfw): ?>
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="<?php echo e($row->nsfw); ?>">
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
-                                </td>
-                            </form>
-                        <?php endif; ?>
+                        <td style="margin: 0 auto; border: 1px solid black">
+                            <a href="/profile/galleries/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->description); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->slug); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->hidden); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->nsfw); ?></p>
+                        </td>
+                        <td>
+                            <button class="btn btn-info d-inline-block" type="submit">
+                                <a style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>">Update</a>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger d-inline-block" type="submit">
+                                <a style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>">Delete</a>
+                            </button>
+                        </td>
                     <?php endif; ?>
-                    <?php if($_SESSION["role"] === "user"): ?>
-                        <?php if($row->userId === $_SESSION["id"]): ?>
-                            <form action="/profile/update/gallery/<?php echo e($row->galleryId); ?>" method="post" >
-                                <input type="hidden" name="galleryId" value="<?php echo e($row->galleryId); ?>">
-                                <input type="hidden" name="userId" value="<?php echo e($row->userId); ?>">
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <input name="description" value="<?php echo e($row->description); ?>">
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <input name="slug" value="<?php echo e($row->slug); ?>">
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <?php if($row->hidden): ?>
-                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value=<?php echo e($row->hidden); ?> checked>
-                                    <?php endif; ?>
-                                    <?php if(!$row->hidden): ?>
-                                        <input class="form-check-input" type="checkbox" id="hidden" name="hidden" value="<?php echo e($row->hidden); ?>">
-                                    <?php endif; ?>
-                                </td>
-                                <td style="text-align: center; border: 1px solid black ">
-                                    <?php if($row->nsfw): ?>
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value=<?php echo e($row->nsfw); ?> checked>
-                                    <?php endif; ?>
-                                    <?php if(!$row->nsfw): ?>
-                                        <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="<?php echo e($row->nsfw); ?>">
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <button class="btn btn-info d-inline-block" type="submit">UPDATE</button>
-                                </td>
-                            </form>
-                            <form action ="/delete/gallery/<?php echo e($row->galleryId); ?>" method="post" class="d-inline-block m-1">
-                                <td>
-                                    <input type="hidden" value="<?php echo e($row->galleryId); ?>" name="galleryId">
-                                    <input type="hidden" value="<?php echo e($row->userId); ?>" name="userId">
-                                    <button class="btn btn-danger" type="submit">DELETE</button>
-                                </td>
-                            </form>
-                        <?php endif; ?>
-                        <?php if($row->userId != $_SESSION["id"]): ?>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <p><?php echo e($row->description); ?></p>
-                            </td>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <p><?php echo e($row->description); ?></p>
-                            </td>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <p><?php echo e($row->hidden); ?></p>
-                            </td>
-                            <td style="text-align: center; border: 1px solid black ">
-                                <p><?php echo e($row->nsfw); ?></p>
-                            </td>
-                        <?php endif; ?>
+                    <?php if($row->userId === $_SESSION["id"] && $_SESSION["role"] === "moderator"): ?>
+
+                        <td style="margin: 0 auto; border: 1px solid black">
+                            <a href="/profile/galleries/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->description); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->slug); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->hidden); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->nsfw); ?></p>
+                        </td>
+                        <td>
+                            <button class="btn btn-info d-inline-block" type="submit">
+                                <a style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>">Update</a>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger d-inline-block" type="submit">
+                                <a style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>">Delete</a>
+                            </button>
+                        </td>
+                    <?php endif; ?>
+                    <?php if($row->userId !== $_SESSION["id"] && $_SESSION["role"] === "moderator"): ?>
+                        <td style="margin: 0 auto; border: 1px solid black">
+                            <a href="/profile/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>?page=0"><?php echo e($row->name); ?></a>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->description); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->slug); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->hidden); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->nsfw); ?></p>
+                        </td>
+                        <td>
+                            <button class="btn btn-info d-inline-block" type="submit">
+                                <a style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>">Update</a>
+                            </button>
+                        </td>
+
+                    <?php endif; ?>
+                    <?php if($row->userId === $_SESSION["id"] && $_SESSION["role"] === "user"): ?>
+
+                        <td style="margin: 0 auto; border: 1px solid black">
+                            <a href="/profile/galleries/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->description); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->slug); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->hidden); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->nsfw); ?></p>
+                        </td>
+                        <td>
+                            <button class="btn btn-info d-inline-block" type="submit">
+                                <a style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>">Update</a>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger d-inline-block" type="submit">
+                                <a style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>">Delete</a>
+                            </button>
+                        </td>
+                    <?php endif; ?>
+                    <?php if($row->userId !== $_SESSION["id"] && $_SESSION["role"] === "user"): ?>
+                        <td style="margin: 0 auto; border: 1px solid black">
+                            <a href="/profile/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->description); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->slug); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->hidden); ?></p>
+                        </td>
+                        <td style="text-align: center; border: 1px solid black ">
+                            <p><?php echo e($row->nsfw); ?></p>
+                        </td>
                     <?php endif; ?>
                 </tr>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -215,9 +166,9 @@ header("Location: http://localhost/home");
                     </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] > $pages): ?>
-                <li class="page-item disabled">
-                    <a class="page-link" href="?page= <?php echo e($_GET["page"]=$pages); ?>">Next</a>
-                </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="?page= <?php echo e($_GET["page"]=$pages); ?>">Next</a>
+                    </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] < $pages): ?>
                     <li class="page-item">

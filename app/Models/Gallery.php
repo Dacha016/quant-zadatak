@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Config\Connection;
+use Predis\Client;
 
 class Gallery
 {
@@ -13,12 +14,15 @@ class Gallery
         $this->conn = new Connection;
     }
     /**
-     * List of users galleries
+     * List of logged user galleries
      * @param $id $id Users id
      * @return mixed
      */
-    public function indexGalleries($id)
+    public function indexGalleries($id): array
     {
+
+//        $redis = new Client();
+//        $key = "galleries_page_{$_GET['page']}";
         $limit =50;
         $page = $_GET["page"];
         $offset = abs($page * $limit);
@@ -27,15 +31,38 @@ class Gallery
             where gallery.user_id = :id limit $limit offset $offset");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
-        return $result = $this->conn->multi();
+        return $this->conn->multi();
+//        if (!$redis->exists($key)) {
+//            $galleries = [];
+//            while ($row = $this->conn->single()) {
+//                $galleries[] = $row;
+//            }
+//            $redis->set($key, serialize($galleries));
+//            $redis->expire($key, 10);
+//        }
+//        return unserialize($redis->get($key));
     }
+
+    public function show($id)
+    {
+        $this->conn->queryPrepare(
+        "SELECT gallery.id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden, u.username as 'userUsername' FROM gallery
+            inner join user u on gallery.user_id = u.id
+            WHERE gallery.id =:id");
+        $this->conn->bindParam(":id", $id);
+        $this->conn->execute();
+        return $this->conn->single();
+    }
+
     /**
      * Get galleries for users with role user
      * @param $id $id of current user
-     * @return mixed
+     * @return array
      */
-    public function showUserGalleries($id)
+    public function showUserGalleries($id): array
     {
+//        $redis = new Client();
+//        $key = "galleries_page_{$_GET['page']}";
         $limit =50;
         $page = $_GET["page"];
         $offset = abs($page * $limit);
@@ -45,15 +72,26 @@ class Gallery
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
         return $this->conn->multi();
+//        if (!$redis->exists($key)) {
+//            $galleries = [];
+//            while ($row = $this->conn->single()) {
+//                $galleries[] = $row;
+//            }
+//            $redis->set($key, serialize($galleries));
+//            $redis->expire($key, 10);
+//        }
+//        return unserialize($redis->get($key));
     }
 
     /**
      * Get galleries for other users view (moderator, admin)
      * @param $id $id of current user (not logged user)
-     * @return mixed
+     * @return array
      */
-    public function showUserGalleriesAll($id)
+    public function showUserGalleriesAll($id): array
     {
+//        $redis= new Client();
+//        $key = "galleries_page_{$_GET['page']}";
         $limit =50;
         $page = $_GET["page"];
         $offset = abs($page * $limit);
@@ -63,12 +101,28 @@ class Gallery
             WHERE u.id =:id limit $limit offset $offset");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
-
-        return $this->conn->multi();
-
+           return $this->conn->multi();
+//        if (!$redis->exists($key)) {
+//            $galleries = [];
+//            while ($row = $this->conn->single()) {
+//                $galleries[] = $row;
+//            }
+//            $redis->set($key, serialize($galleries));
+//            $redis->expire($key, 10);
+//        }
+//        return unserialize($redis->get($key));
     }
 
-    public function createGallery($userId, $name, $nsfw ,$hidden, $description, $slug,)
+    /**
+     * @param $userId
+     * @param $name
+     * @param $nsfw
+     * @param $hidden
+     * @param $description
+     * @param $slug
+     * @return void
+     */
+    public function createGallery($userId, $name, $nsfw ,$hidden, $description, $slug)
     {
         $this->conn->queryPrepare(
             "insert into gallery (user_id, name, nsfw, hidden, description, slug)
@@ -83,25 +137,31 @@ class Gallery
     }
 
     /**
-     * @param $description
-     * @param $hidden
-     * @param $nsfw
-     * @param $id
+     * @param $galleryData
      * @return mixed
      */
-    public function updateGallery($description,$hidden,$nsfw,$id)
+    public function updateGallery($galleryData): mixed
     {
+        $redis = new Client();
+        $redis->flushall();
         $this->conn->queryPrepare(
             "update gallery 
-            set description =:description, hidden =:hidden, nsfw =:nsfw
+            set name =:name, slug =:slug, description =:description, hidden =:hidden, nsfw =:nsfw
             where id =:id");
-        $this->conn->bindParam(":description", $description);
-        $this->conn->bindParam(":hidden", $hidden);
-        $this->conn->bindParam(":nsfw", $nsfw);
-        $this->conn->bindParam(":id", $id);
+        $this->conn->bindParam(":name", $galleryData["name"]);
+        $this->conn->bindParam(":slug", $galleryData["slug"]);
+        $this->conn->bindParam(":description", $galleryData["description"]);
+        $this->conn->bindParam(":hidden", $galleryData["hidden"]);
+        $this->conn->bindParam(":nsfw", $galleryData["nsfw"]);
+        $this->conn->bindParam(":id", $galleryData["galleryId"]);
         return $this->conn->execute();
     }
-    public function getPages($id)
+
+    /**
+     * @param $id
+     * @return float
+     */
+    public function getPages($id): float
     {
         $limit =50;
         $this->conn->queryPrepare("select count(*) as 'row' from gallery where user_id = :id");
@@ -109,9 +169,14 @@ class Gallery
         $this->conn->execute();
         $result = $this->conn->single();
         $rows = $result->row;
-        return $pages = floor($rows/$limit);
+        return floor($rows/$limit);
     }
-    public function getPagesVisible($id)
+
+    /**
+     * @param $id
+     * @return float
+     */
+    public function getPagesVisible($id): float
     {
         $limit =50;
         $this->conn->queryPrepare("select count(*) as 'row' from gallery where user_id = :id and hidden = 0 and nsfw =0");
@@ -119,24 +184,36 @@ class Gallery
         $this->conn->execute();
         $result = $this->conn->single();
         $rows = $result->row;
-        return $pages = floor($rows/$limit);
+        return floor($rows/$limit);
     }
+
+    /**
+     * @param $id
+     * @return void
+     */
     public function deleteGallery($id)
     {
+//        $redis = new Client();
+//        $redis->flushall();
         $this->conn->queryPrepare("DELETE FROM gallery WHERE id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
     }
-    public function createLogg($moderatorUsername,$userUsername, $galleryId, $nsfw, $hidden)
+
+    /**
+     * @param $galleryData
+     * @return bool
+     */
+    public function createLogg($galleryData): bool
     {
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username,gallery_id, gallery_nsfw, gallery_hidden)
             values (:moderator_username, :user_username, :gallery_id, :gallery_nsfw, :gallery_hidden)");
-        $this->conn->bindParam(":moderator_username", $moderatorUsername);
-        $this->conn->bindParam(":user_username", $userUsername);
-        $this->conn->bindParam(":gallery_id", $galleryId);
-        $this->conn->bindParam(":gallery_nsfw", $nsfw);
-        $this->conn->bindParam(":gallery_hidden", $hidden);
+        $this->conn->bindParam(":moderator_username", $galleryData["sessionName"]);
+        $this->conn->bindParam(":user_username", $galleryData["userUsername"]);
+        $this->conn->bindParam(":gallery_id", $galleryData["galleryId"]);
+        $this->conn->bindParam(":gallery_nsfw", $galleryData["nsfw"]);
+        $this->conn->bindParam(":gallery_hidden", $galleryData["hidden"]);
         return $this->conn->execute();
     }
 }

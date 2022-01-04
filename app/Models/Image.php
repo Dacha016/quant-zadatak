@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Config\Connection;
-use Illuminate\Support\Facades\Redis;
 
 class Image
 {
@@ -16,11 +15,10 @@ class Image
 
     /**
      * Send pictures to home page
-     * @return mixed
+     * @return array
      */
-    public function index()
+    public function index() :array
     {
-
         $this->conn->queryPrepare("select file_name from image where hidden = 0 and nsfw = 0 limit 50") ;
         $this->conn->execute();
         return $this->conn->multi();
@@ -36,9 +34,9 @@ class Image
     /**
      * Send pictures of user to profile
      * @param $id $id of logged user
-     * @return mixed
+     * @return array
      */
-    public function showImages($id)
+    public function showImages($id):array
     {
         $this->conn->queryPrepare(
             "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', g.id as 'galleryId'  from image_gallery
@@ -65,12 +63,12 @@ class Image
 
     /**
      * Change values of image
+     * @param $id $id of image
      * @param $hidden $hidden value
      * @param $nsfw $nsfw value
-     * @param $slug $slug image slug
-     * @return mixed
+     * @return bool
      */
-    public function updateImage($id, $hidden, $nsfw)
+    public function updateImage($id, $hidden, $nsfw):bool
     {
         $this->conn->queryPrepare("UPDATE image SET hidden =:hidden, nsfw = :nsfw WHERE id = :id");
         $this->conn->bindParam(":hidden", $hidden);
@@ -81,7 +79,7 @@ class Image
 
     /**
      * Delete picture
-     * @param $slug $slug Image slug
+     * @param $id $id Image id
      * @return void
      */
     public function deleteImage($id)

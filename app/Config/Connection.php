@@ -14,7 +14,6 @@
 
 use PDO;
 use PDOException;
-use PDOStatement;
 
 /**
  * Connection to base
@@ -31,7 +30,7 @@ class Connection
 {
     protected PDO $conn;
     protected $stmt;
-    protected $error;
+    protected string $error;
 
     /**
      * Constructor

@@ -41,10 +41,6 @@ class UserController
     {
         $this->user= new User();
     }
-    public function indexRedis()
-    {
-         var_dump($this->user->indexRedis());
-    }
     /**
      * List of users in users tab
      * @return void
@@ -52,14 +48,12 @@ class UserController
     public function index()
     {
         $pages = $this->user->getPages();
-        $result = $this->user->indexRedis($_SESSION["id"]);
-//        $result = $this->user->indexUsers();
+        $result = $this->user->index($_SESSION["id"]);
         Blade::render("/users", compact("result", "pages"));
     }
-    public function show()
+    public function show($id)
     {
-        $id = $_SESSION["id"];
-        return $result = $this->user->show($id);
+        return $this->user->show($id);
     }
     public function updateAccount()
     {
@@ -69,7 +63,6 @@ class UserController
             Blade::render("/updateAccount", compact("result"));
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $error = "";
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $userData = [
                 "username" => trim($_POST["username"]),
@@ -80,21 +73,21 @@ class UserController
             //Check if username contain letters or numbers
             if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
                 $error = "The username may contain only letters and numbers";
-                die(Blade::render("/updateAccount", compact("error")));
+                Blade::render("/updateAccount", compact("error"));
             }
             //Email check
             if (!filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
                 $error = "Enter the correct email";
-                die(Blade::render("/updateAccount", compact("error")));
+                Blade::render("/updateAccount", compact("error"));
 
             }
             //password length and password mach
             if (strlen($userData["password"]) < 6) {
                 $error = "Password must be longer than 6 characters";
-                die(Blade::render("/updateAccount", compact("error")));
+               Blade::render("/updateAccount", compact("error"));
             } else if ($userData["password"] !== $userData["rPassword"]) {
                 $error = "Password does not match";
-                die(Blade::render("/updateAccount", compact("error")));
+               Blade::render("/updateAccount", compact("error"));
             }
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
             $this->user->updateAccount($userData, $id);
@@ -103,21 +96,31 @@ class UserController
     }
     public function updateUser()
     {
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $_POST["nsfw"] = (isset($_POST['nsfw']) == '1' ? '1' : '0');
-        $_POST["active"] = (isset($_POST['active']) == '1' ? '1' : '0');
-        $updateData = [
-            "role" => trim($_POST["role"]),
-            "nsfw" => (int)$_POST["nsfw"],
-            "active" => (int) $_POST["active"],
-            "userId" => (int) $_POST["userId"]
-        ];
-        if($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
-            $updateData["username"] =$_POST["username"];
-            $updateData["moderatorsUsername"] = $_SESSION["username"];
-            $this->user->createLogg($updateData);
+        $id = $_SERVER["REQUEST_URI"];
+        $id = explode("/", $id);
+        $n = count($id);
+        $id = $id[$n - 1];
+        $result = $this->show($id);
+        if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
+            Blade::render("/updateUsers", compact("result"));
+
+        } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $_POST["nsfw"] = (isset($_POST['nsfw']) == '1' ? '1' : '0');
+            $_POST["active"] = (isset($_POST['active']) == '1' ? '1' : '0');
+            $updateData = [
+                "role" => trim($_POST["role"]),
+                "nsfw" => (int)$_POST["nsfw"],
+                "active" => (int)$_POST["active"],
+                "userId" => (int)$_POST["userId"]
+            ];
+            $this->user->updateUser($updateData);
+            if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+                $updateData["username"] = $_POST["username"];
+                $updateData["moderatorsUsername"] = $_SESSION["username"];
+                $this->user->createLogg($updateData);
+            }
+            header("Location: http://localhost/profile/users?page=" . $_POST["page"]);
         }
-        $this->user->updateUser($updateData);
-        header("Location: http://localhost/profile/users?page=0");
     }
 }

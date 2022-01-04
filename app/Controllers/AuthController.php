@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Blade\Blade;
 use App\Models\User;
-use DevCoder\SessionManager;
+
 
 if (!session_start()) {
     session_start();
@@ -25,7 +25,6 @@ class AuthController
             Blade::render("/registration");
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $error = "";
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $userData = [
                 "username" => trim($_POST["username"]),
@@ -36,31 +35,30 @@ class AuthController
 
             if (empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["email"])) {
                 $error = "Empty fields are not allowed!";
-                die(Blade::render("/registration", compact("error")));
+               Blade::render("/registration", compact("error"));
             }
             //Check if username contain letters or numbers
             if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
                 $error = "The username may contain only letters and numbers";
-                die(Blade::render("/registration", compact("error")));
+                Blade::render("/registration", compact("error"));
             }
             //Email check
             if (!filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
                 $error = "Enter the correct email";
-                die(Blade::render("/registration", compact("error")));
-
+              Blade::render("/registration", compact("error"));
             }
             //password length and password mach
             if (strlen($userData["password"]) < 6) {
                 $error = "Password must be longer than 6 characters";
-                die(Blade::render("/registration", compact("error")));
+                Blade::render("/registration", compact("error"));
             } else if ($userData["password"] !== $userData["rPassword"]) {
                 $error = "Password does not match";
-                die(Blade::render("/registration", compact("error")));
+               Blade::render("/registration", compact("error"));
             }
             //Check if user exist
             if ($this->user->find($userData["username"], $userData["email"])) {
                 $error = "User already exists";
-                die(Blade::render("/registration", compact("error")));
+                Blade::render("/registration", compact("error"));
             }
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
             $userData["role"] = $this->role;
@@ -85,19 +83,19 @@ class AuthController
             ];
             if (empty($_POST["username"]) && empty($_POST["password"])) {
                 $error = "Empty fields are not allowed!";
-                die(Blade::render("/login", compact("error")));
+              Blade::render("/login", compact("error"));
             }
             if (empty($_POST["username"]) && !empty($_POST["password"])) {
                 $error = "Please enter username!";
-                die(Blade::render("/login", compact("error")));
+                Blade::render("/login", compact("error"));
             }
             if (!empty($_POST["username"]) && empty($_POST["password"])) {
                 $error = "Please enter password!";
-                die(Blade::render("/login", compact("error")));
+                Blade::render("/login", compact("error"));
             }
             if(!$this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
                 $error = "Username and username do not match";
-                die(Blade::render("/login", compact("error")));
+                Blade::render("/login", compact("error"));
             }
             $loggedUser = $this->user->login($userData["username"], $userData["password"]);
             if (isset($loggedUser)) {

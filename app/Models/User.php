@@ -38,6 +38,11 @@ class User
         $this->conn = new Connection;
     }
 
+    /**
+     * @param $username
+     * @param $email
+     * @return bool
+     */
     public function find($username, $email): bool
     {
         $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or email = :email");
@@ -51,6 +56,12 @@ class User
             return false;
         }
     }
+
+    /**
+     * @param $username
+     * @param $password
+     * @return bool
+     */
     public function findByUsernameAndPassword($username, $password): bool
     {
         $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or password = :password");
@@ -78,7 +89,14 @@ class User
             exit($e->getMessage());
         }
     }
-    public function login($username, $password) {
+
+    /**
+     * @param $username
+     * @param $password
+     * @return mixed
+     */
+    public function login($username, $password): mixed
+    {
         $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
         $this->conn->bindParam(":username", $username);
         $this->conn->execute();
@@ -90,35 +108,39 @@ class User
             return false;
         }
     }
-     public function indexRedis($id)
+
+    /**
+     * Cache data into Redis Server
+     * @param $id
+     * @return mixed
+     */
+     public function index($id): mixed
      {
          $redis = new Client();
-
+         $key = "users_page_{$_GET["page"]}";
          $limit =50;
          $page = $_GET["page"];
          $offset = abs($page * $limit);
-         $key = "users_pages_{$offset}";
          $this->conn->queryPrepare(
              "select * from user where id != :id limit $limit offset $offset");
          $this->conn->bindParam(":id", $id);
          $this->conn->execute();
-         if(!$redis->get($key)) {
+         if (!$redis->exists($key)) {
              $users = [];
-             while ( $row = $this->conn->single()) {
+             while ($row = $this->conn->single()) {
                  $users[] = $row;
              }
              $redis->set($key, serialize($users));
-             $redis->expire($key, 3600);
-//             return $this->conn->multi();
-             return $users = unserialize($redis->get($key));
-
-         } else{
-             return $users = unserialize($redis->get($key));
+             $redis->expire($key, 300);
          }
+         return unserialize($redis->get($key));
      }
 
-
-    public function show($id)
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function show($id): mixed
     {
         $this->conn->queryPrepare(
             "select * from user where id = :id");
@@ -126,7 +148,13 @@ class User
         $this->conn->execute();
         return $this->conn->single();
     }
-    public function updateAccount($userData,$id)
+
+    /**
+     * @param $userData
+     * @param $id
+     * @return mixed
+     */
+    public function updateAccount($userData,$id): mixed
     {
         $this->conn->queryPrepare(
             "update user set 
@@ -140,8 +168,16 @@ class User
         $this->conn->bindParam(":id", $id);
         return $this->conn->execute();
     }
-    public function updateUser($updateData)
+
+    /**
+     * @param $updateData
+     * @return mixed
+     */
+    public function updateUser($updateData): mixed
     {
+
+        $redis = new Client();
+        $redis->del("users_page_{$_POST['page']}");
         $this->conn->queryPrepare(
             "update user set 
                 role = :role,
@@ -154,16 +190,25 @@ class User
         $this->conn->bindParam(":id", $updateData["userId"]);
         return $this->conn->execute();
     }
-    public function getPages()
+
+    /**
+     * @return float
+     */
+    public function getPages(): float
     {
         $limit =50;
         $this->conn->queryPrepare("select count(*) as 'row' from user");
         $this->conn->execute();
         $result = $this->conn->single();
         $rows = $result->row;
-        return $pages = floor($rows/$limit);
+        return floor($rows/$limit);
     }
-    public function createLogg($updateData)
+
+    /**
+     * @param $updateData
+     * @return mixed
+     */
+    public function createLogg($updateData): mixed
     {
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)

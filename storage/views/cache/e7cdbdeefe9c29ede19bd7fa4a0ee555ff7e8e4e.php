@@ -4,7 +4,7 @@ if(!isset($_SESSION["id"])) {
 }
 ?>
 <?php $__env->startSection("content"); ?>
-    <form action="/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin:10px auto; margin-top:20Vh; border:black 1px solid;
+    <form action="http://localhost/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-5 pt-4" style="text-align:center">Update account</h2>
         <?php
@@ -24,17 +24,21 @@ if(!isset($_SESSION["id"])) {
         </div>
 
         <div class="mb-3">
-            <label for="password" class="form-label" style="font-size:18px; margin-left:15px;">Password:</label>
-            <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="password" value="">
+            <label for="password" class="form-label" style="font-size:18px; margin-left:15px;">Password:
+                <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="password" value="">
+            </label>
         </div>
 
         <div class="mb-3">
-            <label for="rPassword" class="form-label" style="font-size:18px; margin-left:15px;">Retype password:</label>
-            <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="rPassword">
+            <label for="rPassword" class="form-label" style="font-size:18px; margin-left:15px;">Retype password:
+                <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="rPassword">
+            </label>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="border-radius:10px; width:20%;float:right; margin-right:15px">Update</button>
-
+        <div class="m-3">
+            <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile">Cancel</a></button>
+            <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
+        </div>
     </form>
 <?php $__env->stopSection(); ?>
 

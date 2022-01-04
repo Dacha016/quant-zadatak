@@ -32,14 +32,22 @@ $router->post("/profile/galleries/{id}/{id}", "ImageController@getImage"); //get
 $router->post("/update/{id}/{id}", "ImageController@updateImage");  //update image from logged user gallery
 $router->get("/profile/users", "UserController@index");// other users
 $router->get("/profile/users/{id}/{id}", "ImageController@showNotLoggedUserImages");//show no logged user images
+
 $router->get("/profile/users/{id}", "GalleryController@showGalleries"); // Not logged user galleries
 $router->post("/profile/users/{id}/{id}/{id}", "ImageController@getImage"); // no logged user get single image
+
+$router->get("/profile/update/gallery/{id}","GalleryController@updateGallery");
 $router->post("/profile/update/gallery/{id}","GalleryController@updateGallery");
+
+
 $router->get("/profile/updateAccount","UserController@updateAccount");
-$router->post("/profile/update/users/{id}","UserController@updateUser");
 $router->post("/profile/updateAccount","UserController@updateAccount");
 
+$router->get("/profile/update/users/{id}","UserController@updateUser");
+$router->post("/profile/update/users/{id}","UserController@updateUser");
+
 $router->post('/delete/image/{id}', "ImageController@deleteImage");
+$router->get('/delete/gallery/{id}', "GalleryController@deleteGallery");
 $router->post('/delete/gallery/{id}', "GalleryController@deleteGallery");
 
 

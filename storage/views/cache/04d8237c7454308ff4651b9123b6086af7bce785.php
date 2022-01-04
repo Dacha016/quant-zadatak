@@ -6,7 +6,7 @@ if(!isset($_SESSION["id"])) {
 <?php $__env->startSection("content"); ?>
 <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
 <div style="margin: 20px auto; max-width: 1000px; text-align: center">
-    <img src=<?php echo e($result->file_name); ?> alt="pictures" >
+    <img src=<?php echo e($result->file_name); ?> class="mt-2" alt="<?php echo e($result->filename); ?>">
     <div>
         <form action ="/update/<?php echo e($result->galleryId); ?>/<?php echo e($result->imageId); ?>" method="post" class="d-inline-block m-1">
             <input type="hidden" value="<?php echo e($result->userId); ?>" name="userId">
