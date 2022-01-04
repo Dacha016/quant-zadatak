@@ -206,9 +206,9 @@ class User
 
     /**
      * @param $updateData
-     * @return mixed
+     * @return bool
      */
-    public function createLogg($updateData): mixed
+    public function createLogg($updateData): bool
     {
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)

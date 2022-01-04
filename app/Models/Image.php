@@ -17,14 +17,14 @@ class Image
      * Send pictures to home page
      * @return array
      */
-    public function index() :array
+    public function indexHome() :array
     {
         $this->conn->queryPrepare("select file_name from image where hidden = 0 and nsfw = 0 limit 50") ;
         $this->conn->execute();
         return $this->conn->multi();
     }
 
-    public function imagesOnTheMainPage()
+    public function indexProfile()
     {
         $this->conn->queryPrepare("select file_name from image limit 50") ;
         $this->conn->execute();
@@ -36,7 +36,7 @@ class Image
      * @param $id $id of logged user
      * @return array
      */
-    public function showImages($id):array
+    public function indexGallery($id):array
     {
         $this->conn->queryPrepare(
             "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', g.id as 'galleryId'  from image_gallery
@@ -47,7 +47,7 @@ class Image
         $this->conn->execute();
         return $this->conn->multi();
     }
-    public function getImage ($id)
+    public function show ($id)
     {
         $this->conn->queryPrepare(
             "select i.id as 'imageId', i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden', i.file_name as 'file_name', i.user_id as 'userId', u.username as 'username', g.id as 'galleryId' 
@@ -62,43 +62,47 @@ class Image
     }
 
     /**
-     * Change values of image
-     * @param $id $id of image
-     * @param $hidden $hidden value
-     * @param $nsfw $nsfw value
+     * @param $imageData
      * @return bool
      */
-    public function updateImage($id, $hidden, $nsfw):bool
+    public function update($imageData):bool
     {
         $this->conn->queryPrepare("UPDATE image SET hidden =:hidden, nsfw = :nsfw WHERE id = :id");
-        $this->conn->bindParam(":hidden", $hidden);
-        $this->conn->bindParam(":nsfw", $nsfw);
-        $this->conn->bindParam(":id", $id);
+        $this->conn->bindParam(":hidden", $imageData["hidden"]);
+        $this->conn->bindParam(":nsfw", $imageData["nsfw"]);
+        $this->conn->bindParam(":id", $imageData["imageId"]);
         return $this->conn->execute();
     }
 
     /**
-     * Delete picture
-     * @param $id $id Image id
-     * @return void
+     * @param $imageData
      */
-    public function deleteImage($id)
+    public function delete($id)
     {
         $this->conn->queryPrepare("DELETE FROM image WHERE id =:id");
-        $this->conn->bindParam(":id", $id);
-        $this->conn->execute();
+        $this->conn->bindParam(":id",$id);
+        var_dump($this->conn->execute());
+        die();
+
     }
-    public function createLogg($moderatorUsername,$userUsername, $galleryId, $imageName, $nsfw, $hidden)
+
+    /**
+     * @param $imageData
+     * @return bool
+     */
+    public function createLogg($imageData):bool
     {
+
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username,gallery_id, image_name, image_nsfw, image_hidden)
             values (:moderator_username, :user_username, :image_name, :gallery_id, :image_nsfw, :image_hidden)");
-        $this->conn->bindParam(":moderator_username", $moderatorUsername);
-        $this->conn->bindParam(":user_username", $userUsername);
-        $this->conn->bindParam(":gallery_id", $galleryId);
-        $this->conn->bindParam(":image_name", $imageName);
-        $this->conn->bindParam(":image_nsfw", $nsfw);
-        $this->conn->bindParam(":image_hidden", $hidden);
+        $this->conn->bindParam(":moderator_username", $imageData["sessionUsername"]);
+        $this->conn->bindParam(":user_username", $imageData["userUsername"]);
+        $this->conn->bindParam(":image_name", $imageData["imageName"]);
+        $this->conn->bindParam(":gallery_id", $imageData["galleryId"]);
+        $this->conn->bindParam(":image_nsfw", $imageData["nsfw"]);
+        $this->conn->bindParam(":image_hidden", $imageData["hidden"]);
         return $this->conn->execute();
+
     }
 }

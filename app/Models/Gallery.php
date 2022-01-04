@@ -18,7 +18,7 @@ class Gallery
      * @param $id $id Users id
      * @return mixed
      */
-    public function indexGalleries($id): array
+    public function index($id): array
     {
 
 //        $redis = new Client();
@@ -27,8 +27,10 @@ class Gallery
         $page = $_GET["page"];
         $offset = abs($page * $limit);
         $this->conn->queryPrepare(
-            "select gallery.id as 'galleryId',description, name, user_id as 'userId', nsfw, hidden, slug from gallery  
-            where gallery.user_id = :id limit $limit offset $offset");
+            "SELECT  gallery.id as 'galleryId', description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden,  u.username as 'username' 
+            FROM gallery 
+            inner join user u on gallery.user_id = u.id
+            WHERE u.id =:id limit $limit offset $offset");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
         return $this->conn->multi();
@@ -46,7 +48,8 @@ class Gallery
     public function show($id)
     {
         $this->conn->queryPrepare(
-        "SELECT gallery.id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden, u.username as 'userUsername' FROM gallery
+            "SELECT gallery.id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden, u.username as 'userUsername' 
+            FROM gallery
             inner join user u on gallery.user_id = u.id
             WHERE gallery.id =:id");
         $this->conn->bindParam(":id", $id);
@@ -59,7 +62,7 @@ class Gallery
      * @param $id $id of current user
      * @return array
      */
-    public function showUserGalleries($id): array
+    public function indexHiddenOrNsfw($id): array
     {
 //        $redis = new Client();
 //        $key = "galleries_page_{$_GET['page']}";
@@ -67,7 +70,8 @@ class Gallery
         $page = $_GET["page"];
         $offset = abs($page * $limit);
         $this->conn->queryPrepare(
-            "SELECT id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden FROM gallery
+            "SELECT id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden 
+            FROM gallery
             WHERE user_id =:id AND hidden = 0 AND nsfw = 0 limit $limit offset $offset");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
@@ -84,55 +88,19 @@ class Gallery
     }
 
     /**
-     * Get galleries for other users view (moderator, admin)
-     * @param $id $id of current user (not logged user)
-     * @return array
+     * @param $galleryData
      */
-    public function showUserGalleriesAll($id): array
-    {
-//        $redis= new Client();
-//        $key = "galleries_page_{$_GET['page']}";
-        $limit =50;
-        $page = $_GET["page"];
-        $offset = abs($page * $limit);
-        $this->conn->queryPrepare(
-            "SELECT  gallery.id as 'galleryId', description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden,  u.username as 'username' FROM gallery 
-            inner join user u on gallery.user_id = u.id
-            WHERE u.id =:id limit $limit offset $offset");
-        $this->conn->bindParam(":id", $id);
-        $this->conn->execute();
-           return $this->conn->multi();
-//        if (!$redis->exists($key)) {
-//            $galleries = [];
-//            while ($row = $this->conn->single()) {
-//                $galleries[] = $row;
-//            }
-//            $redis->set($key, serialize($galleries));
-//            $redis->expire($key, 10);
-//        }
-//        return unserialize($redis->get($key));
-    }
-
-    /**
-     * @param $userId
-     * @param $name
-     * @param $nsfw
-     * @param $hidden
-     * @param $description
-     * @param $slug
-     * @return void
-     */
-    public function createGallery($userId, $name, $nsfw ,$hidden, $description, $slug)
+    public function create($galleryData)
     {
         $this->conn->queryPrepare(
             "insert into gallery (user_id, name, nsfw, hidden, description, slug)
             values (:user_id, :name, :nsfw, :hidden, :description, :slug)");
-        $this->conn->bindParam(":user_id", $userId);
-        $this->conn->bindParam(":name", $name);
-        $this->conn->bindParam("nsfw", $nsfw);
-        $this->conn->bindParam(":hidden", $hidden);
-        $this->conn->bindParam(":description", $description);
-        $this->conn->bindParam(":slug", $slug);
+        $this->conn->bindParam(":user_id", $galleryData["userId"]);
+        $this->conn->bindParam(":name", $galleryData["name"]);
+        $this->conn->bindParam("nsfw", $galleryData["nsfw"]);
+        $this->conn->bindParam(":hidden", $galleryData["hidden"]);
+        $this->conn->bindParam(":description", $galleryData["description"]);
+        $this->conn->bindParam(":slug", $galleryData["slug"]);
         $this->conn->execute();
     }
 
@@ -140,7 +108,7 @@ class Gallery
      * @param $galleryData
      * @return mixed
      */
-    public function updateGallery($galleryData): mixed
+    public function update($galleryData): mixed
     {
         $redis = new Client();
         $redis->flushall();
@@ -161,6 +129,20 @@ class Gallery
      * @param $id
      * @return float
      */
+
+    /**
+     * @param $id
+     * @return void
+     */
+    public function delete($id)
+    {
+//        $redis = new Client();
+//        $redis->flushall();
+        $this->conn->queryPrepare("DELETE FROM gallery WHERE id =:id");
+        $this->conn->bindParam(":id", $id);
+        $this->conn->execute();
+    }
+
     public function getPages($id): float
     {
         $limit =50;
@@ -185,19 +167,6 @@ class Gallery
         $result = $this->conn->single();
         $rows = $result->row;
         return floor($rows/$limit);
-    }
-
-    /**
-     * @param $id
-     * @return void
-     */
-    public function deleteGallery($id)
-    {
-//        $redis = new Client();
-//        $redis->flushall();
-        $this->conn->queryPrepare("DELETE FROM gallery WHERE id =:id");
-        $this->conn->bindParam(":id", $id);
-        $this->conn->execute();
     }
 
     /**

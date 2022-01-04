@@ -9,7 +9,7 @@ if(!isset($_SESSION["id"])) {
 <div >
     @foreach($result as $row)
         <div class="d-inline-block m-2">
-            <img src={{$row->file_name}} class="mt-2" alt="{{$row->filename}}">
+            <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
             @if(($_SESSION["role"] === "admin" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "moderator" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "user" && $row->userId ===$_SESSION["id"]))
                 <div class="d-inline-block m-2">
                     <form action ="http://localhost/profile/galleries/{{$row->galleryId}}/{{$row->imageId}}" method="post" class="d-inline-block m-1">

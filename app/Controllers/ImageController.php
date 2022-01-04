@@ -17,9 +17,9 @@ class ImageController
     {
         $this->image = new Image;
     }
-    public function index()
+    public function indexHome()
     {
-        $result =$this->image->index();
+        $result =$this->image->indexHome();
         Blade::render("/home", compact("result"));
     }
 
@@ -27,9 +27,9 @@ class ImageController
      * List of users image on profile page
      * @return void
      */
-    public function imagesOnTheMainPage()
+    public function indexProfile()
     {
-        $result = $this->image->imagesOnTheMainPage();
+        $result = $this->image->indexProfile();
         Blade::render("/profile", compact("result"));
     }
 
@@ -38,13 +38,13 @@ class ImageController
      * @return void
      */
     public
-    function showImages()
+    function index()
     {
         $id = $_SERVER["REQUEST_URI"];
         $id = explode("/", $id);
         $n = count($id);
         $id = $id[$n - 1];
-        $result = $this->image->showImages($id);
+        $result = $this->image->indexGallery($id);
         Blade::render("/images", compact("result"));
     }
 
@@ -58,7 +58,7 @@ class ImageController
         $id = explode("/", $id);
         $n = count($id);
         $id = $id[$n - 1];
-        $result = $this->image->showImages($id);
+        $result = $this->image->indexGallery($id);
         Blade::render("/images", compact("result"));
 
     }
@@ -66,36 +66,39 @@ class ImageController
      * Get only one image to update
      * @return void
      */
-    public function getImage()
+    public function show()
     {
-        $result = $this->image->getImage($_POST["getImage"]);
+        $result = $this->image->show($_POST["getImage"]);
         Blade::render("/image", compact("result") );
     }
     /**
      * Update image
      * @return void
      */
-    public function updateImage()
+    public function update()
     {
 //var_dump($_POST);
 //die();
         $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
         $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
-        $imageId = $_POST["imageId"];
-        $galleryId = $_POST["galleryId"];
-        $userUsername = $_POST["userUsername"];
-        $imageName = $_POST["imageName"];
-        if($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
-            $this->image->createLogg($_SESSION["username"], $userUsername, $imageName,  $galleryId, $nsfw,  $hidden);
+        $imageData = [
+            "imageId" => $_POST["imageId"],
+            "galleryId" =>$_POST["galleryId"],
+            "hidden" => $hidden,
+            "nsfw" => $nsfw,
+            "imageName" => $_POST["imageName"],
+            "userUsername" => $_POST["userUsername"],
+            "sessionUsername" => $_SESSION["username"],
+            "userId" => $_POST["userId"],
+        ];
+        if($imageData["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+            $this->image->createLogg($imageData);
         }
-        $this->image->updateImage($imageId, $hidden, $nsfw);
-
-
-        $userId=$_POST["userId"];
-        if ($_POST["userId"] === $_SESSION["id"]) {
-            header("Location: http://localhost/profile/galleries/".$galleryId."page=0");
+        $this->image->update($imageData);
+        if ($imageData["userId"] === $_SESSION["id"]) {
+            header("Location: http://localhost/profile/galleries/".$imageData["galleryId"]."page=0");
         }else{
-            header("Location: http://localhost/profile/users/".$userId ."/" . $galleryId."page=0");
+            header("Location: http://localhost/profile/users/".$imageData["userId"]."/" . $imageData["galleryId"]."page=0");
         }
     }
 
@@ -103,15 +106,19 @@ class ImageController
      * Delete image
      * @return void
      */
-    public function deleteImage(){
-        $galleryId = $_POST["galleryId"];
-        $userId=$_POST["userId"];
-        $imageId = $_POST["imageId"];
-        $this->image->deleteImage($imageId);
-        if ($userId === $_SESSION["id"]) {
-            header("Location: http://localhost/profile/galleries/".$galleryId."?page=0");
+    public function delete()
+    {
+
+        $imageData = [
+            "galleryId" =>(int) $_POST["galleryId"],
+            "userId" => $_POST["userId"],
+            "imageId" =>$_POST["imageId"]
+        ];
+        $this->image->delete($imageData["imageId"]);
+        if ($imageData["userId"] == $_SESSION["id"]) {
+            header("Location: http://localhost/profile/galleries/".$imageData["galleryId"]."?page=0");
         }else{
-            header("Location: http://localhost/profile/users/".$userId ."/" . $galleryId."?page=0");
+            header("Location: http://localhost/profile/users/".$imageData["userId"] ."/" . $imageData["galleryId"]."?page=0");
         }
     }
 

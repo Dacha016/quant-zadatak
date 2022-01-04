@@ -16,28 +16,28 @@ use Bramus\Router\Router;
 
 $router = new Router;
 $router->setNamespace("App\Controllers");
-$router->get('/home', "ImageController@index");
+$router->get('/home', "ImageController@indexHome");
 $router->get('/registration', "AuthController@registration");
 $router->post('/registration', "AuthController@registration");
 $router->get('/login', "AuthController@login");
 $router->post('/login', "AuthController@login");
 $router->get('/logout', "AuthController@logout");
 
-$router->get('/profile', "ImageController@imagesOnTheMainPage"); // images on the main page
-$router->get("/profile/galleries/newGallery","GalleryController@createGallery"); // get form
-$router->post("/profile/galleries/newGallery","GalleryController@createGallery"); //post data
-$router->get('/profile/galleries', "GalleryController@indexGalleries"); // galleries in profile
-$router->get('/profile/galleries/{id}', "ImageController@showImages");  //images from gallery
-$router->post("/profile/galleries/{id}/{id}", "ImageController@getImage"); //get single image
-$router->post("/update/{id}/{id}", "ImageController@updateImage");  //update image from logged user gallery
+$router->get('/profile', "ImageController@indexProfile"); // images on the main page
+$router->get("/profile/galleries/newGallery","GalleryController@create"); // get form
+$router->post("/profile/galleries/newGallery","GalleryController@create"); //post data
+$router->get('/profile/galleries', "GalleryController@index"); // galleries in profile
+$router->get('/profile/galleries/{id}', "ImageController@index");  //images from gallery
+$router->post("/profile/galleries/{id}/{id}", "ImageController@show"); //get single image
+$router->post("/update/{id}/{id}", "ImageController@update");  //update image from logged user gallery
 $router->get("/profile/users", "UserController@index");// other users
 $router->get("/profile/users/{id}/{id}", "ImageController@showNotLoggedUserImages");//show no logged user images
 
-$router->get("/profile/users/{id}", "GalleryController@showGalleries"); // Not logged user galleries
-$router->post("/profile/users/{id}/{id}/{id}", "ImageController@getImage"); // no logged user get single image
+$router->get("/profile/users/{id}", "GalleryController@notLoggedUserGalleries"); // Not logged user galleries
+$router->post("/profile/users/{id}/{id}/{id}", "ImageController@show"); // no logged user get single image
 
-$router->get("/profile/update/gallery/{id}","GalleryController@updateGallery");
-$router->post("/profile/update/gallery/{id}","GalleryController@updateGallery");
+$router->get("/profile/update/gallery/{id}","GalleryController@update");
+$router->post("/profile/update/gallery/{id}","GalleryController@update");
 
 
 $router->get("/profile/updateAccount","UserController@updateAccount");
@@ -46,9 +46,9 @@ $router->post("/profile/updateAccount","UserController@updateAccount");
 $router->get("/profile/update/users/{id}","UserController@updateUser");
 $router->post("/profile/update/users/{id}","UserController@updateUser");
 
-$router->post('/delete/image/{id}', "ImageController@deleteImage");
-$router->get('/delete/gallery/{id}', "GalleryController@deleteGallery");
-$router->post('/delete/gallery/{id}', "GalleryController@deleteGallery");
+$router->post('/delete/image/{id}', "ImageController@delete");
+$router->get('/delete/gallery/{id}', "GalleryController@delete");
+$router->post('/delete/gallery/{id}', "GalleryController@delete");
 
 
 

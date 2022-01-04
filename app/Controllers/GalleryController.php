@@ -8,8 +8,6 @@ if (!session_start()) {
 use App\Models\Gallery;
 use App\Blade\Blade;
 
-
-
 class GalleryController
 {
 
@@ -23,18 +21,19 @@ class GalleryController
      * List of logged user galleries
      * @return void
      */
-    public function indexGalleries()
+    public function index()
     {
         $pages = $this->gallery->getPages($_SESSION["id"]);
-        $result = $this->gallery->indexGalleries($_SESSION["id"]);
+        $result = $this->gallery->index($_SESSION["id"]);
         Blade::render("/galleries", compact("result","pages"));
     }
 
     /**
-     * Show different permissions for different user
-     * @return void
+     * Show not logged user galleries.
+     * If logged user role is "user" show galleries which are not hidden or nsfw
+     * if logged user role is "admin" or "moderator" show all galleries
      */
-    public function showGalleries()
+    public function notLoggedUserGalleries()
     {
         $id = $_SERVER["REQUEST_URI"];
         $id = explode("/", $id);
@@ -45,9 +44,9 @@ class GalleryController
 
         if ($_SESSION["role"] === "user") {
             $pages = $this->gallery->getPagesVisible($id);
-            $result = $this->gallery->showUserGalleries($id);
+            $result = $this->gallery->indexHiddenOrNsfw($id);
         } else {
-            $result = $this->gallery->showUserGalleriesAll($id);
+            $result = $this->gallery->index($id);
             $pages = $this->gallery->getPages($id);
         }
         Blade::render("/galleries", compact("result", "pages"));
@@ -57,21 +56,27 @@ class GalleryController
      * Create new gallery
      * @return void
      */
-    public function createGallery()
+    public function create()
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/createGallery");
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $userId = $_SESSION["id"];
             $name = trim($_POST["name"]);
-            $description = trim($_POST["description"]);
             $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
             $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
             $slug = str_replace(" ","-", $name);
             $slug = strtolower($slug);
-            $this->gallery->createGallery($userId, $name, $nsfw, $hidden, $description, $slug);
+            $galleryData =[
+                "userId" => $_SESSION["id"],
+                "name" => trim($_POST["name"]),
+                "slug" =>$slug,
+                "description" => trim($_POST["description"]),
+                "hidden" => $hidden,
+                "nsfw" => $nsfw
+            ];
+            $this->gallery->create($galleryData);
             header("Location: http://localhost/profile/galleries?page=0");
         }
 
@@ -81,7 +86,7 @@ class GalleryController
      * Update gallery of logger user and other users
      * @return void
      */
-    public function updateGallery()
+    public function update()
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             $galleryId = $_SERVER["REQUEST_URI"];
@@ -111,7 +116,7 @@ class GalleryController
             if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
                 $this->gallery->createLogg($galleryData);
             }
-            $this->gallery->updateGallery($galleryData);
+            $this->gallery->update($galleryData);
             if ($galleryData["userId"] == $_SESSION["id"]) {
                 header("Location: http://localhost/profile/galleries?page=0");
             }
@@ -125,7 +130,7 @@ class GalleryController
      * Delete all data from gallery and aly other table with gallery_id
      * @return void
      */
-    public function deleteGallery()
+    public function delete()
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             $galleryId = $_SERVER["REQUEST_URI"];
@@ -140,7 +145,7 @@ class GalleryController
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $userId = $_POST["userId"];
             $galleryId = $_POST["galleryId"];
-            $this->gallery->deleteGallery($galleryId);
+            $this->gallery->delete($galleryId);
             if ($userId === $_SESSION["id"]) {
                 header("Location: http://localhost/profile/galleries?page=0");
             } else {
