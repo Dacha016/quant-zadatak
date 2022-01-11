@@ -12,7 +12,6 @@
  */
 namespace App\Models;
 
-use App\Config\Connection;
 use PDOException;
 use Predis\Client;
 
@@ -26,16 +25,14 @@ use Predis\Client;
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
-class User
+class User extends Model
 {
-    protected Connection $conn;
-
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->conn = new Connection;
+       parent::__construct();
     }
 
     /**
@@ -64,12 +61,15 @@ class User
      */
     public function findByUsernameAndPassword($username, $password): bool
     {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or password = :password");
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
         $this->conn->bindParam(":username", $username);
-        $this->conn->bindParam(":password", $password);
         $this->conn->execute();
         $result = $this->conn->single();
-        if ($result){
+        if (! $result) {
+            return false;
+        }
+        $hashedPassword = $result->password;
+        if (password_verify($password, $hashedPassword)) {
             return true;
         } else {
             return false;

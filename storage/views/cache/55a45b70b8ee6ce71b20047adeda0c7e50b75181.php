@@ -51,7 +51,7 @@ if(!isset($_SESSION["id"])) {
                             <p><?php echo e($row->active); ?></p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/update/users/<?php echo e($row->id); ?>?page=<?php echo e($_GET['page']); ?>">Update</a></button>
+                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/update/users/<?php echo e($row->id); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a></button>
                         </td>
                     </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

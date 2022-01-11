@@ -45,7 +45,7 @@ if(!isset($_SESSION["id"])) {
             </label>
         </div>
         <div class="m-3">
-            <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/users?page={{$_GET['page']}}">Cancel</a></button>
+            <a class="btn btn-secondary" style="color: white" href="http://localhost/profile/users?page={{$_GET['page']}}">Cancel</a>
             <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
         </div>
     </form>

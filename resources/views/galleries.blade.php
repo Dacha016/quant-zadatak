@@ -36,12 +36,12 @@ header("Location: http://localhost/home");
                         </td>
                         <td>
                             <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}">Update</a>
+                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
                             </button>
                         </td>
                         <td>
                             <button class="btn btn-danger d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}">Delete</a>
+                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
                             </button>
                         </td>
                     @endif
@@ -64,12 +64,12 @@ header("Location: http://localhost/home");
                         </td>
                         <td>
                             <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}">Update</a>
+                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
                             </button>
                         </td>
                         <td>
                             <button class="btn btn-danger d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}">Delete</a>
+                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
                             </button>
                         </td>
                     @endif
@@ -91,7 +91,7 @@ header("Location: http://localhost/home");
                         </td>
                         <td>
                             <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}">Update</a>
+                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
                             </button>
                         </td>
 
@@ -115,12 +115,12 @@ header("Location: http://localhost/home");
                         </td>
                         <td>
                             <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}">Update</a>
+                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
                             </button>
                         </td>
                         <td>
                             <button class="btn btn-danger d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}">Delete</a>
+                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
                             </button>
                         </td>
                     @endif

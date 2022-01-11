@@ -52,7 +52,7 @@ if(!isset($_SESSION["id"])) {
                             <p>{{$row->active}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/update/users/{{$row->id}}?page={{$_GET['page']}}">Update</a></button>
+                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/update/users/{{$row->id}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a></button>
                         </td>
                     </tr>
                 @endforeach

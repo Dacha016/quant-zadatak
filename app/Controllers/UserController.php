@@ -51,14 +51,10 @@ class UserController
         $result = $this->user->index($_SESSION["id"]);
         Blade::render("/users", compact("result", "pages"));
     }
-    public function show($id)
-    {
-        return $this->user->show($id);
-    }
     public function updateAccount()
     {
         $id = $_SESSION["id"];
-        $result = $this->show($id);
+        $result = $this->user->show($id);
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/updateAccount", compact("result"));
 
@@ -100,7 +96,7 @@ class UserController
         $id = explode("/", $id);
         $n = count($id);
         $id = $id[$n - 1];
-        $result = $this->show($id);
+        $result = $this->user->show($id);
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/updateUsers", compact("result"));
 

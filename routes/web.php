@@ -35,7 +35,9 @@ $router->get("/profile/users/{id}/{id}", "ImageController@showNotLoggedUserImage
 
 $router->get("/profile/users/{id}", "GalleryController@notLoggedUserGalleries"); // Not logged user galleries
 $router->post("/profile/users/{id}/{id}/{id}", "ImageController@show"); // no logged user get single image
-
+$router->get("/comments/users/{id}/{id}", "ImageController@indexComments"); // no logged user get single image
+$router->post("/comments/users/{id}/{id}", "ImageController@indexComments"); // no logged user get single image
+$router->post('/create/comments', "ImageController@createComments");
 $router->get("/profile/update/gallery/{id}","GalleryController@update");
 $router->post("/profile/update/gallery/{id}","GalleryController@update");
 

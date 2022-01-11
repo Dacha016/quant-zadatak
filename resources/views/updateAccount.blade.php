@@ -16,12 +16,12 @@ if(!isset($_SESSION["id"])) {
         </div>
         <div class="mb-3 mt-3 b">
             <label for="username" class="form-label" style="font-size:18px; margin-left:15px;">Username:</label>
-            <input type="text" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" id="username" name="username" value="">
+            <input type="text" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" id="username" name="username" value="{{$result->username}}">
         </div>
 
         <div class="mb-3 mt-3">
             <label for="email" class="form-label" style="font-size:18px; margin-left:15px;">Email:</label>
-            <input type="email" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" id="email" name="email" value="">
+            <input type="email" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" id="email" name="email" value="{{$result->email}}">
         </div>
 
         <div class="mb-3">
@@ -37,7 +37,7 @@ if(!isset($_SESSION["id"])) {
         </div>
 
         <div class="m-3">
-            <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile">Cancel</a></button>
+            <a class="btn btn-secondary" style="color: white" href="http://localhost/profile">Cancel</a>
             <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
         </div>
     </form>

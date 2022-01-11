@@ -29,6 +29,7 @@
                 Nsfw
             </label>
         </div>
+        <a class="btn btn-secondary" style="color: white" href="http://localhost/profile">Cancel</a>
         <button type="submit" class="btn btn-primary" style="border-radius:10px; width:20%;float:right; margin-right:15px">Create</button>
     </form>
 @endsection

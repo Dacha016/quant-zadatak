@@ -46,7 +46,7 @@ class GalleryController
             $pages = $this->gallery->getPagesVisible($id);
             $result = $this->gallery->indexHiddenOrNsfw($id);
         } else {
-            $result = $this->gallery->index($id);
+            $result = $this->gallery->indexAll($id);
             $pages = $this->gallery->getPages($id);
         }
         Blade::render("/galleries", compact("result", "pages"));

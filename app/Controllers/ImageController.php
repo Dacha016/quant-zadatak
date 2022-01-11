@@ -29,10 +29,26 @@ class ImageController
      */
     public function indexProfile()
     {
-        $result = $this->image->indexProfile();
+        $result = $this->image->indexProfile($_SESSION["id"]);
         Blade::render("/profile", compact("result"));
     }
 
+    public function indexComments()
+    {
+        $id = $_SERVER["REQUEST_URI"];
+        $id = explode("/", $id);
+        $n = count($id);
+        $id = $id[$n - 1];
+        $result = $this->image->indexComments($id);
+        $image = $this->image->show($id);
+        if ($result == null) {
+            $result = "Be the first to comment on this image";
+
+            Blade::render("/noComment", compact("result", "image"));
+        }else {
+            Blade::render("/imageComment", compact("result", "image"));
+        }
+    }
     /**
      * List of gallery images
      * @return void
@@ -44,7 +60,7 @@ class ImageController
         $id = explode("/", $id);
         $n = count($id);
         $id = $id[$n - 1];
-        $result = $this->image->indexGallery($id);
+        $result = $this->image->index($id);
         Blade::render("/images", compact("result"));
     }
 
@@ -58,7 +74,7 @@ class ImageController
         $id = explode("/", $id);
         $n = count($id);
         $id = $id[$n - 1];
-        $result = $this->image->indexGallery($id);
+        $result = $this->image->index($id);
         Blade::render("/images", compact("result"));
 
     }
@@ -68,7 +84,7 @@ class ImageController
      */
     public function show()
     {
-        $result = $this->image->show($_POST["getImage"]);
+        $result = $this->image->showImageInGallery($_POST["getImage"]);
         Blade::render("/image", compact("result") );
     }
     /**
@@ -77,8 +93,6 @@ class ImageController
      */
     public function update()
     {
-//var_dump($_POST);
-//die();
         $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
         $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
         $imageData = [
@@ -102,24 +116,38 @@ class ImageController
         }
     }
 
+    public function createComments()
+    {
+        $commentData = [
+            "imageId" =>$_POST["imageId"],
+            "userId" => $_POST["userId"],
+            "comment" => $_POST["comment"]
+        ];
+
+        $this->image->createComments($commentData);
+        header("Location: http://localhost/comments/users/{$commentData['userId']}/{$commentData['imageId']}");
+    }
+
     /**
      * Delete image
      * @return void
      */
     public function delete()
     {
-
         $imageData = [
             "galleryId" =>(int) $_POST["galleryId"],
             "userId" => $_POST["userId"],
             "imageId" =>$_POST["imageId"]
         ];
         $this->image->delete($imageData["imageId"]);
-        if ($imageData["userId"] == $_SESSION["id"]) {
-            header("Location: http://localhost/profile/galleries/".$imageData["galleryId"]."?page=0");
-        }else{
-            header("Location: http://localhost/profile/users/".$imageData["userId"] ."/" . $imageData["galleryId"]."?page=0");
+        if ($imageData["galleryId"] !== 0) {
+            if ($imageData["userId"] == $_SESSION["id"]) {
+                header("Location: http://localhost/profile/galleries/".$imageData["galleryId"]."?page=0");
+            } else {
+                header("Location: http://localhost/profile/users/" . $imageData["userId"] . "/" . $imageData["galleryId"] . "?page=0");
+            }
+        } else {
+            header("Location: http://localhost/profile");
         }
     }
-
 }
