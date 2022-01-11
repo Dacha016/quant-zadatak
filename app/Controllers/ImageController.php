@@ -41,7 +41,7 @@ class ImageController
         $id = $id[$n - 1];
         $result = $this->image->indexComments($id);
         if ($result == null) {
-            $result = "Be the first to comment on this image";
+            $result = "Be the first to comment";
             $image = $this->image->showImageInGallery($id);
             if (!$image) {
                 $image = $this->image->show($id);
@@ -128,7 +128,6 @@ class ImageController
             $this->image->update($imageData);
             header("Location: http://localhost/profile");
         }
-
     }
 
     public function createComments()

@@ -66,7 +66,7 @@ if(!isset($_SESSION["id"])) {
                 <div class="d-inline-block" >
                     <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
                     <div class="text-center">
-                        <a href="/comments/users/{{$row->userId}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a></a>
+                        <a href="/comments/users/{{$row->userId}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                     </div>
                 </div>
             @endif

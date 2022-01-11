@@ -111,6 +111,27 @@ class Gallery extends Model
         return unserialize($redis->get($key));
     }
 
+    public function indexComments($id)
+    {
+        $redis = new Client();
+        $key = "gallery_{$id}_comments";
+        $this->conn->queryPrepare(
+            "select  g.name as 'galleryName', u.username as 'username', comment from comment
+            inner join gallery g on comment.gallery_id = g.id
+            inner join user u on comment.user_id = u.id
+            where gallery_id =:id");
+        $this->conn->bindParam(":id",$id);
+        $this->conn->execute();
+        if (!$redis->exists($key)) {
+            $comments = [];
+            while ($row = $this->conn->single()) {
+                $comments[] = $row;
+            }
+            $redis->set($key, serialize($comments));
+            $redis->expire($key, 300);
+        }
+        return unserialize($redis->get($key));
+    }
     /**
      * @param $galleryData
      */
@@ -207,6 +228,16 @@ class Gallery extends Model
         $this->conn->bindParam(":gallery_id", $galleryData["galleryId"]);
         $this->conn->bindParam(":gallery_nsfw", $galleryData["nsfw"]);
         $this->conn->bindParam(":gallery_hidden", $galleryData["hidden"]);
+        return $this->conn->execute();
+    }
+    public function createComment($commentData)
+    {
+        $redis = new Client();
+        $redis->del("gallery_{$commentData['galleryId']}_comments");
+        $this->conn->queryPrepare("insert into comment (user_id, gallery_id, comment) values (:user_id, :gallery_id, :comment)");
+        $this->conn->bindParam(":user_id", $commentData["userId"]);
+        $this->conn->bindParam(":gallery_id", $commentData["galleryId"]);
+        $this->conn->bindParam(":comment", $commentData["comment"]);
         return $this->conn->execute();
     }
 }

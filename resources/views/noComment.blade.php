@@ -16,7 +16,9 @@ if(!isset($_SESSION["id"])) {
                 @if(isset($image->galleryId))
                     <input type="hidden" value="{{$image->galleryId}}" name="galleryId">
                 @endif
-                <input type="text" placeholder="Add comment" name="comment">
+               <label>
+                   <input type="text" placeholder="Add comment" name="comment">
+               </label>
                 <button type="submit">Comment</button>
             </form>
         </div>

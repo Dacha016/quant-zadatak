@@ -35,14 +35,13 @@ header("Location: http://localhost/home");
                             <p>{{$row->nsfw}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
-                            </button>
+                            <a href="/profile/comments/galleries/{{$row->galleryId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                         <td>
-                            <button class="btn btn-danger d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
-                            </button>
+                            <a  class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
                         </td>
                     @endif
                         @if($_SESSION["role"] === "admin" && $row->userId !== $_SESSION["id"])
@@ -63,14 +62,13 @@ header("Location: http://localhost/home");
                                 <p>{{$row->nsfw}}</p>
                             </td>
                             <td>
-                                <button class="btn btn-info d-inline-block" type="submit">
-                                    <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
-                                </button>
+                                <a href="/profile/comments/users/{{$row->userId}}/{{$row->galleryId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                             </td>
                             <td>
-                                <button class="btn btn-danger d-inline-block" type="submit">
-                                    <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
-                                </button>
+                                <a class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
+                            </td>
+                            <td>
+                                <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
                             </td>
                         @endif
                     @if($row->userId === $_SESSION["id"] && $_SESSION["role"] === "moderator")
@@ -91,14 +89,13 @@ header("Location: http://localhost/home");
                             <p>{{$row->nsfw}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
-                            </button>
+                            <a href="/profile/comments/galleries/{{$row->galleryId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                         <td>
-                            <button class="btn btn-danger d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
-                            </button>
+                            <a  class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
                         </td>
                     @endif
                     @if($row->userId !== $_SESSION["id"] && $_SESSION["role"] === "moderator")
@@ -118,9 +115,10 @@ header("Location: http://localhost/home");
                             <p>{{$row->nsfw}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
-                            </button>
+                            <a href="/profile/comments/users/{{$row->userId}}/{{$row->galleryId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                        </td>
+                        <td>
+                            <a class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
                         </td>
 
                     @endif
@@ -142,14 +140,13 @@ header("Location: http://localhost/home");
                             <p>{{$row->nsfw}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
-                            </button>
+                            <a href="/profile/comments/galleries/{{$row->galleryId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                         <td>
-                            <button class="btn btn-danger d-inline-block" type="submit">
-                                <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
-                            </button>
+                            <a  class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
                         </td>
                     @endif
                     @if($row->userId !== $_SESSION["id"] && $_SESSION["role"] === "user")
@@ -167,6 +164,9 @@ header("Location: http://localhost/home");
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p>{{$row->nsfw}}</p>
+                        </td>
+                        <td>
+                            <a href="/profile/comments/users/{{$row->userId}}/{{$row->galleryId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                     @endif
                 </tr>
