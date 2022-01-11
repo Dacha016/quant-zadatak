@@ -12,14 +12,12 @@ if(!isset($_SESSION["id"])) {
                     <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
                 </div>
                 <div class="text-center">
-                    <a href="/comment" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
-                    <form action ="http://localhost/profile/galleries/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="getImage">
+                    <a href="/profile/comments/images/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                    <form action ="http://localhost/profile/images/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
+                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                         <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
                     </form>
                     <form action ="http://localhost/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="<?php echo e($row->galleryId); ?>" name="galleryId">
-                        <input type="hidden" value="<?php echo e($row->userId); ?>" name="userId">
                         <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                         <button class="btn btn-danger" type="submit"><i class="fas fa-trash"></i></button>
                     </form>

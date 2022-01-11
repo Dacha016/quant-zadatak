@@ -17,7 +17,7 @@ header("Location: http://localhost/home");
             </tr>
             @foreach($result as $row)
                 <tr>
-                    @if($_SESSION["role"] === "admin")
+                    @if($_SESSION["role"] === "admin" && $row->userId === $_SESSION["id"])
 
                         <td style="margin: 0 auto; border: 1px solid black">
                             <a href="/profile/galleries/{{$row->galleryId}}">{{$row->name}}</a>
@@ -45,6 +45,34 @@ header("Location: http://localhost/home");
                             </button>
                         </td>
                     @endif
+                        @if($_SESSION["role"] === "admin" && $row->userId !== $_SESSION["id"])
+
+                            <td style="margin: 0 auto; border: 1px solid black">
+                                <a href="/profile/users/{{$row->userId}}/{{$row->galleryId}}?page=0">{{$row->name}}</a>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->description}}</p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->slug}}</p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->hidden}}</p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p>{{$row->nsfw}}</p>
+                            </td>
+                            <td>
+                                <button class="btn btn-info d-inline-block" type="submit">
+                                    <a style="color: white" href="http://localhost/profile/update/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a>
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger d-inline-block" type="submit">
+                                    <a style="color: white" href="http://localhost/delete/gallery/{{$row->galleryId}}?page={{$_GET['page']}}"><i class="fas fa-trash"></i></a>
+                                </button>
+                            </td>
+                        @endif
                     @if($row->userId === $_SESSION["id"] && $_SESSION["role"] === "moderator")
 
                         <td style="margin: 0 auto; border: 1px solid black">

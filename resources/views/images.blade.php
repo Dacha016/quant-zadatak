@@ -14,9 +14,9 @@ if(!isset($_SESSION["id"])) {
                     <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
                 </div>
                 <div class="text-center">
-                    <a href="/imageComment" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                    <a href="/profile/comments/galleries/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                     <form action ="http://localhost/profile/galleries/{{$row->galleryId}}/{{$row->imageId}}" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="{{$row->imageId}}" name="getImage">
+                        <input type="hidden" value="{{$row->imageId}}" name="imageId">
                         <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
                     </form>
                     <form action ="http://localhost/delete/image/{{$row->imageId}}" method="post" class="d-inline-block m-1">
@@ -36,7 +36,7 @@ if(!isset($_SESSION["id"])) {
                 <div>
                     <a href="/comments/users/{{$row->userId}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                     <form action ="http://localhost/profile/galleries/{{$row->galleryId}}/{{$row->imageId}}" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="{{$row->imageId}}" name="getImage">
+                        <input type="hidden" value="{{$row->imageId}}" name="imageId">
                         <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
                     </form>
                     <form action ="http://localhost/delete/image/{{$row->imageId}}" method="post" class="d-inline-block m-1">
@@ -56,7 +56,7 @@ if(!isset($_SESSION["id"])) {
                 <div>
                     <a href="/comments/users/{{$row->userId}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                     <form action ="http://localhost/profile/galleries/{{$row->galleryId}}/{{$row->imageId}}" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="{{$row->imageId}}" name="getImage">
+                        <input type="hidden" value="{{$row->imageId}}" name="imageId">
                         <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
                     </form>
                 </div>
@@ -66,7 +66,7 @@ if(!isset($_SESSION["id"])) {
                 <div class="d-inline-block" >
                     <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
                     <div class="text-center">
-                        <a href="/comments/users/{{$row->userId}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block text-center" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                        <a href="/comments/users/{{$row->userId}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a></a>
                     </div>
                 </div>
             @endif

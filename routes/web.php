@@ -28,16 +28,28 @@ $router->get("/profile/galleries/newGallery","GalleryController@create"); // get
 $router->post("/profile/galleries/newGallery","GalleryController@create"); //post data
 $router->get('/profile/galleries', "GalleryController@index"); // galleries in profile
 $router->get('/profile/galleries/{id}', "ImageController@index");  //images from gallery
-$router->post("/profile/galleries/{id}/{id}", "ImageController@show"); //get single image
-$router->post("/update/{id}/{id}", "ImageController@update");  //update image from logged user gallery
+$router->post("/profile/galleries/{id}/{id}", "ImageController@show"); //get single image from gallery
+$router->post("/profile/images/{id}", "ImageController@show"); //get single image from profile
+$router->post("/update/images/{id}", "ImageController@update");  //update image from logged user gallery
+
 $router->get("/profile/users", "UserController@index");// other users
 $router->get("/profile/users/{id}/{id}", "ImageController@showNotLoggedUserImages");//show no logged user images
 
 $router->get("/profile/users/{id}", "GalleryController@notLoggedUserGalleries"); // Not logged user galleries
+$router->get('/profile/users/{id}/{id}', "ImageController@index");  //images from gallery
 $router->post("/profile/users/{id}/{id}/{id}", "ImageController@show"); // no logged user get single image
-$router->get("/comments/users/{id}/{id}", "ImageController@indexComments"); // no logged user get single image
-$router->post("/comments/users/{id}/{id}", "ImageController@indexComments"); // no logged user get single image
-$router->post('/create/comments', "ImageController@createComments");
+
+$router->get("/comments/users/{id}/{id}/{id}", "ImageController@indexComments"); // comments
+$router->post("/comments/users/{id}/{id}/{id}", "ImageController@indexComments"); // comments
+
+$router->get("/profile/comments/images/{id}", "ImageController@indexComments"); // comments of images on profile page
+$router->post("/profile/comments/images/{id}", "ImageController@indexComments"); //comments
+
+$router->get("/profile/comments/galleries/{id}/{id}", "ImageController@indexComments"); // comments of images in galleries
+$router->post("/profile/comments/galleries/{id}/{id}", "ImageController@indexComments"); //comments
+
+$router->post('/create/comments', "ImageController@createComments"); //create comment
+
 $router->get("/profile/update/gallery/{id}","GalleryController@update");
 $router->post("/profile/update/gallery/{id}","GalleryController@update");
 

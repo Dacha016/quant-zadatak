@@ -8,10 +8,13 @@ if(!isset($_SESSION["id"])) {
     <div style="margin: 20px auto; width: 1200px;">
         <h1 style="text-align:center">Comments</h1>
         <div>
-            <img src="{{$image->file_name}}" class="mt-2" alt="{{$image->filename}}">
+            <img src="{{$image->file_name}}" class="mt-2" alt="{{$image->file_name}}">
             <form action="/create/comments" method="post">
-                <input type="hidden"  name="userId" value="{{$_SESSION["id"]}}">
-                <input type="hidden"  name="imageId" value="{{$image->id}}">
+                <input type="hidden"  name="userId" value="{{$image->userId}}">
+                <input type="hidden"  name="imageId" value="{{$image->imageId}}">
+                @if(isset($image->galleryId))
+                    <input type="hidden" value="{{$image->galleryId}}" name="galleryId">
+                @endif
                 <input type="text" placeholder="Add comment" name="comment">
                 <button type="submit">Comment</button>
             </form>

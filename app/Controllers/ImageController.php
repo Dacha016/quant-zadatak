@@ -40,12 +40,18 @@ class ImageController
         $n = count($id);
         $id = $id[$n - 1];
         $result = $this->image->indexComments($id);
-        $image = $this->image->show($id);
         if ($result == null) {
             $result = "Be the first to comment on this image";
-
+            $image = $this->image->showImageInGallery($id);
+            if (!$image) {
+                $image = $this->image->show($id);
+            }
             Blade::render("/noComment", compact("result", "image"));
         }else {
+            $image = $this->image->showImageInGallery($id);
+            if (!$image) {
+                $image = $this->image->show($id);
+            }
             Blade::render("/imageComment", compact("result", "image"));
         }
     }
@@ -84,7 +90,10 @@ class ImageController
      */
     public function show()
     {
-        $result = $this->image->showImageInGallery($_POST["getImage"]);
+        $result = $this->image->showImageInGallery($_POST["imageId"]);
+        if (! $result) {
+            $result = $this->image->show($_POST["imageId"]);
+        }
         Blade::render("/image", compact("result") );
     }
     /**
@@ -97,7 +106,6 @@ class ImageController
         $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
         $imageData = [
             "imageId" => $_POST["imageId"],
-            "galleryId" =>$_POST["galleryId"],
             "hidden" => $hidden,
             "nsfw" => $nsfw,
             "imageName" => $_POST["imageName"],
@@ -105,27 +113,40 @@ class ImageController
             "sessionUsername" => $_SESSION["username"],
             "userId" => $_POST["userId"],
         ];
-        if($imageData["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
-            $this->image->createLogg($imageData);
+        if (isset($_POST["galleryId"])) {
+            $imageData["galleryId"] = $_POST["galleryId"];
+            if($imageData["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+                $this->image->createLogg($imageData);
+            }
+            $this->image->update($imageData);
+            if ($imageData["userId"] === $_SESSION["id"]) {
+                header("Location: http://localhost/profile/galleries/".$imageData["galleryId"]."page=0");
+            }else{
+                header("Location: http://localhost/profile/users/".$imageData["userId"]."/" . $imageData["galleryId"]."page=0");
+            }
+        } else {
+            $this->image->update($imageData);
+            header("Location: http://localhost/profile");
         }
-        $this->image->update($imageData);
-        if ($imageData["userId"] === $_SESSION["id"]) {
-            header("Location: http://localhost/profile/galleries/".$imageData["galleryId"]."page=0");
-        }else{
-            header("Location: http://localhost/profile/users/".$imageData["userId"]."/" . $imageData["galleryId"]."page=0");
-        }
+
     }
 
     public function createComments()
     {
         $commentData = [
             "imageId" =>$_POST["imageId"],
-            "userId" => $_POST["userId"],
+            "userId" => $_SESSION["id"],
             "comment" => $_POST["comment"]
         ];
-
         $this->image->createComments($commentData);
-        header("Location: http://localhost/comments/users/{$commentData['userId']}/{$commentData['imageId']}");
+        if (isset($_POST["galleryId"]) && $commentData["userId"] !== $_POST["userId"]) {
+            header("Location: http://localhost/comments/users/{$_POST['userId']}/{$_POST["galleryId"]}/{$commentData['imageId']}");
+        } elseif (isset($_POST["galleryId"]) && $commentData["userId"] == $_POST["userId"]){
+             header("Location: http://localhost/profile/comments/galleries/{$_POST["galleryId"]}/{$commentData['imageId']}");
+        }
+        else {
+            header("Location: http://localhost/profile/comments/images/{$commentData['imageId']}");
+        }
     }
 
     /**

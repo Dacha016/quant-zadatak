@@ -16,7 +16,7 @@ header("Location: http://localhost/home");
             </tr>
             <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
-                    <?php if($_SESSION["role"] === "admin"): ?>
+                    <?php if($_SESSION["role"] === "admin" && $row->userId === $_SESSION["id"]): ?>
 
                         <td style="margin: 0 auto; border: 1px solid black">
                             <a href="/profile/galleries/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a>
@@ -44,6 +44,34 @@ header("Location: http://localhost/home");
                             </button>
                         </td>
                     <?php endif; ?>
+                        <?php if($_SESSION["role"] === "admin" && $row->userId !== $_SESSION["id"]): ?>
+
+                            <td style="margin: 0 auto; border: 1px solid black">
+                                <a href="/profile/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>?page=0"><?php echo e($row->name); ?></a>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p><?php echo e($row->description); ?></p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p><?php echo e($row->slug); ?></p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p><?php echo e($row->hidden); ?></p>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <p><?php echo e($row->nsfw); ?></p>
+                            </td>
+                            <td>
+                                <button class="btn btn-info d-inline-block" type="submit">
+                                    <a style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger d-inline-block" type="submit">
+                                    <a style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
+                                </button>
+                            </td>
+                        <?php endif; ?>
                     <?php if($row->userId === $_SESSION["id"] && $_SESSION["role"] === "moderator"): ?>
 
                         <td style="margin: 0 auto; border: 1px solid black">

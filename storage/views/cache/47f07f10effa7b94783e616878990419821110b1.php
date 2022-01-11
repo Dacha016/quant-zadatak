@@ -13,9 +13,9 @@ if(!isset($_SESSION["id"])) {
                     <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
                 </div>
                 <div class="text-center">
-                    <a href="/imageComment" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                    <a href="/profile/comments/galleries/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                     <form action ="http://localhost/profile/galleries/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="getImage">
+                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                         <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
                     </form>
                     <form action ="http://localhost/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
@@ -35,7 +35,7 @@ if(!isset($_SESSION["id"])) {
                 <div>
                     <a href="/comments/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                     <form action ="http://localhost/profile/galleries/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="getImage">
+                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                         <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
                     </form>
                     <form action ="http://localhost/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
@@ -55,7 +55,7 @@ if(!isset($_SESSION["id"])) {
                 <div>
                     <a href="/comments/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                     <form action ="http://localhost/profile/galleries/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="getImage">
+                        <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                         <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
                     </form>
                 </div>
@@ -65,7 +65,7 @@ if(!isset($_SESSION["id"])) {
                 <div class="d-inline-block" >
                     <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
                     <div class="text-center">
-                        <a href="/comments/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block text-center" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                        <a href="/comments/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a></a>
                     </div>
                 </div>
             <?php endif; ?>
