@@ -1,12 +1,16 @@
 @extends("layout.main")
 <?php
 if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
+    header("Location: /home");
 }
 ?>
 @section("content")
     @if(($_SESSION["role"]==="moderator" && $result->userId === $_SESSION["id"]) || $_SESSION["role"]==="admin" || ($_SESSION["role"]==="user" && $result->userId === $_SESSION["id"]) )
+        @if(($_SESSION["role"]==="admin" && $result->userId !== $_SESSION["id"]))
+            <form action="/profile/update/gallery/{{$result->galleryId}}" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden"   >
+        @endif
         <form action="/profile/update/gallery/{{$result->galleryId}}" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden"   >
+
             <h2 class="mb-2 pt-4" style="text-align:center">Update</h2>
             <h3 style="text-align:center">{{$result->name}}</h3>
             <input type="hidden" name="galleryId" value="{{$result->galleryId}}">
@@ -52,7 +56,12 @@ if(!isset($_SESSION["id"])) {
                 </label>
             </div>
             <div class="m-3">
-                <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/galleries?page={{$_GET['page']}}">Cancel</a></button>
+                @if(($_SESSION["role"]==="admin" && $result->userId !== $_SESSION["id"]))
+                    <a class="btn btn-secondary d-inline-block" style="color: white" href="/profile/users/{{$result->userUsername}}?page={{$_GET['page']}}">Cancel</a>
+                @endif
+                @if(($_SESSION["role"]==="admin" && $result->userId == $_SESSION["id"]))
+                    <a class="btn btn-secondary d-inline-block"  style="color: white" href="/profile/galleries?page={{$_GET['page']}}">Cancel</a>
+                @endif
                 <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
             </div>
         </form>
@@ -92,7 +101,7 @@ if(!isset($_SESSION["id"])) {
                 </label>
             </div>
             <div class="m-3">
-                <a class="btn btn-secondary" style="color: white" href="http://localhost/profile/galleries?page={{$_GET['page']}}">Cancel</a>
+                <a class="btn btn-secondary" style="color: white" href="/profile/galleries?page={{$_GET['page']}}">Cancel</a>
                 <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
             </div>
         </form>

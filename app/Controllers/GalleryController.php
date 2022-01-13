@@ -23,17 +23,13 @@ class GalleryController
      */
     public function index()
     {
-        $pages = $this->gallery->getPages($_SESSION["id"]);
-        $result = $this->gallery->index($_SESSION["id"]);
+        $pages = $this->gallery->getPages($_SESSION["username"]);
+        $result = $this->gallery->index($_SESSION["username"]);
         Blade::render("/galleries", compact("result","pages"));
     }
 
-    public function indexComments()
+    public function indexComments($id)
     {
-        $id = $_SERVER["REQUEST_URI"];
-        $id = explode("/", $id);
-        $n = count($id);
-        $id = $id[$n - 1];
         $result = $this->gallery->indexComments($id);
         $gallery = $this->gallery->show($id);
         Blade::render("/galleryComments", compact("result","gallery"));
@@ -43,20 +39,14 @@ class GalleryController
      * If logged user role is "user" show galleries which are not hidden or nsfw
      * if logged user role is "admin" or "moderator" show all galleries
      */
-    public function notLoggedUserGalleries()
+    public function notLoggedUserGalleries($slug)
     {
-        $id = $_SERVER["REQUEST_URI"];
-        $id = explode("/", $id);
-        $n = count($id);
-        $id = $id[$n - 1];
-        $id = explode("?", $id);
-        $id = $id[0];
         if ($_SESSION["role"] === "user") {
-            $pages = $this->gallery->getPagesVisible($id);
-            $result = $this->gallery->indexHiddenOrNsfw($id);
+            $pages = $this->gallery->getPagesVisible($slug);
+            $result = $this->gallery->indexHiddenOrNsfw($slug);
         } else {
-            $result = $this->gallery->indexAll($id);
-            $pages = $this->gallery->getPages($id);
+            $result = $this->gallery->index($slug);
+            $pages = $this->gallery->getPages($slug);
         }
         Blade::render("/galleries", compact("result", "pages"));
     }
@@ -73,8 +63,8 @@ class GalleryController
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $name = trim($_POST["name"]);
-            $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
-            $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
+            $hidden = isset($_POST['hidden']) ? '1' : '0';
+            $nsfw = isset($_POST['nsfw'])  ? '1' : '0';
             $slug = str_replace(" ","-", $name);
             $slug = strtolower($slug);
             $galleryData =[
@@ -86,7 +76,7 @@ class GalleryController
                 "nsfw" => $nsfw
             ];
             $this->gallery->create($galleryData);
-            header("Location: http://localhost/profile/galleries?page=0");
+            header("Location: /profile/galleries?page=1");
         }
     }
 
@@ -98,31 +88,21 @@ class GalleryController
             "comment" => $_POST["comment"]
         ];
         $this->gallery->createComment($commentData);
-        if ($commentData["userId"] !== $_POST["userId"]) {
-            header("Location: http://localhost/profile/comments/users/{$_POST['userId']}/{$_POST["galleryId"]}");
-        } else{
-            header("Location: http://localhost/profile/comments/galleries/{$_POST["galleryId"]}");
-        }
+            header("Location: /comments/galleries/{$_POST["galleryId"]}");
     }
 
     /**
      * Update gallery of logger user and other users
      * @return void
      */
-    public function update()
+    public function update($id)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $galleryId = $_SERVER["REQUEST_URI"];
-            $galleryId = explode("/", $galleryId);
-            $n = count($galleryId);
-            $galleryId = $galleryId[$n - 1];
-            $galleryId =  explode("?", $galleryId);
-            $galleryId = $galleryId[0];
-            $result = $this->gallery->show( $galleryId);
+            $result = $this->gallery->show( $id);
             Blade::render("/updateGallery", compact("result"));
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $hidden = (isset($_POST['hidden']) == '1' ? '1' : '0');
-            $nsfw = (isset($_POST['nsfw']) == '1' ? '1' : '0');
+            $hidden = isset($_POST['hidden']) ? '1' : '0';
+            $nsfw = isset($_POST['nsfw'])  ? '1' : '0';
             $galleryData =[
                 "userId" => $_POST["userId"],
                 "galleryId"=> $_POST["galleryId"],
@@ -139,10 +119,10 @@ class GalleryController
             }
             $this->gallery->update($galleryData);
             if ($galleryData["userId"] == $_SESSION["id"]) {
-                header("Location: http://localhost/profile/galleries?page=0");
+                header("Location: /profile/galleries?page=1" );
             }
             if ($galleryData["userId"] !== $_SESSION["id"]) {
-                header("Location: http://localhost/profile/users/" . $galleryData["userId"] . "?page=0");
+                header("Location: /profile/users/" . $galleryData["userUsername"] . "?page=1");
             }
         }
     }
@@ -151,25 +131,17 @@ class GalleryController
      * Delete all data from gallery and aly other table with gallery_id
      * @return void
      */
-    public function delete()
+    public function delete($id)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $galleryId = $_SERVER["REQUEST_URI"];
-            $galleryId = explode("/", $galleryId);
-            $n = count($galleryId);
-            $galleryId = $galleryId[$n - 1];
-            $galleryId =  explode("?", $galleryId);
-            $galleryId = $galleryId[0];
-            $result = $this->gallery->show( $galleryId);
+            $result = $this->gallery->show($id);
             Blade::render("/deleteGallery", compact("result"));
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $userId = $_POST["userId"];
-            $galleryId = $_POST["galleryId"];
-            $this->gallery->delete($galleryId);
-            if ($userId === $_SESSION["id"]) {
-                header("Location: http://localhost/profile/galleries?page=0");
+            $this->gallery->delete($_POST["galleryId"]);
+            if ($_POST["userId"] === $_SESSION["id"]) {
+                header("Location: /profile/galleries?page=1");
             } else {
-                header("Location: http://localhost/profile/users/" . $userId . "?page=0");
+                header("Location: /profile/users/" . $_POST["userUsername"] . "?page=1");
             }
         }
     }

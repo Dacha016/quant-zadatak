@@ -1,6 +1,6 @@
 @extends("layout.main")
 @section("content")
-    <form action="http://localhost/profile/galleries/newGallery" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;
+    <form action="/profile/galleries/newGallery" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;
         width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-5 pt-4" style="text-align:center">Create gallery</h2>
         <?php
@@ -29,7 +29,7 @@
                 Nsfw
             </label>
         </div>
-        <a class="btn btn-secondary" style="color: white" href="http://localhost/profile">Cancel</a>
+        <a class="btn btn-secondary" style="color: white" href="/profile">Cancel</a>
         <button type="submit" class="btn btn-primary" style="border-radius:10px; width:20%;float:right; margin-right:15px">Create</button>
     </form>
 @endsection

@@ -1,6 +1,6 @@
 <?php
 if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
+    header("Location: /home");
 }
 ?>
 <?php $__env->startSection("content"); ?>
@@ -15,10 +15,10 @@ if(!isset($_SESSION["id"])) {
                 <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr>
                         <td style="text-align: center; border: 1px solid black ">
-                            <a href="/profile/users/<?php echo e($row->id); ?>?page=0"> <?php echo e($row->username); ?></a>
+                            <a href="/profile/users/<?php echo e($row->username); ?>?page=1"> <?php echo e($row->username); ?></a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
-                            <p><?php echo e($row->username); ?></p>
+                            <p><?php echo e($row->email); ?></p>
                         </td>
                     </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -36,7 +36,7 @@ if(!isset($_SESSION["id"])) {
                 <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr>
                         <td style="text-align: center; border: 1px solid black ">
-                            <a href="http://localhost/profile/users/<?php echo e($row->id); ?>?page=0"> <?php echo e($row->username); ?></a>
+                            <a href="/profile/users/<?php echo e($row->username); ?>?page=1"> <?php echo e($row->username); ?></a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p><?php echo e($row->email); ?></p>
@@ -51,7 +51,7 @@ if(!isset($_SESSION["id"])) {
                             <p><?php echo e($row->active); ?></p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/update/users/<?php echo e($row->id); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a></button>
+                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="/profile/update/users/<?php echo e($row->username); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a></button>
                         </td>
                     </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -59,32 +59,32 @@ if(!isset($_SESSION["id"])) {
         <?php endif; ?>
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
-                <?php if($_GET["page"] > 0): ?>
+                <?php if($_GET["page"] > 1): ?>
                     <li class="page-item" >
-                        <a class="page-link" href="?page=0" > << </a>
+                        <a class="page-link" href="?page=1" > << </a>
                     </li>
                 <?php endif; ?>
-                <?php if($_GET["page"] === 0): ?>
-                        <a class="page-link" href="?page=0" disabled> << </a>
+                <?php if($_GET["page"] === 1): ?>
+                        <a class="page-link" href="?page=1" disabled> << </a>
                     <?php endif; ?>
-                <?php if($_GET["page"] < 0): ?>
+                <?php if($_GET["page"] < 1): ?>
                     <li class="page-item disabled">
-                        <a class="page-link" href="?page=0">Previous</a>
+                        <a class="page-link" href="?page=1">Previous</a>
                     </li>
                 <?php endif; ?>
-                <?php if($_GET["page"] > 0): ?>
+                <?php if($_GET["page"] > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page= <?php echo e($_GET["page"] - 1); ?>">Previous</a>
+                        <a class="page-link" href="?page=<?php echo e($_GET["page"] - 1); ?>">Previous</a>
                     </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] > $pages): ?>
                     <li class="page-item disabled">
-                        <a class="page-link" href="?page= <?php echo e($_GET["page"]=$pages); ?>">Next</a>
+                        <a class="page-link" href="?page=<?php echo e($_GET["page"]=$pages); ?>">Next</a>
                     </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] < $pages): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page= <?php echo e($_GET["page"] + 1); ?>">Next</a>
+                        <a class="page-link" href="?page=<?php echo e($_GET["page"] + 1); ?>">Next</a>
                     </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] < $pages): ?>

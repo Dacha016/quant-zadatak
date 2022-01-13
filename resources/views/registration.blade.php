@@ -1,6 +1,6 @@
 @extends("layout.main")
 @section("content")
-    <form action="http://localhost/registration" method="post" class="p-2 align-self-center" style="margin-left: 35vW; margin-top:20Vh; border:black 1px solid;
+    <form action="/registration" method="post" class="p-2 align-self-center" style="margin-left: 35vW; margin-top:20Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-5 pt-4" style="text-align:center">Registration</h2>
         <?php
@@ -31,7 +31,7 @@
         </div>
 
         <div class="m-3">
-            <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="http://localhost/home">Cancel</a></button>
+            <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="/home">Cancel</a></button>
             <button class="btn btn-success d-inline-block float-right" type="submit">Register</button>
         </div>
 

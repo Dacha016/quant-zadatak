@@ -27,6 +27,7 @@ use Predis\Client;
  */
 class User extends Model
 {
+
     /**
      * Constructor
      */
@@ -114,16 +115,16 @@ class User extends Model
      * @param $id
      * @return mixed
      */
-     public function index($id): mixed
+     public function index($slug): mixed
      {
          $redis = new Client();
          $key = "users_page_{$_GET["page"]}";
          $limit =50;
-         $page = $_GET["page"];
+         $page = $_GET["page"]-1;
          $offset = abs($page * $limit);
          $this->conn->queryPrepare(
-             "select * from user where id != :id limit $limit offset $offset");
-         $this->conn->bindParam(":id", $id);
+             "select * from user where username != :slug limit $limit offset $offset");
+         $this->conn->bindParam(":slug", $slug);
          $this->conn->execute();
          if (!$redis->exists($key)) {
              $users = [];
@@ -140,11 +141,11 @@ class User extends Model
      * @param $id
      * @return mixed
      */
-    public function show($id): mixed
+    public function show($slug): mixed
     {
         $this->conn->queryPrepare(
-            "select * from user where id = :id");
-        $this->conn->bindParam(":id", $id);
+            "select * from user where username = :slug");
+        $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
         return $this->conn->single();
     }
@@ -152,9 +153,9 @@ class User extends Model
     /**
      * @param $userData
      * @param $id
-     * @return mixed
+
      */
-    public function updateAccount($userData,$id): mixed
+    public function updateAccount($userData,$id)
     {
         $this->conn->queryPrepare(
             "update user set 
@@ -166,7 +167,8 @@ class User extends Model
         $this->conn->bindParam(":email", $userData["email"]);
         $this->conn->bindParam(":password", $userData["password"]);
         $this->conn->bindParam(":id", $id);
-        return $this->conn->execute();
+        $this->conn->execute();
+        $_SESSION["username"] = $userData["username"];
     }
 
     /**
@@ -201,7 +203,7 @@ class User extends Model
         $this->conn->execute();
         $result = $this->conn->single();
         $rows = $result->row;
-        return floor($rows/$limit);
+        return ceil($rows/$limit);
     }
 
     /**

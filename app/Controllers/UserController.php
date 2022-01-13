@@ -87,23 +87,20 @@ class UserController
             }
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
             $this->user->updateAccount($userData, $id);
-            header("Location: http://localhost/profile");
+            header("Location: /profile");
         }
     }
-    public function updateUser()
+    public function updateUser($slug)
     {
-        $id = $_SERVER["REQUEST_URI"];
-        $id = explode("/", $id);
-        $n = count($id);
-        $id = $id[$n - 1];
-        $result = $this->user->show($id);
+
+        $result = $this->user->show($slug);
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/updateUsers", compact("result"));
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $_POST["nsfw"] = (isset($_POST['nsfw']) == '1' ? '1' : '0');
-            $_POST["active"] = (isset($_POST['active']) == '1' ? '1' : '0');
+            $_POST["nsfw"] = isset($_POST['nsfw']) ? '1' : '0';
+            $_POST["active"] = isset($_POST['active']) ? '1' : '0';
             $updateData = [
                 "role" => trim($_POST["role"]),
                 "nsfw" => (int)$_POST["nsfw"],
@@ -116,7 +113,7 @@ class UserController
                 $updateData["moderatorsUsername"] = $_SESSION["username"];
                 $this->user->createLogg($updateData);
             }
-            header("Location: http://localhost/profile/users?page=" . $_POST["page"]);
+            header("Location: /profile/users?page=" . $_POST["page"]);
         }
     }
 }

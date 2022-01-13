@@ -12,6 +12,7 @@ abstract class Model
     {
         $this->conn = new Connection;
     }
+
     public abstract function index($id);
     public abstract function show($id);
 }

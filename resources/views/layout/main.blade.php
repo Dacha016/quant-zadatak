@@ -19,10 +19,10 @@
                     <a class="nav-link" href="http://localhost/logout">Logout </a>
                 </li>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="http://localhost/profile/users?page=0">Users </a>
+                    <a class="nav-link" href="http://localhost/profile/users?page=1">Users </a>
                 </li>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="http://localhost/profile/galleries?page=0">Galleries </a>
+                    <a class="nav-link" href="http://localhost/profile/galleries?page=1">Galleries </a>
                 </li>
                 <li class="nav-item active align-self-center" >
                     <a class="nav-link" href="http://localhost/profile/galleries/newGallery"> New Gallery </a>

@@ -1,11 +1,11 @@
 @extends("layout.main")
 <?php
 if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
+    header("Location: /home");
 }
 ?>
 @section("content")
-    <form action="http://localhost/profile/update/users/{{$result->id}}" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden"  >
+    <form action="/profile/update/users/{{$result->username}}" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden"  >
         <h2 class="mb-2 pt-4" style="text-align:center">Update</h2>
         <h3 style="text-align:center">{{$result->username}}</h3>
         <?php
@@ -29,7 +29,7 @@ if(!isset($_SESSION["id"])) {
                 @if(!$result->nsfw)
                     <input class="form-check-input" type="checkbox" id="nsfw" name="nsfw" value="{{$result->nsfw}}">
                 @endif
-                    <label >Hidden</label>
+                    <label >Nsfw</label>
             </label>
         </div>
 
@@ -41,11 +41,11 @@ if(!isset($_SESSION["id"])) {
                 @if(!$result->active)
                     <input class="form-check-input" type="checkbox" id="active" name="active" value="{{$result->active}}">
                 @endif
-                <label >Nsfw</label>
+                <label >Active</label>
             </label>
         </div>
         <div class="m-3">
-            <a class="btn btn-secondary" style="color: white" href="http://localhost/profile/users?page={{$_GET['page']}}">Cancel</a>
+            <a class="btn btn-secondary" style="color: white" href="/profile/users?page={{$_GET['page']}}">Cancel</a>
             <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
         </div>
     </form>

@@ -38,18 +38,21 @@ class AuthController
                Blade::render("/registration", compact("error"));
                 exit();
             }
+
             //Check if username contain letters or numbers
             if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
                 $error = "The username may contain only letters and numbers";
                 Blade::render("/registration", compact("error"));
                 exit();
             }
+
             //Email check
             if (!filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
                 $error = "Enter the correct email";
               Blade::render("/registration", compact("error"));
                 exit();
             }
+
             //password length and password mach
             if (strlen($userData["password"]) < 6) {
                 $error = "Password must be longer than 6 characters";
@@ -60,20 +63,20 @@ class AuthController
                Blade::render("/registration", compact("error"));
                 exit();
             }
+
             //Check if user exist
             if ($this->user->find($userData["username"], $userData["email"])) {
                 $error = "User already exists";
                 Blade::render("/registration", compact("error"));
                 exit();
             }
+
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
             $userData["role"] = $this->role;
             $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 30), 6));
-            // Insert into database
-            if ($this->user->register($userData)) {
-                header("Location: http://localhost/login");
-                Blade::render("/login");
-            }
+            $this->user->register($userData);
+            header("Location: /login");
+            Blade::render("/login");
         }
     }
 
@@ -87,41 +90,44 @@ class AuthController
                 "username" => trim($_POST["username"]),
                 "password" => trim($_POST["password"]),
             ];
+
             if (empty($_POST["username"]) && empty($_POST["password"])) {
                 $error = "Empty fields are not allowed!";
                 Blade::render("/login", compact("error"));
                 exit();
             }
+
             if (empty($_POST["username"]) && !empty($_POST["password"])) {
                 $error = "Please enter username!";
                 Blade::render("/login", compact("error"));
                 exit();
             }
+
             if (!empty($_POST["username"]) && empty($_POST["password"])) {
                 $error = "Please enter password!";
                 Blade::render("/login", compact("error"));
                 exit();
             }
+
             if(!$this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
                 $error = "Username and username do not match";
                 Blade::render("/login", compact("error"));
                 exit();
             }
+
             $loggedUser = $this->user->login($userData["username"], $userData["password"]);
-            if (isset($loggedUser)) {
-                session_start();
-                $_SESSION["id"] = $loggedUser->id;
-                $_SESSION["username"] = $loggedUser->username;
-                $_SESSION["role"] = $loggedUser->role;
-                header("Location: http://localhost/profile");
-                Blade::render("/profile");
-            }
+            session_start();
+            $_SESSION["id"] = $loggedUser->id;
+            $_SESSION["username"] = $loggedUser->username;
+            $_SESSION["role"] = $loggedUser->role;
+            header("Location: /profile");
+            Blade::render("/profile");
         }
     }
     public function logout()
     {
         session_unset();
         session_destroy();
-        header("Location: http://localhost/home");
+        header("Location: /home");
     }
 }

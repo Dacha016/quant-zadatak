@@ -1,15 +1,18 @@
 @extends("layout.main")
 <?php
 if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
+    header("Location: /home");
 }
 ?>
 @section("content")
 <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
 <div style="margin: 20px auto; max-width: 1000px; text-align: center">
-    <img src={{$result->file_name}} class="mt-2" alt="{{$result->filename}}">
+    <img style=" width: 35vw; height: 70vh" src={{$result->file_name}} class="mt-2" alt="{{$result->filename}}">
     <div>
-        <form action ="/update/images/{{$result->imageId}}" method="post" class="d-inline-block m-1">
+        @if($result->userId !== $_SESSION["id"])
+            <form action ="/update/images/{{$result->imageId}}" method="post" class="d-inline-block m-1">
+        @endif
+        <form action ="/profile/update/images/{{$result->imageId}}" method="post" class="d-inline-block m-1">
             <input type="hidden" value="{{$result->userId}}" name="userId">
             <input type="hidden" value="{{$result->username}}" name="userUsername">
             @if(isset($result->galleryId))

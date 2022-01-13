@@ -1,11 +1,11 @@
 @extends("layout.main")
 <?php
 if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
+    header("Location: /home");
 }
 ?>
 @section("content")
-    <form action="http://localhost/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;
+    <form action="/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-5 pt-4" style="text-align:center">Update account</h2>
         <?php
@@ -37,7 +37,7 @@ if(!isset($_SESSION["id"])) {
         </div>
 
         <div class="m-3">
-            <a class="btn btn-secondary" style="color: white" href="http://localhost/profile">Cancel</a>
+            <a class="btn btn-secondary" style="color: white" href="/profile">Cancel</a>
             <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
         </div>
     </form>

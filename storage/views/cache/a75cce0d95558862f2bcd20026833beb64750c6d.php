@@ -1,6 +1,6 @@
 <?php
 if(!isset($_SESSION["id"])) {
-header("Location: http://localhost/home");
+header("Location: /home");
 }
 ?>
 <?php $__env->startSection("content"); ?>
@@ -34,19 +34,19 @@ header("Location: http://localhost/home");
                             <p><?php echo e($row->nsfw); ?></p>
                         </td>
                         <td>
-                            <a href="/profile/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                            <a href="/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                         <td>
-                            <a  class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
+                            <a  class="btn btn-info d-inline-block" style="color: white" href="/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
                         </td>
                         <td>
-                            <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
+                            <a class="btn btn-danger d-inline-block" style="color: white" href="/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
                         </td>
                     <?php endif; ?>
                         <?php if($_SESSION["role"] === "admin" && $row->userId !== $_SESSION["id"]): ?>
 
                             <td style="margin: 0 auto; border: 1px solid black">
-                                <a href="/profile/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>?page=0"><?php echo e($row->name); ?></a>
+                                <a href="/profile/users/<?php echo e($row->username); ?>/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><?php echo e($row->name); ?></a>
                             </td>
                             <td style="text-align: center; border: 1px solid black ">
                                 <p><?php echo e($row->description); ?></p>
@@ -61,13 +61,13 @@ header("Location: http://localhost/home");
                                 <p><?php echo e($row->nsfw); ?></p>
                             </td>
                             <td>
-                                <a href="/profile/comments/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                                <a href="/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                             </td>
                             <td>
-                                <a class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
+                                <a class="btn btn-info d-inline-block" style="color: white" href="/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
                             </td>
                             <td>
-                                <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
+                                <a class="btn btn-danger d-inline-block" style="color: white" href="/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
                             </td>
                         <?php endif; ?>
                     <?php if($row->userId === $_SESSION["id"] && $_SESSION["role"] === "moderator"): ?>
@@ -88,18 +88,18 @@ header("Location: http://localhost/home");
                             <p><?php echo e($row->nsfw); ?></p>
                         </td>
                         <td>
-                            <a href="/profile/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                            <a href="/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                         <td>
-                            <a  class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
+                            <a  class="btn btn-info d-inline-block" style="color: white" href="/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
                         </td>
                         <td>
-                            <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
+                            <a class="btn btn-danger d-inline-block" style="color: white" href="/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
                         </td>
                     <?php endif; ?>
                     <?php if($row->userId !== $_SESSION["id"] && $_SESSION["role"] === "moderator"): ?>
                         <td style="margin: 0 auto; border: 1px solid black">
-                            <a href="/profile/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>?page=0"><?php echo e($row->name); ?></a>
+                            <a href="/profile/users/<?php echo e($row->username); ?>/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><?php echo e($row->name); ?></a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p><?php echo e($row->description); ?></p>
@@ -114,17 +114,17 @@ header("Location: http://localhost/home");
                             <p><?php echo e($row->nsfw); ?></p>
                         </td>
                         <td>
-                            <a href="/profile/comments/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                            <a href="/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                         <td>
-                            <a class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
+                            <a class="btn btn-info d-inline-block" style="color: white" href="/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
                         </td>
 
                     <?php endif; ?>
                     <?php if($row->userId === $_SESSION["id"] && $_SESSION["role"] === "user"): ?>
 
                         <td style="margin: 0 auto; border: 1px solid black">
-                            <a href="/profile/galleries/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a>
+                            <a href="/profile/galleries/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><?php echo e($row->name); ?></a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p><?php echo e($row->description); ?></p>
@@ -139,18 +139,18 @@ header("Location: http://localhost/home");
                             <p><?php echo e($row->nsfw); ?></p>
                         </td>
                         <td>
-                            <a href="/profile/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
+                            <a href="/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
                         </td>
                         <td>
-                            <a  class="btn btn-info d-inline-block" style="color: white" href="http://localhost/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
+                            <a  class="btn btn-info d-inline-block" style="color: white" href="/profile/update/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-pen"></i></a>
                         </td>
                         <td>
-                            <a class="btn btn-danger d-inline-block" style="color: white" href="http://localhost/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
+                            <a class="btn btn-danger d-inline-block" style="color: white" href="/delete/gallery/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><i class="fas fa-trash"></i></a>
                         </td>
                     <?php endif; ?>
                     <?php if($row->userId !== $_SESSION["id"] && $_SESSION["role"] === "user"): ?>
                         <td style="margin: 0 auto; border: 1px solid black">
-                            <a href="/profile/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>"><?php echo e($row->name); ?></a>
+                            <a href="/profile/users/<?php echo e($row->username); ?>/<?php echo e($row->galleryId); ?>?page=<?php echo e($_GET['page']); ?>"><?php echo e($row->name); ?></a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p><?php echo e($row->description); ?></p>
@@ -165,42 +165,39 @@ header("Location: http://localhost/home");
                             <p><?php echo e($row->nsfw); ?></p>
                         </td>
                         <td>
-                            <a href="/profile/comments/users/<?php echo e($row->userId); ?>/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>
-                        </td>
+                            <a href="/comments/galleries/<?php echo e($row->galleryId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class=" d-block fas fa-comment"></i></a>                        </td>
                     <?php endif; ?>
                 </tr>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </table>
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
-                <?php if($_GET["page"] > 0): ?>
+                <?php if($_GET["page"] > 1): ?>
                     <li class="page-item" >
-                        <a class="page-link" href="?page=0" > << </a>
+                        <a class="page-link" href="?page=1" > << </a>
                     </li>
                 <?php endif; ?>
-                <?php if($_GET["page"] === 0): ?>
-                    <li class="page-item" disabled>
-                        <a class="page-link" href="?page=0" > << </a>
-                    </li>
+                <?php if($_GET["page"] === 1): ?>
+                    <a class="page-link" href="?page=1" disabled> << </a>
                 <?php endif; ?>
-                <?php if($_GET["page"] < 0): ?>
+                <?php if($_GET["page"] < 1): ?>
                     <li class="page-item disabled">
-                        <a class="page-link" href="?page=0">Previous</a>
+                        <a class="page-link" href="?page=1">Previous</a>
                     </li>
                 <?php endif; ?>
-                <?php if($_GET["page"] > 0): ?>
+                <?php if($_GET["page"] > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page= <?php echo e($_GET["page"] - 1); ?>">Previous</a>
+                        <a class="page-link" href="?page=<?php echo e($_GET["page"] - 1); ?>">Previous</a>
                     </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] > $pages): ?>
                     <li class="page-item disabled">
-                        <a class="page-link" href="?page= <?php echo e($_GET["page"]=$pages); ?>">Next</a>
+                        <a class="page-link" href="?page=<?php echo e($_GET["page"]=$pages); ?>">Next</a>
                     </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] < $pages): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page= <?php echo e($_GET["page"] + 1); ?>">Next</a>
+                        <a class="page-link" href="?page=<?php echo e($_GET["page"] + 1); ?>">Next</a>
                     </li>
                 <?php endif; ?>
                 <?php if($_GET["page"] < $pages): ?>

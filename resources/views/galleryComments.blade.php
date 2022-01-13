@@ -1,7 +1,7 @@
 @extends("layout.main")
 <?php
 if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
+    header("Location: /home");
 }
 ?>
 @section("content")

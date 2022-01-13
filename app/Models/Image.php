@@ -19,7 +19,7 @@ class Image extends Model
     {
         $redis = new Client();
         $key = "home_image";
-        $this->conn->queryPrepare("select file_name from image where hidden = 0 and nsfw = 0 limit 50") ;
+        $this->conn->queryPrepare("select file_name, id as 'imageId' from image where hidden = 0 and nsfw = 0 limit 150") ;
         $this->conn->execute();
         if (!$redis->exists($key)) {
             $images = [];
@@ -82,9 +82,10 @@ class Image extends Model
         $redis = new Client();
         $key = "image_of_gallery_$id";
         $this->conn->queryPrepare(
-            "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', g.id as 'galleryId'  from image_gallery
+            "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', u.username as 'username',  g.id as 'galleryId'  from image_gallery
                 inner join image i on image_gallery.image_id = i.id     
                 inner join gallery g on image_gallery.gallery_id = g.id
+                inner join user u on i.user_id = u.id
                 where image_gallery.gallery_id =:id");
         $this->conn->bindParam(":id",$id);
         $this->conn->execute();
@@ -160,6 +161,9 @@ class Image extends Model
      */
     public function delete($id)
     {
+        $redis = new Client();
+        $redis->del( "image_of_gallery_{$_POST['galleryId']}");
+        $redis->del( "user_{$_SESSION['id']}_profile_image");
         $this->conn->queryPrepare("DELETE FROM image WHERE id =:id");
         $this->conn->bindParam(":id",$id);
         $this->conn->execute();

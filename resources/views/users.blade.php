@@ -1,7 +1,7 @@
 @extends("layout.main")
 <?php
 if(!isset($_SESSION["id"])) {
-    header("Location: http://localhost/home");
+    header("Location: /home");
 }
 ?>
 @section("content")
@@ -16,10 +16,10 @@ if(!isset($_SESSION["id"])) {
                 @foreach($result as $row)
                     <tr>
                         <td style="text-align: center; border: 1px solid black ">
-                            <a href="/profile/users/{{$row->id}}?page=0"> {{$row->username}}</a>
+                            <a href="/profile/users/{{$row->username}}?page=1"> {{$row->username}}</a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
-                            <p>{{$row->username}}</p>
+                            <p>{{$row->email}}</p>
                         </td>
                     </tr>
                 @endforeach
@@ -37,7 +37,7 @@ if(!isset($_SESSION["id"])) {
                 @foreach($result as $row)
                     <tr>
                         <td style="text-align: center; border: 1px solid black ">
-                            <a href="http://localhost/profile/users/{{$row->id}}?page=0"> {{$row->username}}</a>
+                            <a href="/profile/users/{{$row->username}}?page=1"> {{$row->username}}</a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p>{{$row->email}}</p>
@@ -52,7 +52,7 @@ if(!isset($_SESSION["id"])) {
                             <p>{{$row->active}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="http://localhost/profile/update/users/{{$row->id}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a></button>
+                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="/profile/update/users/{{$row->username}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a></button>
                         </td>
                     </tr>
                 @endforeach
@@ -60,32 +60,32 @@ if(!isset($_SESSION["id"])) {
         @endif
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
-                @if($_GET["page"] > 0)
+                @if($_GET["page"] > 1)
                     <li class="page-item" >
-                        <a class="page-link" href="?page=0" > << </a>
+                        <a class="page-link" href="?page=1" > << </a>
                     </li>
                 @endif
-                @if($_GET["page"] === 0)
-                        <a class="page-link" href="?page=0" disabled> << </a>
+                @if($_GET["page"] === 1)
+                        <a class="page-link" href="?page=1" disabled> << </a>
                     @endif
-                @if($_GET["page"] < 0)
+                @if($_GET["page"] < 1)
                     <li class="page-item disabled">
-                        <a class="page-link" href="?page=0">Previous</a>
+                        <a class="page-link" href="?page=1">Previous</a>
                     </li>
                 @endif
-                @if($_GET["page"] > 0)
+                @if($_GET["page"] > 1)
                     <li class="page-item">
-                        <a class="page-link" href="?page= {{$_GET["page"] - 1 }}">Previous</a>
+                        <a class="page-link" href="?page={{$_GET["page"] - 1 }}">Previous</a>
                     </li>
                 @endif
                 @if($_GET["page"] > $pages)
                     <li class="page-item disabled">
-                        <a class="page-link" href="?page= {{$_GET["page"]=$pages }}">Next</a>
+                        <a class="page-link" href="?page={{$_GET["page"]=$pages }}">Next</a>
                     </li>
                 @endif
                 @if($_GET["page"] < $pages)
                     <li class="page-item">
-                        <a class="page-link" href="?page= {{$_GET["page"] + 1 }}">Next</a>
+                        <a class="page-link" href="?page={{$_GET["page"] + 1 }}">Next</a>
                     </li>
                 @endif
                 @if($_GET["page"] < $pages)
