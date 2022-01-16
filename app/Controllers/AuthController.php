@@ -10,15 +10,9 @@ if (!session_start()) {
     session_start();
 }
 
-class AuthController
+class AuthController extends User
 {
-    protected User $user;
-    protected string $role = "user";
 
-    public function __construct()
-    {
-        $this->user = new User;
-    }
     public function registration()
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
@@ -65,16 +59,18 @@ class AuthController
             }
 
             //Check if user exist
-            if ($this->user->find($userData["username"], $userData["email"])) {
+            if ($this->show($userData["username"])) {
                 $error = "User already exists";
                 Blade::render("/registration", compact("error"));
                 exit();
             }
 
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-            $userData["role"] = $this->role;
+            $userData["role"] = $this->getRole();
+            $userData["nsfw"] = $this->getNsfw();
+            $userData["active"] = $this->getActive();
             $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 30), 6));
-            $this->user->register($userData);
+            $this->register($userData);
             header("Location: /login");
             Blade::render("/login");
         }
@@ -109,13 +105,13 @@ class AuthController
                 exit();
             }
 
-            if(!$this->user->findByUsernameAndPassword($userData["username"], $userData["password"])) {
-                $error = "Username and username do not match";
+            if(!$this->findByUsername($userData["username"], $userData["password"])) {
+                $error = "Username and password do not match";
                 Blade::render("/login", compact("error"));
                 exit();
             }
 
-            $loggedUser = $this->user->login($userData["username"], $userData["password"]);
+            $loggedUser = $this->loginUser($userData["username"], $userData["password"]);
             session_start();
             $_SESSION["id"] = $loggedUser->id;
             $_SESSION["username"] = $loggedUser->username;

@@ -13,6 +13,6 @@ abstract class Model
         $this->conn = new Connection;
     }
 
-    public abstract function index($id);
-    public abstract function show($id);
+    protected abstract function index($username);
+    protected abstract function show($id);
 }

@@ -1,45 +1,40 @@
 
-//DELETE TABLE
 DROP TABLE doctrine_migration_versions;
 
-//add AUTO_INCREMENT
 ALTER TABLE user
     CHANGE id id INT AUTO_INCREMENT;
 
-// user username
 ALTER TABLE user
     CHANGE username username VARCHAR(50) NOT NULL UNIQUE;
 
-//user email
 ALTER TABLE user
-    CHANGE email email VARCHAR(50) NOT NULL UNIQUE
+    CHANGE email email VARCHAR(50) NOT NULL UNIQUE;
 
-//user password
+
 ALTER TABLE user
     CHANGE password password VARCHAR(255) NOT NULL;
 
-//user apy_key
+
 ALTER TABLE user
     RENAME COLUMN apy_key TO api_key;
 
-//user role
+
 ALTER TABLE user
     CHANGE role role VARCHAR(20) DEFAULT 'user';
 
-// add nsfw
-ALTER TABLE user
-ADD nsfw int DEFAULT 0
 
-// add active
 ALTER TABLE user
-ADD active int DEFAULT 0
-//change to pictures
+ADD nsfw int DEFAULT 0;
+
+
+ALTER TABLE user
+ADD active int DEFAULT 0;
+
 UPDATE image SET file_name = concat('https://picsum.photos/200/300?random=', id);
 
 ALTER TABLE user
     CHANGE id id INT AUTO_INCREMENT;
 
-// create table moderators_logging
 create table moderator_logging
 (
     id int primary key auto_increment not null,
@@ -54,56 +49,58 @@ create table moderator_logging
     image_name varchar(150) null,
     image_hidden int null,
     image_nsfw int null
-)
+);
 
-
-//drop image_gallery constrains
-alter table image_gallery
-drop constraint FK_D23B2FE63DA5256D
 
 alter table image_gallery
-drop constraint FK_D23B2FE64E7AF8F
+drop constraint FK_D23B2FE63DA5256D;
 
-// alter table image_gallery
+alter table image_gallery
+drop constraint FK_D23B2FE64E7AF8F;
 
 alter table image_gallery
 add constraint FK_D23B2FE64E7AF8F
 foreign key (gallery_id)
 references gallery(id)
-on delete cascade
+on delete cascade;
 
 alter table image_gallery
 add constraint FK_D23B2FE63DA5256D
 foreign key (image_id)
 references image(id)
-on delete cascade
+on delete cascade;
 
-// drop image constrain
+
 alter table image
-drop constraint FK_C53D045FA76ED395
-//
+drop constraint FK_C53D045FA76ED395;
+
 alter table image
 add constraint FK_C53D045FA76ED395
 foreign key (user_id)
 references user(id)
-on delete cascade
+on delete cascade;
 
 
 alter table comment
-drop constraint FK_9474526C3DA5256D
+drop constraint FK_9474526C3DA5256D;
 
 alter table comment
 add constraint FK_9474526C3DA5256D
 foreign key (image_id)
 references image(id)
-on delete cascade
+on delete cascade;
 
 
 alter table comment
-drop constraint FK_9474526C4E7AF8F
+drop constraint FK_9474526C4E7AF8F;
 
 alter table comment
 add constraint FK_9474526C4E7AF8F
 foreign key (gallery_id)
 references gallery(id)
-on delete cascade
+on delete cascade;
+
+
+create index username_index on user (username);
+create index gallery_slug_index on gallery (slug);
+create index gallery_id_index on image_gallery (gallery_id)

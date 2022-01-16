@@ -8,30 +8,23 @@ if (!session_start()) {
 use App\Models\Gallery;
 use App\Blade\Blade;
 
-class GalleryController
+class GalleryController extends Gallery
 {
-
-    protected Gallery $gallery;
-
-    public function __construct()
-    {
-        $this->gallery = new Gallery;
-    }
     /**
      * List of logged user galleries
      * @return void
      */
-    public function index()
+    public function indexGalleries()
     {
-        $pages = $this->gallery->getPages($_SESSION["username"]);
-        $result = $this->gallery->index($_SESSION["username"]);
+        $pages = $this->getPages($_SESSION["username"]);
+        $result = $this->index($_SESSION["username"]);
         Blade::render("/galleries", compact("result","pages"));
     }
 
-    public function indexComments($id)
+    public function indexGalleryComments($id)
     {
-        $result = $this->gallery->indexComments($id);
-        $gallery = $this->gallery->show($id);
+        $result = $this->indexComments($id);
+        $gallery = $this->show($id);
         Blade::render("/galleryComments", compact("result","gallery"));
     }
     /**
@@ -42,11 +35,11 @@ class GalleryController
     public function notLoggedUserGalleries($slug)
     {
         if ($_SESSION["role"] === "user") {
-            $pages = $this->gallery->getPagesVisible($slug);
-            $result = $this->gallery->indexHiddenOrNsfw($slug);
+            $pages = $this->getPagesVisible($slug);
+            $result = $this->indexHiddenOrNsfw($slug);
         } else {
-            $result = $this->gallery->index($slug);
-            $pages = $this->gallery->getPages($slug);
+            $result = $this->index($slug);
+            $pages = $this->getPages($slug);
         }
         Blade::render("/galleries", compact("result", "pages"));
     }
@@ -75,7 +68,7 @@ class GalleryController
                 "hidden" => $hidden,
                 "nsfw" => $nsfw
             ];
-            $this->gallery->create($galleryData);
+            $this->createGallery($galleryData);
             header("Location: /profile/galleries?page=1");
         }
     }
@@ -87,7 +80,7 @@ class GalleryController
             "userId" => $_SESSION["id"],
             "comment" => $_POST["comment"]
         ];
-        $this->gallery->createComment($commentData);
+        $this->createGalleryComment($commentData);
             header("Location: /comments/galleries/{$_POST["galleryId"]}");
     }
 
@@ -98,7 +91,7 @@ class GalleryController
     public function update($id)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $result = $this->gallery->show( $id);
+            $result = $this->show( $id);
             Blade::render("/updateGallery", compact("result"));
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $hidden = isset($_POST['hidden']) ? '1' : '0';
@@ -115,9 +108,9 @@ class GalleryController
                 "sessionName" =>$_SESSION["username"]
             ];
             if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
-                $this->gallery->createLogg($galleryData);
+                $this->createLogg($galleryData);
             }
-            $this->gallery->update($galleryData);
+            $this->updateGallery($galleryData);
             if ($galleryData["userId"] == $_SESSION["id"]) {
                 header("Location: /profile/galleries?page=1" );
             }
@@ -134,10 +127,10 @@ class GalleryController
     public function delete($id)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $result = $this->gallery->show($id);
+            $result = $this->show($id);
             Blade::render("/deleteGallery", compact("result"));
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $this->gallery->delete($_POST["galleryId"]);
+            $this->deleteGallery($_POST["galleryId"]);
             if ($_POST["userId"] === $_SESSION["id"]) {
                 header("Location: /profile/galleries?page=1");
             } else {

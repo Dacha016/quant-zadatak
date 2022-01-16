@@ -7,6 +7,13 @@ if(!isset($_SESSION["id"])) {
 @section("content")
     <div style="margin: 20px auto; max-width: 1200px;">
         <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
+        <form id="imageForm" action ="/addImage" method="post" class="p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
+            <input type="file" id="fileName" name="fileName" />
+            <input class="float-right" type="submit" id="submit" name="submit" value="Upload" />
+        </form>
+        @if(!$result)
+            <h3 class="d-block " style="text-align:center">ADD IMAGE</h3>
+        @endif
         @foreach($result as $row)
             <div class="d-inline-block m-3" >
                 <div>
@@ -15,10 +22,8 @@ if(!isset($_SESSION["id"])) {
                     </a>
                 </div>
                 <div class="text-center">
-                    <form action ="/profile/images/{{$row->imageId}}" method="post" class="d-inline-block m-1">
-                        <input type="hidden" value="{{$row->imageId}}" name="imageId">
-                        <button class="btn btn-info d-inline-block" type="submit"><i class="fas fa-pen"></i></button>
-                    </form>
+                    <a href="/profile/images/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px"><i class="fas fa-pen"></i></a>
+
                     <form action ="/delete/image/{{$row->imageId}}" method="post" class="d-inline-block m-1">
                         <input type="hidden" value="{{$row->imageId}}" name="imageId">
                         <button class="btn btn-danger" type="submit"><i class="fas fa-trash"></i></button>
@@ -28,3 +33,4 @@ if(!isset($_SESSION["id"])) {
         @endforeach
     </div>
 @endsection
+<script type="text/javascript" src="../js/index.js"></script>

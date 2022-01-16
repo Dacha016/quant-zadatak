@@ -26,26 +26,26 @@ $router->get('/logout', "AuthController@logout");
 $router->get('/profile', "ImageController@indexProfile"); // images on the main page
 $router->get("/profile/galleries/newGallery","GalleryController@create"); // get form
 $router->post("/profile/galleries/newGallery","GalleryController@create"); //post data
-$router->get('/profile/galleries', "GalleryController@index"); // galleries in profile
-$router->get('/profile/galleries/{id}', "ImageController@index");  //images from gallery
-$router->post("/profile/galleries/{id}/{id}", "ImageController@showImageInGallery"); //get single image from gallery
-$router->post("/profile/images/{id}", "ImageController@show"); //get single image from profile
+$router->get('/profile/galleries', "GalleryController@indexGalleries"); // galleries in profile
+$router->get("/profile/galleries/{id}/{id}", "ImageController@showImageInGallery"); //get single image from gallery
+$router->get('/profile/galleries/{id}', "ImageController@indexImage");  //images from gallery
+$router->get("/profile/images/{id}", "ImageController@showImage"); //get single image from profile
 $router->post("/profile/update/images/{id}", "ImageController@update");  //update image from logged user gallery
 // not logged user
-$router->get("/profile/users", "UserController@index");// other users
-$router->post("/profile/users/{slug}/{slug}/{id}", "ImageController@showImageInGallery"); // no logged user get single image
+$router->get("/profile/users", "UserController@indexUsers");// other users
+$router->get("/profile/users/{slug}/{id}/{id}", "ImageController@showImageInNotLoggedUserGallery");//not logged user image
 $router->get("/profile/users/{slug}/{id}", "ImageController@notLoggedUserImages");  //images from gallery
 $router->get("/profile/users/{slug}", "GalleryController@notLoggedUserGalleries"); // Not logged user galleries
-$router->post("/update/images/{id}", "ImageController@notLoggedUserUpdate");  //update image from logged user gallery
+$router->post("/update/images/{id}", "ImageController@update");  //update image from logged user gallery
 
 //image comments
 $router->get("/home/images/{id}", "ImageController@indexComments");
-$router->get("/comments/users/{slug}/{id}/{id}", "ImageController@notLoggedUserGalleryComments"); // comments
+$router->get("/comments/users/{slug}/{id}/{id}", "ImageController@notLoggedUserImageComments"); // comments
 $router->get("/profile/comments/images/{id}", "ImageController@indexComments"); // comments of images on profile page
-$router->get("/profile/comments/galleries/{id}/{id}", "ImageController@loggedUserGalleryComments"); // comments of images in galleries
+$router->get("/profile/comments/galleries/{id}/{id}", "ImageController@loggedUserImageComments"); // comments of images in galleries
 $router->post('/image/comments', "ImageController@createComments"); //create comment
 // gallery comments
-$router->get("/comments/galleries/{id}", "GalleryController@indexComments"); // comments of  gallery
+$router->get("/comments/galleries/{id}", "GalleryController@indexGalleryComments"); // comments of  gallery
 $router->get("/profile/comments/users/{slug}/{id}", "GalleryController@indexComments"); // comments of other users gallery
 $router->post('/gallery/comment', "GalleryController@createComment"); //create comment
 
@@ -62,3 +62,6 @@ $router->post('/delete/image/{id}', "ImageController@delete");
 $router->get('/delete/gallery/{id}', "GalleryController@delete");
 $router->post('/delete/gallery/{id}', "GalleryController@delete");
 
+
+$router->post("/addImage/galleries/{id}", "ImageController@insertInGallery");
+$router->post("/addImage", "ImageController@create");

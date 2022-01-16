@@ -12,7 +12,6 @@
  */
 namespace App\Models;
 
-use PDOException;
 use Predis\Client;
 
 
@@ -28,82 +27,97 @@ use Predis\Client;
 class User extends Model
 {
 
+    private string $username;
+    private string $email;
+    private string $password;
+    private string $api_key;
+    private string $role = "user";
+    private int $nsfw = 0;
+    private int $active = 0;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-       parent::__construct();
+        parent::__construct();
+    }
+
+    public function getUsername():string
+    {
+        return $this->username;
+    }
+
+    public function getEmail():string
+    {
+        return $this->email;
+    }
+
+    public function getPassword():string
+    {
+        return $this->password;
+    }
+
+    public function getApi_key():string
+    {
+        return $this->api_key;
+    }
+
+    public function getRole():string
+    {
+        return $this->role;
+    }
+
+    public function getNsfw():int
+    {
+        return $this->nsfw;
+    }
+
+    public function getActive():int
+    {
+        return $this->active;
     }
 
     /**
+     * List of users without logged user
      * @param $username
-     * @param $email
-     * @return bool
+     * @return array
      */
-    public function find($username, $email): bool
+    protected function index($username): array
     {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username or email = :email");
+        $redis = new Client();
+        $key = "users_page_{$_GET["page"]}";
+        $limit =50;
+        $page = $_GET["page"]-1;
+        $offset = abs($page * $limit);
+        $this->conn->queryPrepare(
+            "select * from user where username != :username limit $limit offset $offset");
         $this->conn->bindParam(":username", $username);
-        $this->conn->bindParam(":email", $email);
         $this->conn->execute();
-        $result = $this->conn->single();
-        if ($result){
-            return true;
-        } else {
-            return false;
+        if (!$redis->exists($key)) {
+            $users = [];
+            while ($row = $this->conn->single()) {
+                $users[] = $row;
+            }
+            $redis->set($key, serialize($users));
+            $redis->expire($key, 300);
         }
+        return unserialize($redis->get($key));
     }
 
     /**
+     * Find user if exists
      * @param $username
-     * @param $password
-     * @return bool
-     */
-    public function findByUsernameAndPassword($username, $password): bool
-    {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
-        $this->conn->bindParam(":username", $username);
-        $this->conn->execute();
-        $result = $this->conn->single();
-        if (! $result) {
-            return false;
-        }
-        $hashedPassword = $result->password;
-        if (password_verify($password, $hashedPassword)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    public function register($userData)
-    {
-        try {
-            $this->conn->queryPrepare("INSERT INTO user (username, email, password, role, api_key) VALUES (:username, :email, :password, :role, :api_key)");
-            $this->conn->bindParam(":username", $userData["username"]);
-            $this->conn->bindParam(":email", $userData["email"]);
-            $this->conn->bindParam(":password", $userData["password"]);
-            $this->conn->bindParam(":role", $userData["role"]);
-            $this->conn->bindParam(":api_key", $userData["api_key"]);
-            return $this->conn->execute();
-        } catch (PDOException $e) {
-            exit($e->getMessage());
-        }
-    }
-
-    /**
-     * @param $username
-     * @param $password
      * @return mixed
      */
-    public function login($username, $password): mixed
+    protected function show($username): mixed
     {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
         $this->conn->bindParam(":username", $username);
         $this->conn->execute();
         $result = $this->conn->single();
-        $hashedPassword = $result->password;
-        if (password_verify($password, $hashedPassword)) {
+
+        if ($result){
             return $result;
         } else {
             return false;
@@ -111,51 +125,50 @@ class User extends Model
     }
 
     /**
-     * Cache data into Redis Server
-     * @param $id
-     * @return mixed
+     * Register new user
+     * @param $userData
+     * @return void
      */
-     public function index($slug): mixed
-     {
-         $redis = new Client();
-         $key = "users_page_{$_GET["page"]}";
-         $limit =50;
-         $page = $_GET["page"]-1;
-         $offset = abs($page * $limit);
-         $this->conn->queryPrepare(
-             "select * from user where username != :slug limit $limit offset $offset");
-         $this->conn->bindParam(":slug", $slug);
-         $this->conn->execute();
-         if (!$redis->exists($key)) {
-             $users = [];
-             while ($row = $this->conn->single()) {
-                 $users[] = $row;
-             }
-             $redis->set($key, serialize($users));
-             $redis->expire($key, 300);
-         }
-         return unserialize($redis->get($key));
-     }
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function show($slug): mixed
+    protected function register($userData):void
     {
         $this->conn->queryPrepare(
-            "select * from user where username = :slug");
-        $this->conn->bindParam(":slug", $slug);
+            "INSERT INTO user (username, email, password, role, api_key, nsfw, active) 
+            VALUES (:username, :email, :password, :role, :api_key, :nsfw, :active)");
+        $this->conn->bindParam(":username", $userData["username"]);
+        $this->conn->bindParam(":email", $userData["email"]);
+        $this->conn->bindParam(":password", $userData["password"]);
+        $this->conn->bindParam(":role", $userData["role"]);
+        $this->conn->bindParam(":api_key", $userData["api_key"]);
+        $this->conn->bindParam(":nsfw", $userData["nsfw"]);
+        $this->conn->bindParam(":active", $userData["active"]);
         $this->conn->execute();
-        return $this->conn->single();
     }
 
     /**
+     * Insert data in moderator_logging
+     * @param $updateData
+     * @return void
+     */
+    protected function createLogg($updateData): void
+    {
+        $this->conn->queryPrepare(
+            "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)
+            values (:moderator_username, :user_username, :user_active, :user_nsfw, :user_role)");
+        $this->conn->bindParam(":moderator_username", $updateData["moderatorsUsername"]);
+        $this->conn->bindParam(":user_role", $updateData["role"]);
+        $this->conn->bindParam(":user_nsfw", $updateData["nsfw"]);
+        $this->conn->bindParam(":user_active", $updateData["active"]);
+        $this->conn->bindParam(":user_username", $updateData["username"]);
+        $this->conn->execute();
+    }
+
+    /**
+     * Update logged user account
      * @param $userData
      * @param $id
-
+     * @return void
      */
-    public function updateAccount($userData,$id)
+    protected function updateLoggedUserAccount($userData,$id):void
     {
         $this->conn->queryPrepare(
             "update user set 
@@ -168,16 +181,15 @@ class User extends Model
         $this->conn->bindParam(":password", $userData["password"]);
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
-        $_SESSION["username"] = $userData["username"];
     }
 
     /**
+     * Update not logged user account
      * @param $updateData
-     * @return mixed
+     * @return void
      */
-    public function updateUser($updateData): mixed
+    protected function updateNotLoggedUser($updateData):void
     {
-
         $redis = new Client();
         $redis->del("users_page_{$_POST['page']}");
         $this->conn->queryPrepare(
@@ -190,13 +202,59 @@ class User extends Model
         $this->conn->bindParam(":nsfw", $updateData["nsfw"]);
         $this->conn->bindParam(":active", $updateData["active"]);
         $this->conn->bindParam(":id", $updateData["userId"]);
-        return $this->conn->execute();
+        $this->conn->execute();
     }
 
     /**
+     * Find user by username adn compare passwords
+     * @param $username
+     * @param $password
+     * @return bool
+     */
+    protected function findByUsername($username, $password): bool
+    {
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
+        $this->conn->bindParam(":username", $username);
+        $this->conn->execute();
+        $result = $this->conn->single();
+
+        if (! $result) {
+            return false;
+        }
+        $hashedPassword = $result->password;
+
+        if (password_verify($password, $hashedPassword)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $username
+     * @param $password
+     * @return mixed
+     */
+    protected function loginUser($username, $password): mixed
+    {
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
+        $this->conn->bindParam(":username", $username);
+        $this->conn->execute();
+        $result = $this->conn->single();
+        $hashedPassword = $result->password;
+
+        if (password_verify($password, $hashedPassword)) {
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Pages for pagination
      * @return float
      */
-    public function getPages(): float
+    protected function getPages(): float
     {
         $limit =50;
         $this->conn->queryPrepare("select count(*) as 'row' from user");
@@ -204,22 +262,5 @@ class User extends Model
         $result = $this->conn->single();
         $rows = $result->row;
         return ceil($rows/$limit);
-    }
-
-    /**
-     * @param $updateData
-     * @return bool
-     */
-    public function createLogg($updateData): bool
-    {
-        $this->conn->queryPrepare(
-            "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)
-            values (:moderator_username, :user_username, :user_active, :user_nsfw, :user_role)");
-        $this->conn->bindParam(":moderator_username", $updateData["moderatorsUsername"]);
-        $this->conn->bindParam(":user_role", $updateData["role"]);
-        $this->conn->bindParam(":user_nsfw", $updateData["nsfw"]);
-        $this->conn->bindParam(":user_active", $updateData["active"]);
-        $this->conn->bindParam(":user_username", $updateData["username"]);
-        return $this->conn->execute();
     }
 }

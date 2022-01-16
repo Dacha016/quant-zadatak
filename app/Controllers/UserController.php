@@ -30,31 +30,27 @@ use App\Models\User;
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
-class UserController
+class UserController extends User
 {
-    protected User $user;
-    protected string $role= "user";
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->user= new User();
-    }
     /**
      * List of users in users tab
      * @return void
      */
-    public function index()
+    public function indexUsers()
     {
-        $pages = $this->user->getPages();
-        $result = $this->user->index($_SESSION["id"]);
+        $pages = $this->getPages();
+        $result = $this->index($_SESSION["username"]);
         Blade::render("/users", compact("result", "pages"));
     }
+
+    /**
+     * Update logged user account
+     * @return void
+     */
     public function updateAccount()
     {
-        $id = $_SESSION["id"];
-        $result = $this->user->show($id);
+        $result = $this->show($_SESSION["username"]);
+
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/updateAccount", compact("result"));
 
@@ -69,31 +65,42 @@ class UserController
             //Check if username contain letters or numbers
             if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
                 $error = "The username may contain only letters and numbers";
-                Blade::render("/updateAccount", compact("error"));
+                Blade::render("/updateAccount", compact("error", "result"));
+                exit();
             }
             //Email check
             if (!filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
                 $error = "Enter the correct email";
-                Blade::render("/updateAccount", compact("error"));
+                Blade::render("/updateAccount", compact("error", "result"));
+                exit();
 
             }
             //password length and password mach
             if (strlen($userData["password"]) < 6) {
                 $error = "Password must be longer than 6 characters";
-               Blade::render("/updateAccount", compact("error"));
+               Blade::render("/updateAccount", compact("error", "result"));
+                exit();
             } else if ($userData["password"] !== $userData["rPassword"]) {
                 $error = "Password does not match";
-               Blade::render("/updateAccount", compact("error"));
+               Blade::render("/updateAccount", compact("error", "result"));
+                exit();
             }
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-            $this->user->updateAccount($userData, $id);
+            $this->updateLoggedUserAccount($userData, $_SESSION["id"]);
+            $_SESSION["username"] = $userData["username"];
             header("Location: /profile");
         }
     }
+
+    /**
+     * Update not logged user account
+     * @param $slug
+     * @return void
+     */
     public function updateUser($slug)
     {
+        $result = $this->show($slug);
 
-        $result = $this->user->show($slug);
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/updateUsers", compact("result"));
 
@@ -107,11 +114,12 @@ class UserController
                 "active" => (int)$_POST["active"],
                 "userId" => (int)$_POST["userId"]
             ];
-            $this->user->updateUser($updateData);
+            $this->updateNotLoggedUser($updateData);
+
             if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
                 $updateData["username"] = $_POST["username"];
                 $updateData["moderatorsUsername"] = $_SESSION["username"];
-                $this->user->createLogg($updateData);
+                $this->createLogg($updateData);
             }
             header("Location: /profile/users?page=" . $_POST["page"]);
         }
