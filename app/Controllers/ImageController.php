@@ -131,13 +131,23 @@ class ImageController extends Image
          Blade::render("/imageUpdate", compact("result") );
     }
 
+    /**
+     * Show image in not logged user gallery
+     * @param $slug
+     * @param $galleryId
+     * @param $id
+     * @return void
+     */
     public function showImageInNotLoggedUserGallery($slug, $galleryId, $id)
     {
         $result = $this->showInGallery($id);
         Blade::render("/imageUpdate", compact("result") );
     }
 
-
+    /**
+     * Insert image in image table
+     * @return void
+     */
     public function create()
     {
         $slug = str_replace(" ","-", $_POST["fileName"]);
@@ -153,6 +163,11 @@ class ImageController extends Image
         header("Location: /profile");
     }
 
+    /**
+     * Insert image in image_gallery table
+     * @param $id
+     * @return void
+     */
     public function insertInGallery($id)
     {
         $slug = str_replace(" ","-", $_POST["fileName"]);
@@ -235,13 +250,13 @@ class ImageController extends Image
     public function delete($id)
     {
         $imageData = [
-            "galleryId" =>(int) $_POST["galleryId"],
+            "galleryId" =>$_POST["galleryId"],
             "userId" => $_POST["userId"],
             "imageId" =>$_POST["imageId"]
         ];
-        $this->delete($imageData["imageId"]);
+        $this->deleteImage($imageData["imageId"]);
 
-        if ($imageData["galleryId"] !== 0) {
+        if (isset($imageData["galleryId"])) {
             if ($imageData["userId"] == $_SESSION["id"]) {
                 header("Location: /profile/galleries/".$imageData["galleryId"]."?page=0");
             } else {

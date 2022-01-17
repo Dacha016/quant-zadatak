@@ -38,7 +38,7 @@ class Connection
     public function __construct()
     {
         try{
-            $this->conn = new PDO("mysql:host=".$_ENV["HOST"].";dbname=".$_ENV["DATABASE"], $_ENV["USERNAME"], $_ENV["PASSWORD"], array(PDO::ATTR_PERSISTENT=>true));
+            $this->conn = new PDO("mysql:host=".$_ENV["DATABASE_HOST"].";dbname=".$_ENV["DATABASE"], $_ENV["USERNAME"], $_ENV["PASSWORD"], array(PDO::ATTR_PERSISTENT=>true));
         }catch(PDOException $e){
             $this->error = $e->getMessage();
             echo $this->error;

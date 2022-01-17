@@ -21,12 +21,18 @@ class GalleryController extends Gallery
         Blade::render("/galleries", compact("result","pages"));
     }
 
+    /**
+     * List of gallery comments
+     * @param $id
+     * @return void
+     */
     public function indexGalleryComments($id)
     {
         $result = $this->indexComments($id);
         $gallery = $this->show($id);
         Blade::render("/galleryComments", compact("result","gallery"));
     }
+
     /**
      * Show not logged user galleries.
      * If logged user role is "user" show galleries which are not hidden or nsfw
@@ -73,6 +79,10 @@ class GalleryController extends Gallery
         }
     }
 
+    /**
+     * Insert data in comment table
+     * @return void
+     */
     public function createComment()
     {
         $commentData = [

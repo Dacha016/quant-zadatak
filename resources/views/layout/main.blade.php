@@ -30,9 +30,6 @@
                 <li class="nav-item active align-self-center" >
                     <a class="nav-link" href="http://localhost/profile/updateAccount"> Update account </a>
                 </li>
-                <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="/addImage"> Add Image </a>
-                </li>
                 <?php } else{?>
                     <h3><a href="http://localhost/home">Welcome Guest</a></h3>
                 <li class="nav-item active align-self-center" >

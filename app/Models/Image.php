@@ -183,6 +183,11 @@ class Image extends Model
         return $this->conn->single();
     }
 
+    /**
+     * Insert image in image table
+     * @param $imageData
+     * @return void
+     */
     protected function createImage($imageData):void
     {
         $redis = new Client();
@@ -198,6 +203,11 @@ class Image extends Model
         $this->conn->execute();
     }
 
+    /**
+     * Insert image in image_gallery table
+     * @param $imageData
+     * @return void
+     */
     protected function insertImageInGallery($imageData):void
     {
         $redis = new Client();
@@ -273,6 +283,12 @@ class Image extends Model
         $this->conn->bindParam(":id",$id);
         $this->conn->execute();
     }
+
+    /**
+     * Select last image in image table
+     * @param $id
+     * @return mixed
+     */
     protected function selectLastImageId($id)
     {
         $this->conn->queryPrepare(
