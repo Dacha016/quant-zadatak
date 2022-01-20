@@ -15,7 +15,6 @@ class Image extends Model
 
     public function __construct()
     {
-
         parent::__construct();
     }
 
@@ -121,20 +120,20 @@ class Image extends Model
 
     /**
      * Logged user pictures in galleries
-     * @param $id $id of logged user
+     * @param $username $id of logged user
      * @return array
      */
-    protected function index($id):array
+    public function index($username):array
     {
         $redis = new Client();
-        $key = "image_of_gallery_$id";
+        $key = "image_of_gallery_$username";
         $this->conn->queryPrepare(
             "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', u.username as 'username',  g.id as 'galleryId'  from image_gallery
                 inner join image i on image_gallery.image_id = i.id     
                 inner join gallery g on image_gallery.gallery_id = g.id
                 inner join user u on i.user_id = u.id
                 where image_gallery.gallery_id =:id");
-        $this->conn->bindParam(":id",$id);
+        $this->conn->bindParam(":id",$username);
         $this->conn->execute();
 
         if (!$redis->exists($key)) {
@@ -153,7 +152,7 @@ class Image extends Model
      * @param $id
      * @return mixed
      */
-    protected function show($id):mixed
+    public function show($id):mixed
     {
         $this->conn->queryPrepare(
             "select image.id as 'imageId', image.file_name as 'file_name',image.hidden as 'hidden', image.nsfw as 'nsfw', u.username as 'username', u.id as 'userId' from image

@@ -6,6 +6,7 @@ if(!isset($_SESSION["id"])) {
 <?php $__env->startSection("content"); ?>
 <div style="width: 1200px; margin: 10px auto">
     <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
+
     <form id="imageForm" action ="/addImage/galleries/<?php echo e($galleryId); ?>" method="post" class="p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
         <input type="file" id="fileName" name="fileName" />
         <input class="float-right" type="submit" id="submit" name="submit" value="Upload" />

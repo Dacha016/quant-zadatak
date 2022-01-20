@@ -6,13 +6,15 @@ use App\Config\Connection;
 
 abstract class Model
 {
-    protected Connection $conn;
+    protected $conn;
 
     public function __construct()
     {
-        $this->conn = new Connection;
+        Connection::connect($_ENV["DATABASE_HOST"], $_ENV["DATABASE"], $_ENV["USERNAME"], $_ENV["PASSWORD"]);
+        $this->conn = Connection::getInstance();
+        session_start();
     }
 
-    protected abstract function index($username);
-    protected abstract function show($id);
+    abstract public function index($username);
+    abstract public function show($id);
 }

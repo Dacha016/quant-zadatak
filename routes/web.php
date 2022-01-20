@@ -39,10 +39,11 @@ $router->get("/profile/users/{slug}", "GalleryController@notLoggedUserGalleries"
 $router->post("/update/images/{id}", "ImageController@update");  //update image from logged user gallery
 
 //image comments
-$router->get("/home/images/{id}", "ImageController@indexComments");
 $router->get("/comments/users/{slug}/{id}/{id}", "ImageController@notLoggedUserImageComments"); // comments
-$router->get("/profile/comments/images/{id}", "ImageController@indexComments"); // comments of images on profile page
 $router->get("/profile/comments/galleries/{id}/{id}", "ImageController@loggedUserImageComments"); // comments of images in galleries
+$router->get("/home/images/{id}", "ImageController@indexComments");
+$router->get("/profile/comments/images/{id}", "ImageController@indexComments"); // comments of images on profile page
+
 $router->post('/image/comments', "ImageController@createComments"); //create comment
 // gallery comments
 $router->get("/comments/galleries/{id}", "GalleryController@indexGalleryComments"); // comments of  gallery
@@ -62,6 +63,8 @@ $router->post('/delete/image/{id}', "ImageController@delete");
 $router->get('/delete/gallery/{id}', "GalleryController@delete");
 $router->post('/delete/gallery/{id}', "GalleryController@delete");
 
-
 $router->post("/addImage/galleries/{id}", "ImageController@insertInGallery");
 $router->post("/addImage", "ImageController@create");
+
+$router->get("/profile/subscription", "UserController@subscription");
+$router->post("/profile/subscription", "UserController@subscription");

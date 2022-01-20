@@ -41,7 +41,14 @@
                 <?php }?>
             </ul>
         </div>
+        @if(isset($_SESSION["id"]))
+            <div>
+                <p class="d-inline">Subscription: <b>{{$_SESSION["plan"]}}</b></p>
+                <p class="d-inline">Ends:<b>{{$_SESSION["plans end"]}}</b></p>
+            </div>
+        @endif
     </nav>
+
     @yield("content")
 </body>
 </html>

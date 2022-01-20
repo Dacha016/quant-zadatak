@@ -2,10 +2,6 @@
 
 namespace App\Controllers;
 
-if (!session_start()) {
-    session_start();
-}
-
 use App\Blade\Blade;
 use App\Models\Image;
 

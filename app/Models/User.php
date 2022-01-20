@@ -24,7 +24,7 @@ use Predis\Client;
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
-class User extends Model
+class User extends Model implements Subscription
 {
 
     private string $username;
@@ -83,7 +83,7 @@ class User extends Model
      * @param $username
      * @return array
      */
-    protected function index($username): array
+    public function index($username): array
     {
         $redis = new Client();
         $key = "users_page_{$_GET["page"]}";
@@ -105,12 +105,21 @@ class User extends Model
         return unserialize($redis->get($key));
     }
 
+    public function indexSubscription($id)
+    {
+
+        $this->conn->queryPrepare("SELECT * FROM subscription WHERE user_id = :id");
+        $this->conn->bindParam(":id", $id);
+        $this->conn->execute();
+        return $this->conn->multi();
+    }
+
     /**
      * Find user if exists
      * @param $username
      * @return mixed
      */
-    protected function show($username): mixed
+    public function show($username): mixed
     {
         $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
         $this->conn->bindParam(":username", $username);
@@ -121,6 +130,21 @@ class User extends Model
             return $result;
         } else {
             return false;
+        }
+    }
+
+    public function showSubscription($id)
+    {
+        $this->conn->queryPrepare("SELECT * FROM subscription WHERE user_id = :id");
+        $this->conn->bindParam(":id", $id);
+        $this->conn->execute();
+        $result = $this->conn->multi();
+
+        foreach ($result as $row) {
+
+            if ($row->active == 1) {
+                return $row;
+            }
         }
     }
 
@@ -159,6 +183,51 @@ class User extends Model
         $this->conn->bindParam(":user_nsfw", $updateData["nsfw"]);
         $this->conn->bindParam(":user_active", $updateData["active"]);
         $this->conn->bindParam(":user_username", $updateData["username"]);
+        $this->conn->execute();
+    }
+
+    public function createSubscription($userData)
+    {
+        $result = $this->showSubscription($userData["id"]);
+
+        if ($result) {
+           $this->updateSubscription($result->id);
+        }
+
+        $this->conn->queryPrepare(
+           "insert into subscription (user_id, plan, start, end, active) 
+            VALUES (:user_id, :plan, :start, :end, :active ) ");
+        $this->conn->bindParam(":user_id", $userData["id"]);
+        $this->conn->bindParam(":plan", $userData["subscription"]);
+        $this->conn->bindParam(":start", date("Y-m-d"));
+
+        if ($userData["subscription"] == "Free") {
+            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+100 years')));
+            $now = new \DateTime();
+            $ends= new \DateTime(date("Y-m-d", strtotime('+100 years')));
+            $interval= $now->diff($ends);
+            $_SESSION["plans end"] = $interval->format('%r%a days');
+        } elseif ($userData["subscription"] == "Month") {
+            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+1 month')));
+            $now = new \DateTime();
+            $ends= new \DateTime(date("Y-m-d", strtotime('+1 month')));
+            $interval= $now->diff($ends);
+            $_SESSION["plans end"] = $interval->format('%r%a days');
+        } elseif ($userData["subscription"] == "6 months") {
+            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+6 months')));
+            $now = new \DateTime();
+            $ends= new \DateTime(date("Y-m-d", strtotime('+6 month')));
+            $interval= $now->diff($ends);
+            $_SESSION["plans end"] = $interval->format('%r%a days');
+        } elseif ($userData["subscription"] == "Year") {
+            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+1 year')));
+            $now = new \DateTime();
+            $ends= new \DateTime(date("Y-m-d", strtotime('+1 month')));
+            $interval= $now->diff($ends);
+            $_SESSION["plans end"] = $interval->format('%r%a days');
+        }
+        $this->conn->bindParam(":active", 1);
+        $_SESSION["plan"] = $userData["subscription"];
         $this->conn->execute();
     }
 
@@ -202,6 +271,13 @@ class User extends Model
         $this->conn->bindParam(":nsfw", $updateData["nsfw"]);
         $this->conn->bindParam(":active", $updateData["active"]);
         $this->conn->bindParam(":id", $updateData["userId"]);
+        $this->conn->execute();
+    }
+
+    protected function updateSubscription($id)
+    {
+        $this->conn->queryPrepare("update subscription set active = 0 where id =:id");
+        $this->conn->bindParam(":id", $id);
         $this->conn->execute();
     }
 

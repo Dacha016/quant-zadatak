@@ -12,10 +12,6 @@
  */
 namespace App\Controllers;
 
-if (!session_start()) {
-    session_start();
-}
-
 use App\Blade\Blade;
 use App\Models\User;
 
@@ -43,6 +39,11 @@ class UserController extends User
         Blade::render("/users", compact("result", "pages"));
     }
 
+    public function indexSubscriptionList($id)
+    {
+       $result = $this->indexSubscription($id);
+    }
+
     /**
      * Update logged user account
      * @return void
@@ -57,10 +58,11 @@ class UserController extends User
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $userData = [
+                "id" =>$_SESSION["id"],
                 "username" => trim($_POST["username"]),
                 "password" => trim($_POST["password"]),
                 "rPassword" => trim($_POST["rPassword"]),
-                "email" => trim($_POST["email"]),
+                "email" => trim($_POST["email"])
             ];
             //Check if username contain letters or numbers
             if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
@@ -122,6 +124,23 @@ class UserController extends User
                 $this->createLogg($updateData);
             }
             header("Location: /profile/users?page=" . $_POST["page"]);
+        }
+    }
+
+    public function subscription()
+    {
+        if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
+            $result = $this->indexSubscription($_SESSION["id"]);
+            Blade::render("/subscription", compact("result"));
+
+        } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
+            $userData = [
+                "id" => $_SESSION["id"],
+                "subscription" => $_POST["subscription"]
+            ];
+            $this->createSubscription($userData);
+            $result = $this->indexSubscription($_SESSION["id"]);
+            Blade::render("/subscription", compact("result"));
         }
     }
 }

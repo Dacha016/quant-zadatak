@@ -2,9 +2,7 @@
 
 namespace App\Controllers;
 
-if (!session_start()) {
-    session_start();
-}
+
 use App\Models\Gallery;
 use App\Blade\Blade;
 

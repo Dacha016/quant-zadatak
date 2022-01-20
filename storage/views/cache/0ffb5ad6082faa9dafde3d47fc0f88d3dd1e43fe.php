@@ -14,34 +14,41 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto" >
                 <?php if (isset($_SESSION["id"])) {?>
-                <h3><a href="http://localhost/profile"><?php echo $_SESSION["username"]; ?></a></h3>
+                <h3><a href="/profile"><?php echo $_SESSION["username"]; ?></a></h3>
                     <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="http://localhost/logout">Logout </a>
+                    <a class="nav-link" href="/logout">Logout </a>
                 </li>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="http://localhost/profile/users?page=1">Users </a>
+                    <a class="nav-link" href="/profile/users?page=1">Users </a>
                 </li>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="http://localhost/profile/galleries?page=1">Galleries </a>
+                    <a class="nav-link" href="/profile/galleries?page=1">Galleries </a>
                 </li>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="http://localhost/profile/galleries/newGallery"> New Gallery </a>
+                    <a class="nav-link" href="/profile/galleries/newGallery"> New Gallery </a>
                 </li>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link" href="http://localhost/profile/updateAccount"> Update account </a>
+                    <a class="nav-link" href="/profile/updateAccount"> Update account </a>
                 </li>
                 <?php } else{?>
-                    <h3><a href="http://localhost/home">Welcome Guest</a></h3>
+                    <h3><a href="/home">Welcome Guest</a></h3>
                 <li class="nav-item active align-self-center" >
-                    <a class="nav-link " href="http://localhost/registration">Registration </a>
+                    <a class="nav-link " href="/registration">Registration </a>
                 </li>
                 <li class="nav-item align-self-center">
-                    <a class="nav-link" href="http://localhost/login">Login</a>
+                    <a class="nav-link" href="/login">Login</a>
                 </li>
                 <?php }?>
             </ul>
         </div>
+        <?php if(isset($_SESSION["id"])): ?>
+            <div>
+                <p class="d-inline">Subscription: <b><?php echo e($_SESSION["plan"]); ?></b></p>
+                <p class="d-inline">Ends:<b><?php echo e($_SESSION["plans end"]); ?></b></p>
+            </div>
+        <?php endif; ?>
     </nav>
+
     <?php echo $__env->yieldContent("content"); ?>
 </body>
 </html><?php /**PATH /var/www/html/quant-zadatak/resources/views/layout/main.blade.php ENDPATH**/ ?>

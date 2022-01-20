@@ -6,15 +6,14 @@ use App\Blade\Blade;
 use App\Models\User;
 
 
-if (!session_start()) {
-    session_start();
-}
+
 
 class AuthController extends User
 {
 
     public function registration()
     {
+
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/registration");
 
@@ -70,7 +69,15 @@ class AuthController extends User
             $userData["nsfw"] = $this->getNsfw();
             $userData["active"] = $this->getActive();
             $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 30), 6));
+
             $this->register($userData);
+            $result =$this->show($userData["username"]);
+            $userData["id"] = $result->id;
+            $userData["subscription"] = $_POST["subscription"];
+
+
+            $this->createSubscription($userData);
+
             header("Location: /login");
             Blade::render("/login");
         }
@@ -112,10 +119,15 @@ class AuthController extends User
             }
 
             $loggedUser = $this->loginUser($userData["username"], $userData["password"]);
+
+            $userSubscribe = $this->showSubscription($loggedUser->id);
+
             session_start();
             $_SESSION["id"] = $loggedUser->id;
             $_SESSION["username"] = $loggedUser->username;
             $_SESSION["role"] = $loggedUser->role;
+            $_SESSION["plan"] = $userSubscribe->plan;
+            $_SESSION["plans end"] = $userSubscribe->end;
             header("Location: /profile");
             Blade::render("/profile");
         }

@@ -30,6 +30,11 @@
             <input id = "rPassword" type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="rPassword">
         </div>
 
+        <label for="subscription">Subscription plan:</label>
+        <select id="subscription" name="subscription">
+            <option value="Free" selected>Free</option>
+        </select>
+
         <div class="m-3">
             <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="/home">Cancel</a></button>
             <button class="btn btn-success d-inline-block float-right" type="submit">Register</button>
