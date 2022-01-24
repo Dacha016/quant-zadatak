@@ -34,6 +34,7 @@ class User extends Model
     private string $role = "user";
     private int $nsfw = 0;
     private int $active = 0;
+    private int $payment;
 
     /**
      * Constructor
@@ -76,6 +77,11 @@ class User extends Model
     public function getActive():int
     {
         return $this->active;
+    }
+
+    public function getPayment():int
+    {
+        return $this->payment;
     }
 
     /**

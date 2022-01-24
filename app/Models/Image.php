@@ -172,7 +172,7 @@ class Image extends Model
     /**
      * Show image in image_gallery table
      * @param $id
-
+     * @return mixed
      */
     protected function showInGallery ($id)
     {
@@ -304,13 +304,20 @@ class Image extends Model
         return $this->conn->single();
     }
 
-    protected function imageCount($id)
+    /**
+     * The number of pictures added by the user in the last month
+     * @param $id
+     * @param $start
+     * @return mixed
+     */
+    protected function imageCount($id, $start)
     {
         $this->conn->queryPrepare(
             "select count(*) as 'row' from image 
            
-            where user_id= :id and added > date_sub(now(), interval 1 month )");
+            where user_id= :id and added > date_sub(:start, interval 1 month )");
         $this->conn->bindParam(":id", $id);
+        $this->conn->bindParam(":start", $start);
         $this->conn->execute();
         $result = $this->conn->single();
         return $result->row;

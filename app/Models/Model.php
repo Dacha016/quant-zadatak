@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Config\Connection;
 
+if (! session_start()) {
+    session_start();
+}
 abstract class Model
 {
     protected $conn;
@@ -12,9 +15,6 @@ abstract class Model
     {
         $this->conn = Connection::getInstance();
         Connection::connect();
-        if (! session_start()) {
-           session_start();
-        }
     }
 
     abstract public function index($username);

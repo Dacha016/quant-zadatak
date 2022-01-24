@@ -10,36 +10,41 @@ class Subscription extends Model
    private string $end = "";
    private int $active = 1;
 
-   public function __construct()
-   {
+    public function __construct()
+    {
        parent::__construct();
-   }
+    }
 
-   public function getUserId()
-   {
+    public function getUserId()
+    {
        return $this->user_id;
-   }
+    }
 
-   public function getPlan()
-   {
+    public function getPlan()
+    {
        return $this->plan;
-   }
+    }
 
-   public function getStart()
-   {
+    public function getStart()
+    {
        return $this->start;
-   }
+    }
 
-   public function getEnd()
-   {
+    public function getEnd()
+    {
        return $this->end;
-   }
+    }
 
-   public function getActive()
-   {
+    public function getActive()
+    {
        return$this->active;
-   }
+    }
 
+    /**
+     * Users subscription
+     * @param $username
+     * @return mixed
+     */
     public function index($username)
     {
         $this->conn->queryPrepare(
@@ -51,6 +56,11 @@ class Subscription extends Model
         return $this->conn->multi();
     }
 
+    /**
+     * Show active subscription
+     * @param $username
+     * @return mixed|void
+     */
     public function show($username)
     {
         $this->conn->queryPrepare(
@@ -69,9 +79,16 @@ class Subscription extends Model
         }
     }
 
+    /**
+     * Create subscription
+     * @param $userData
+     * @return void
+     * @throws \Exception
+     */
     public function create($userData)
     {
         $result = $this->show($userData["username"]);
+
         if ($result) {
             $this->update($result->id);
         }
@@ -108,12 +125,17 @@ class Subscription extends Model
             $interval= $now->diff($ends);
             $_SESSION["plans end"] = $interval->format('%r%a days');
         }
-        $this->conn->bindParam(":active", $this->getActive());
 
+        $this->conn->bindParam(":active", $this->getActive());
         $_SESSION["plan"] = $userData["subscription"];
         $this->conn->execute();
     }
 
+    /**
+     * Set active status to 0
+     * @param $id
+     * @return void
+     */
     protected function update($id)
     {
         $this->conn->queryPrepare("update subscription set active = 0 where id =:id");

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Blade\Blade;
 use App\Models\Image;
+use App\Models\Subscription;
 
 class ImageController extends Image
 {
@@ -23,7 +24,7 @@ class ImageController extends Image
      */
     public function indexProfile()
     {
-        $monthlyNumberOfPictures = $this->imageCount($_SESSION["id"]);
+        $monthlyNumberOfPictures = $this->lastMonthImages();
         $result = $this->indexProfilePage($_SESSION["id"]);
         Blade::render("/profile", compact("result", "monthlyNumberOfPictures"));
     }
@@ -262,5 +263,17 @@ class ImageController extends Image
         } else {
             header("Location: /profile");
         }
+    }
+
+    /**
+     * Number of uploaded images in last month
+     * @return mixed
+     */
+    public function lastMonthImages()
+    {
+        $userSubscription = new Subscription;
+        $user = $userSubscription->show($_SESSION["username"]);
+        $date = $user->start;
+        return $this->imageCount($_SESSION["id"], $date);
     }
 }

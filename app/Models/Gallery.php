@@ -110,6 +110,7 @@ class Gallery extends Model
             return unserialize($redis->get($key));
         }
     }
+
     /**
      * List of  galleries
      * @param $id $id Users id
