@@ -23,8 +23,9 @@ class ImageController extends Image
      */
     public function indexProfile()
     {
+        $monthlyNumberOfPictures = $this->imageCount($_SESSION["id"]);
         $result = $this->indexProfilePage($_SESSION["id"]);
-        Blade::render("/profile", compact("result"));
+        Blade::render("/profile", compact("result", "monthlyNumberOfPictures"));
     }
 
     /**

@@ -5,7 +5,7 @@
 
             <div class="d-inline-block m-3" >
                 <a href="/home/images/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px">
-                    <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
+                    <img class="mt-2" alt="<?php echo e($row->file_name); ?>" src=<?php echo e($row->file_name); ?> >
                 </a>
             </div>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

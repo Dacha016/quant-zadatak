@@ -7,7 +7,7 @@ if(!isset($_SESSION["id"])) {
 @section("content")
 <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
 <div style="margin: 20px auto; max-width: 1000px; text-align: center">
-    <img style=" width: 35vw; height: 70vh" src={{$result->file_name}} class="mt-2" alt="{{$result->file_name}}">
+    <img style=" width: 35vw; height: 70vh" class="mt-2" alt="{{$result->file_name}}" src={{$result->file_name}} >
     <div>
         @if($result->userId !== $_SESSION["id"])
             <form action ="/update/images/{{$result->imageId}}" method="post" class="d-inline-block m-1">

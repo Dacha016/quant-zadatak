@@ -30,6 +30,9 @@ if(!isset($_SESSION["id"])) {
                     <th style=" border: 1px solid black ">Username</th>
                     <th style="border: 1px solid black">Email</th>
                     <th style="border: 1px solid black">Role</th>
+                    <?php if($_SESSION["role"] === "admin"): ?>
+                        <th style="border: 1px solid black ">Subscription</th>
+                    <?php endif; ?>
                     <th style="border: 1px solid black">Nsfw</th>
                     <th style="border: 1px solid black">Active</th>
                 </tr>
@@ -44,6 +47,11 @@ if(!isset($_SESSION["id"])) {
                         <td style="text-align: center; border: 1px solid black ">
                             <p><?php echo e($row->role); ?></p>
                         </td>
+                        <?php if($_SESSION["role"] === "admin"): ?>
+                            <td style="text-align: center; border: 1px solid black ">
+                                <a href="/subscription/<?php echo e($row->username); ?>">Subscription</a>
+                            </td>
+                        <?php endif; ?>
                         <td style="text-align: center; border: 1px solid black ">
                             <p><?php echo e($row->nsfw); ?></p>
                         </td>

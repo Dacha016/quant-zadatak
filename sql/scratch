@@ -110,6 +110,16 @@ create table subscription
     active  int(1) default 0
 );
 
+alter table subscription
+    add foreign key (user_id) references user(id);
+
+ALTER TABLE user
+    ADD  payment int DEFAULT 1;
+
+ALTER TABLE image
+    ADD added date DEFAULT '2021-12-19';
+
+
 create index username_index on user (username);
 create index gallery_slug_index on gallery (slug);
 create index gallery_id_index on image_gallery (gallery_id)

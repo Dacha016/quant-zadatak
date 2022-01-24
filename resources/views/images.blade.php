@@ -17,7 +17,7 @@ if(!isset($_SESSION["id"])) {
             <div class="d-inline-block m-1" >
                 <div>
                     <a href="/profile/comments/galleries/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
+                        <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                     </a>
                 </div>
                 <div class="text-center">
@@ -35,7 +35,7 @@ if(!isset($_SESSION["id"])) {
             <div class="d-inline-block m-1" >
                 <div class="text-center">
                     <a href="/comments/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
+                        <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                     </a>
                 </div>
                 <div>
@@ -53,7 +53,7 @@ if(!isset($_SESSION["id"])) {
             <div class="d-inline-block m-1" >
                 <div >
                     <a href="/comments/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
+                        <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                     </a>
                 </div>
                 <div class="text-center">
@@ -64,7 +64,7 @@ if(!isset($_SESSION["id"])) {
             @if($_SESSION["role"] === "user" && $row->userId !==$_SESSION["id"])
                 <div class="d-inline-block m-1" >
                     <a href="/comments/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
+                        <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                     </a>
                 </div>
             @endif

@@ -75,8 +75,10 @@ class Gallery extends Model
             }
             $redis->set($key, serialize($galleries));
             $redis->expire($key, 300);
+            return  $galleries;
+        }else {
+            return unserialize($redis->get($key));
         }
-        return unserialize($redis->get($key));
     }
 
     /**
@@ -103,8 +105,10 @@ class Gallery extends Model
             }
             $redis->set($key, serialize($comments));
             $redis->expire($key, 300);
+            return $comments;
+        }else {
+            return unserialize($redis->get($key));
         }
-        return unserialize($redis->get($key));
     }
     /**
      * List of  galleries
@@ -133,8 +137,10 @@ class Gallery extends Model
             }
             $redis->set($key, serialize($galleries));
             $redis->expire($key, 300);
+            return $galleries;
+        }else {
+            return unserialize($redis->get($key));
         }
-        return unserialize($redis->get($key));
     }
 
     /**

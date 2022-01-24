@@ -10,9 +10,11 @@ abstract class Model
 
     public function __construct()
     {
-        Connection::connect($_ENV["DATABASE_HOST"], $_ENV["DATABASE"], $_ENV["USERNAME"], $_ENV["PASSWORD"]);
         $this->conn = Connection::getInstance();
-        session_start();
+        Connection::connect();
+        if (! session_start()) {
+           session_start();
+        }
     }
 
     abstract public function index($username);

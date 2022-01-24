@@ -66,5 +66,6 @@ $router->post('/delete/gallery/{id}', "GalleryController@delete");
 $router->post("/addImage/galleries/{id}", "ImageController@insertInGallery");
 $router->post("/addImage", "ImageController@create");
 
-$router->get("/profile/subscription", "UserController@subscription");
-$router->post("/profile/subscription", "UserController@subscription");
+$router->get("/profile/subscription", "SubscriptionController@subscription");
+$router->post("/profile/subscription", "SubscriptionController@subscription");
+$router->get("/subscription/{slug}", "SubscriptionController@indexSubscriptionList");

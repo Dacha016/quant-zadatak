@@ -4,7 +4,7 @@
     <div style="margin: 20px auto; width: 1200px;">
         <h1 style="text-align:center">Comments</h1>
         <div class="d-inline-block m-1 ">
-            <img style="width: 35vw; height: 75vh;" src="{{$image->file_name}}" class="mt-2" alt="{{$image->file_name}}">
+            <img style="width: 35vw; height: 75vh;" class="mt-2" alt="{{$image->file_name}}" src="{{$image->file_name}}" >
         </div>
         <div style="width: 500px" class="float-right">
             @if(isset($_SESSION["id"]))

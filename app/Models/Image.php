@@ -86,8 +86,10 @@ class Image extends Model
             }
             $redis->set($key, serialize($images));
             $redis->expire($key, 300);
+            return $images;
+        } else {
+            return unserialize($redis->get($key));
         }
-        return unserialize($redis->get($key));
     }
 
     /**
@@ -114,8 +116,10 @@ class Image extends Model
             }
             $redis->set($key, serialize($comments));
             $redis->expire($key, 300);
+            return  $comments;
+        }else {
+            return unserialize($redis->get($key));
         }
-        return unserialize($redis->get($key));
     }
 
     /**
@@ -143,8 +147,10 @@ class Image extends Model
             }
             $redis->set($key, serialize($images));
             $redis->expire($key, 300);
+            return $images;
+        }else {
+            return unserialize($redis->get($key));
         }
-        return unserialize($redis->get($key));
     }
 
     /**
@@ -192,13 +198,14 @@ class Image extends Model
         $redis = new Client();
         $redis->del("user_{$imageData['userId']}_profile_image");
         $this->conn->queryPrepare(
-            "insert into image (user_id, file_name, slug, nsfw, hidden)
-            values (:user_id, :file_name, :slug, :nsfw, :hidden)");
+            "insert into image (user_id, file_name, slug, nsfw, hidden, added)
+            values (:user_id, :file_name, :slug, :nsfw, :hidden, :added)");
         $this->conn->bindParam(":user_id", $imageData["userId"]);
         $this->conn->bindParam(":file_name", $imageData["fileName"]);
         $this->conn->bindParam(":slug", $imageData["slug"]);
         $this->conn->bindParam(":nsfw", $imageData["nsfw"]);
         $this->conn->bindParam(":hidden", $imageData["hidden"]);
+        $this->conn->bindParam(":added", date("Y-m-d"));
         $this->conn->execute();
     }
 
@@ -295,5 +302,17 @@ class Image extends Model
         $this->conn->bindParam(":id",$id);
         $this->conn->execute();
         return $this->conn->single();
+    }
+
+    protected function imageCount($id)
+    {
+        $this->conn->queryPrepare(
+            "select count(*) as 'row' from image 
+           
+            where user_id= :id and added > date_sub(now(), interval 1 month )");
+        $this->conn->bindParam(":id", $id);
+        $this->conn->execute();
+        $result = $this->conn->single();
+        return $result->row;
     }
 }

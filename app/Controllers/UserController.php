@@ -39,11 +39,6 @@ class UserController extends User
         Blade::render("/users", compact("result", "pages"));
     }
 
-    public function indexSubscriptionList($id)
-    {
-       $result = $this->indexSubscription($id);
-    }
-
     /**
      * Update logged user account
      * @return void
@@ -124,23 +119,6 @@ class UserController extends User
                 $this->createLogg($updateData);
             }
             header("Location: /profile/users?page=" . $_POST["page"]);
-        }
-    }
-
-    public function subscription()
-    {
-        if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $result = $this->indexSubscription($_SESSION["id"]);
-            Blade::render("/subscription", compact("result"));
-
-        } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $userData = [
-                "id" => $_SESSION["id"],
-                "subscription" => $_POST["subscription"]
-            ];
-            $this->createSubscription($userData);
-            $result = $this->indexSubscription($_SESSION["id"]);
-            Blade::render("/subscription", compact("result"));
         }
     }
 }

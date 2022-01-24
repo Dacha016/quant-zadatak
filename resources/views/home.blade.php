@@ -6,7 +6,7 @@
 
             <div class="d-inline-block m-3" >
                 <a href="/home/images/{{$row->imageId}}" class="btn btn-info d-inline-block" style="padding: 10px">
-                    <img src={{$row->file_name}} class="mt-2" alt="{{$row->file_name}}">
+                    <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                 </a>
             </div>
         @endforeach

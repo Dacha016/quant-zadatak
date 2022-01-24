@@ -16,7 +16,7 @@ if(!isset($_SESSION["id"])) {
             <div class="d-inline-block m-1" >
                 <div>
                     <a href="/profile/comments/galleries/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
+                        <img class="mt-2" alt="<?php echo e($row->file_name); ?>" src=<?php echo e($row->file_name); ?> >
                     </a>
                 </div>
                 <div class="text-center">
@@ -34,7 +34,7 @@ if(!isset($_SESSION["id"])) {
             <div class="d-inline-block m-1" >
                 <div class="text-center">
                     <a href="/comments/users/<?php echo e($row->username); ?>/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
+                        <img class="mt-2" alt="<?php echo e($row->file_name); ?>" src=<?php echo e($row->file_name); ?> >
                     </a>
                 </div>
                 <div>
@@ -52,7 +52,7 @@ if(!isset($_SESSION["id"])) {
             <div class="d-inline-block m-1" >
                 <div >
                     <a href="/comments/users/<?php echo e($row->username); ?>/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
+                        <img class="mt-2" alt="<?php echo e($row->file_name); ?>" src=<?php echo e($row->file_name); ?> >
                     </a>
                 </div>
                 <div class="text-center">
@@ -63,7 +63,7 @@ if(!isset($_SESSION["id"])) {
             <?php if($_SESSION["role"] === "user" && $row->userId !==$_SESSION["id"]): ?>
                 <div class="d-inline-block m-1" >
                     <a href="/comments/users/<?php echo e($row->username); ?>/<?php echo e($row->galleryId); ?>/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px">
-                        <img src=<?php echo e($row->file_name); ?> class="mt-2" alt="<?php echo e($row->file_name); ?>">
+                        <img class="mt-2" alt="<?php echo e($row->file_name); ?>" src=<?php echo e($row->file_name); ?> >
                     </a>
                 </div>
             <?php endif; ?>

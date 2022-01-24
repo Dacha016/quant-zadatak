@@ -24,7 +24,7 @@ use Predis\Client;
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
-class User extends Model implements Subscription
+class User extends Model
 {
 
     private string $username;
@@ -101,17 +101,10 @@ class User extends Model implements Subscription
             }
             $redis->set($key, serialize($users));
             $redis->expire($key, 300);
+            return $users;
+        }else {
+            return unserialize($redis->get($key));
         }
-        return unserialize($redis->get($key));
-    }
-
-    public function indexSubscription($id)
-    {
-
-        $this->conn->queryPrepare("SELECT * FROM subscription WHERE user_id = :id");
-        $this->conn->bindParam(":id", $id);
-        $this->conn->execute();
-        return $this->conn->multi();
     }
 
     /**
@@ -130,21 +123,6 @@ class User extends Model implements Subscription
             return $result;
         } else {
             return false;
-        }
-    }
-
-    public function showSubscription($id)
-    {
-        $this->conn->queryPrepare("SELECT * FROM subscription WHERE user_id = :id");
-        $this->conn->bindParam(":id", $id);
-        $this->conn->execute();
-        $result = $this->conn->multi();
-
-        foreach ($result as $row) {
-
-            if ($row->active == 1) {
-                return $row;
-            }
         }
     }
 
@@ -183,51 +161,6 @@ class User extends Model implements Subscription
         $this->conn->bindParam(":user_nsfw", $updateData["nsfw"]);
         $this->conn->bindParam(":user_active", $updateData["active"]);
         $this->conn->bindParam(":user_username", $updateData["username"]);
-        $this->conn->execute();
-    }
-
-    public function createSubscription($userData)
-    {
-        $result = $this->showSubscription($userData["id"]);
-
-        if ($result) {
-           $this->updateSubscription($result->id);
-        }
-
-        $this->conn->queryPrepare(
-           "insert into subscription (user_id, plan, start, end, active) 
-            VALUES (:user_id, :plan, :start, :end, :active ) ");
-        $this->conn->bindParam(":user_id", $userData["id"]);
-        $this->conn->bindParam(":plan", $userData["subscription"]);
-        $this->conn->bindParam(":start", date("Y-m-d"));
-
-        if ($userData["subscription"] == "Free") {
-            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+100 years')));
-            $now = new \DateTime();
-            $ends= new \DateTime(date("Y-m-d", strtotime('+100 years')));
-            $interval= $now->diff($ends);
-            $_SESSION["plans end"] = $interval->format('%r%a days');
-        } elseif ($userData["subscription"] == "Month") {
-            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+1 month')));
-            $now = new \DateTime();
-            $ends= new \DateTime(date("Y-m-d", strtotime('+1 month')));
-            $interval= $now->diff($ends);
-            $_SESSION["plans end"] = $interval->format('%r%a days');
-        } elseif ($userData["subscription"] == "6 months") {
-            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+6 months')));
-            $now = new \DateTime();
-            $ends= new \DateTime(date("Y-m-d", strtotime('+6 month')));
-            $interval= $now->diff($ends);
-            $_SESSION["plans end"] = $interval->format('%r%a days');
-        } elseif ($userData["subscription"] == "Year") {
-            $this->conn->bindParam(":end", date("Y-m-d", strtotime('+1 year')));
-            $now = new \DateTime();
-            $ends= new \DateTime(date("Y-m-d", strtotime('+1 month')));
-            $interval= $now->diff($ends);
-            $_SESSION["plans end"] = $interval->format('%r%a days');
-        }
-        $this->conn->bindParam(":active", 1);
-        $_SESSION["plan"] = $userData["subscription"];
         $this->conn->execute();
     }
 
@@ -271,13 +204,6 @@ class User extends Model implements Subscription
         $this->conn->bindParam(":nsfw", $updateData["nsfw"]);
         $this->conn->bindParam(":active", $updateData["active"]);
         $this->conn->bindParam(":id", $updateData["userId"]);
-        $this->conn->execute();
-    }
-
-    protected function updateSubscription($id)
-    {
-        $this->conn->queryPrepare("update subscription set active = 0 where id =:id");
-        $this->conn->bindParam(":id", $id);
         $this->conn->execute();
     }
 

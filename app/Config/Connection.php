@@ -54,10 +54,10 @@ class Connection
 
     }
 
-    public static function connect($host, $database, $username, $password)
+    public static function connect()
     {
         try {
-            self::$conn = new PDO("mysql:host=".$host.";dbname=".$database, $username, $password, array(PDO::ATTR_PERSISTENT=>true));
+            self::$conn = new PDO("mysql:host=".$_ENV["DATABASE_HOST"].";dbname=".$_ENV["DATABASE"], $_ENV["USERNAME"], $_ENV["PASSWORD"], array(PDO::ATTR_PERSISTENT=>true));
         } catch (PDOException $e) {
             return false;
         }
