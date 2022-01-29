@@ -6,8 +6,6 @@ if(!isset($_SESSION["id"])) {
 <?php $__env->startSection("content"); ?>
     <div style="margin: 20px auto; max-width: 1200px;">
         <div>
-            <?php echo e($monthlyNumberOfPictures); ?>
-
             <h1 class="d-block mb-5 " style="text-align:center">IMGUR Clone</h1>
             <?php if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures < 5 ): ?>
                 <form id="imageForm" action ="/addImage" method="post" class=" d-inline-block p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >

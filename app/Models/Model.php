@@ -19,4 +19,5 @@ abstract class Model
 
     abstract public function index($username);
     abstract public function show($id);
+    abstract public function update($id);
 }

@@ -122,4 +122,5 @@ ALTER TABLE image
 
 create index username_index on user (username);
 create index gallery_slug_index on gallery (slug);
-create index gallery_id_index on image_gallery (gallery_id)
+create index gallery_id_index on image_gallery (gallery_id);
+create index gallery_name_index on gallery (name);

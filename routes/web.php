@@ -30,13 +30,13 @@ $router->get('/profile/galleries', "GalleryController@indexGalleries"); // galle
 $router->get("/profile/galleries/{id}/{id}", "ImageController@showImageInGallery"); //get single image from gallery
 $router->get('/profile/galleries/{id}', "ImageController@indexImage");  //images from gallery
 $router->get("/profile/images/{id}", "ImageController@showImage"); //get single image from profile
-$router->post("/profile/update/images/{id}", "ImageController@update");  //update image from logged user gallery
+$router->post("/profile/update/images/{id}", "ImageController@updateImage");  //update image from logged user gallery
 // not logged user
 $router->get("/profile/users", "UserController@indexUsers");// other users
 $router->get("/profile/users/{slug}/{id}/{id}", "ImageController@showImageInNotLoggedUserGallery");//not logged user image
 $router->get("/profile/users/{slug}/{id}", "ImageController@notLoggedUserImages");  //images from gallery
 $router->get("/profile/users/{slug}", "GalleryController@notLoggedUserGalleries"); // Not logged user galleries
-$router->post("/update/images/{id}", "ImageController@update");  //update image from logged user gallery
+$router->post("/update/images/{id}", "ImageController@updateImage");  //update image from logged user gallery
 
 //image comments
 $router->get("/comments/users/{slug}/{id}/{id}", "ImageController@notLoggedUserImageComments"); // comments
@@ -50,8 +50,8 @@ $router->get("/comments/galleries/{id}", "GalleryController@indexGalleryComments
 $router->get("/profile/comments/users/{slug}/{id}", "GalleryController@indexComments"); // comments of other users gallery
 $router->post('/gallery/comment', "GalleryController@createComment"); //create comment
 
-$router->get("/profile/update/gallery/{id}","GalleryController@update");
-$router->post("/profile/update/gallery/{id}","GalleryController@update");
+$router->get("/profile/update/gallery/{id}","GalleryController@updateGallery");
+$router->post("/profile/update/gallery/{id}","GalleryController@updateGallery");
 
 $router->get("/profile/updateAccount","UserController@updateAccount");
 $router->post("/profile/updateAccount","UserController@updateAccount");

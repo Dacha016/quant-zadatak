@@ -6,11 +6,12 @@ if(!isset($_SESSION["id"])) {
 <?php $__env->startSection("content"); ?>
 <div style="width: 1200px; margin: 10px auto">
     <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
-
-    <form id="imageForm" action ="/addImage/galleries/<?php echo e($galleryId); ?>" method="post" class="p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
+    <?php if($_SESSION["id"] == $gallery->userId): ?>
+    <form id="imageForm" action ="/addImage/galleries/<?php echo e($gallery->galleryId); ?>" method="post" class="p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
         <input type="file" id="fileName" name="fileName" />
         <input class="float-right" type="submit" id="submit" name="submit" value="Upload" />
     </form>
+    <?php endif; ?>
     <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <?php if(($_SESSION["role"] === "admin" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "moderator" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "user" && $row->userId ===$_SESSION["id"])): ?>
             <div class="d-inline-block m-1" >

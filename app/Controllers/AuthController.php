@@ -6,9 +6,6 @@ use App\Blade\Blade;
 use App\Models\Subscription;
 use App\Models\User;
 
-
-
-
 class AuthController extends User
 {
 

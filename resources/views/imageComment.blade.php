@@ -7,6 +7,9 @@
             <img style="width: 35vw; height: 75vh;" class="mt-2" alt="{{$image->file_name}}" src="{{$image->file_name}}" >
         </div>
         <div style="width: 500px" class="float-right">
+            @if(isset($error))
+                <p>{{$error}}</p>
+            @endif
             @if(isset($_SESSION["id"]))
                 <form action="/image/comments" method="post">
                     <input type="hidden"  name="userId" value="{{$image->userId}}">
