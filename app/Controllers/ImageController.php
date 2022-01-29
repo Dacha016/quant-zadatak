@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Blade\Blade;
+use App\Models\Gallery;
 use App\Models\Image;
 use App\Models\Subscription;
 
@@ -36,8 +37,7 @@ class ImageController extends Image
     public function indexImage($id)
     {
         $result = $this->index($id);
-        $galleryId = $id;
-        Blade::render("/images", compact("result", "galleryId"));
+        Blade::render("/images", compact("result"));
     }
 
     /**
@@ -47,7 +47,10 @@ class ImageController extends Image
     public function notLoggedUserImages($slug,$id)
     {
         $result = $this->index($id);
-        Blade::render("/images", compact("result"));
+        $gallery = new Gallery;
+        $gallery = $gallery->show($id);
+        Blade::render("/images", compact("result", "gallery"));
+
     }
 
     /**
@@ -92,12 +95,12 @@ class ImageController extends Image
     {
         $result = $this->imageComments($id);
         if ($result == null) {
-            $result = "Be the first to comment";
+            $error = "Be the first to comment";
             $image = $this->showInGallery($id);
             if (!$image) {
                 $image = $this->show($id);
             }
-            Blade::render("/noComment", compact("result", "image"));
+            Blade::render("/imageComment", compact("result", "image", "error"));
         }else {
             $image = $this->showInGallery($id);
             if (!$image) {
@@ -189,7 +192,7 @@ class ImageController extends Image
      * Update image
      * @return void
      */
-    public function update($id)
+    public function updateImage($id)
     {
         $hidden = isset($_POST['hidden'])  ? '1' : '0';
         $nsfw = isset($_POST['nsfw']) ? '1' : '0';
@@ -202,7 +205,7 @@ class ImageController extends Image
             "sessionUsername" => $_SESSION["username"],
             "userId" => $_POST["userId"],
         ];
-        $this->updateImage($imageData);
+        $this->active($imageData);
 
         if (isset($_POST["galleryId"])) {
             $imageData["galleryId"] = $_POST["galleryId"];
@@ -272,8 +275,8 @@ class ImageController extends Image
     public function lastMonthImages()
     {
         $userSubscription = new Subscription;
-        $user = $userSubscription->show($_SESSION["username"]);
-        $date = $user->start;
+        $user = $userSubscription->index($_SESSION["username"]);
+        $date = $user[0]->start;
         return $this->imageCount($_SESSION["id"], $date);
     }
 }

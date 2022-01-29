@@ -28,12 +28,14 @@ use App\Models\User;
  */
 class UserController extends User
 {
+
     /**
      * List of users in users tab
      * @return void
      */
     public function indexUsers()
     {
+
         $pages = $this->getPages();
         $result = $this->index($_SESSION["username"]);
         Blade::render("/users", compact("result", "pages"));

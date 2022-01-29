@@ -219,7 +219,7 @@ class Gallery extends Model
      * @param $galleryData
      * @return void
      */
-    public function updateGallery($galleryData): void
+    public function active($galleryData): void
     {
         $redis = new Client();
         $redis->del("galleries_of_user_{$galleryData['userUsername']}_page_{$_POST['page']}");

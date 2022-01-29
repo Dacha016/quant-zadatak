@@ -12,6 +12,7 @@
  */
 namespace App\Models;
 
+use App\Interfaces\Card;
 use Predis\Client;
 
 
@@ -24,7 +25,7 @@ use Predis\Client;
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
-class User extends Model
+class User extends Model implements Card
 {
 
     private string $username;
@@ -34,13 +35,23 @@ class User extends Model
     private string $role = "user";
     private int $nsfw = 0;
     private int $active = 0;
-    private int $payment;
+    private int $payment = 0;
+    private string $valid_until;
 
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($username = "", $email = "", $password = "", $api_key = "", $role = "user", $nsfw = 0, $active = 0, $payment = 0, $valid_until = "" )
     {
+        $this->username = $username;
+        $this->email = $email;
+        $this->password = $password;
+        $this->api_key = $api_key;
+        $this->role = $role;
+        $this->nsfw = $nsfw;
+        $this->active = $active;
+        $this->payment = $payment;
+        $this->valid_until = $valid_until;
         parent::__construct();
     }
 
@@ -49,10 +60,10 @@ class User extends Model
         return $this->username;
     }
 
-    public function getEmail():string
-    {
-        return $this->email;
-    }
+//    public function getEmail():string
+//    {
+//        return $this->email;
+//    }
 
     public function getPassword():string
     {
@@ -82,6 +93,10 @@ class User extends Model
     public function getPayment():int
     {
         return $this->payment;
+    }
+    public function  getValidUntil():string
+    {
+        return $this->valid_until;
     }
 
     /**
@@ -214,6 +229,18 @@ class User extends Model
     }
 
     /**
+     * Change value of payment
+     * @param $id
+     * @return mixed
+     */
+    public function active($id)
+    {
+        $this->conn->queryPrepare("update user set payment = 0 where id =:id");
+        $this->conn->bindParam(":id", $id);
+        return $this->conn->execute();
+    }
+
+    /**
      * Find user by username adn compare passwords
      * @param $username
      * @param $password
@@ -262,7 +289,7 @@ class User extends Model
      * Pages for pagination
      * @return float
      */
-    protected function getPages(): float
+    public function getPages(): float
     {
         $limit =50;
         $this->conn->queryPrepare("select count(*) as 'row' from user");
@@ -270,5 +297,37 @@ class User extends Model
         $result = $this->conn->single();
         $rows = $result->row;
         return ceil($rows/$limit);
+    }
+
+    /**
+     * Check is users card is valid
+     * @return mixed
+     */
+    public function isValid()
+    {
+        $now = date("Y-m-d");
+        $user = $this->show($_SESSION["username"]);
+
+        if ($now >= $user->valid_until) {
+            $this->active($_SESSION["id"]);
+        }
+
+        $this->conn->queryPrepare("select payment from user where id =:id and payment = 1");
+        $this->conn->bindParam(":id", $_SESSION["id"]);
+        $this->conn->execute();
+        $this->conn->execute();
+        return $this->conn->single();
+
+    }
+
+    /**
+     * Pay if users card id valid
+     * @return bool
+     */
+    public function pay()
+    {
+
+        return $this->isValid();
+
     }
 }

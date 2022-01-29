@@ -2,8 +2,8 @@
 
 use Bramus\Router\Router;
 use Dotenv\Dotenv;
-require_once realpath('../vendor/autoload.php');
 
+require_once realpath('../vendor/autoload.php');
 
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
@@ -12,5 +12,5 @@ require realpath('../routes/web.php');
 $router->run();
 
 $redis = new \Predis\Client();
-include realpath(dirname(__DIR__)."/app/Controllers/Subscription.php");
 
+include realpath(dirname(__DIR__) . "/app/Autoload/Subscription.php");

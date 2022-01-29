@@ -96,7 +96,7 @@ class GalleryController extends Gallery
      * Update gallery of logger user and other users
      * @return void
      */
-    public function update($id)
+    public function updateGallery($id)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             $result = $this->show( $id);
@@ -118,7 +118,7 @@ class GalleryController extends Gallery
             if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
                 $this->createLogg($galleryData);
             }
-            $this->updateGallery($galleryData);
+            $this->active($galleryData);
             if ($galleryData["userId"] == $_SESSION["id"]) {
                 header("Location: /profile/galleries?page=1" );
             }

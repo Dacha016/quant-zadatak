@@ -37,15 +37,23 @@ class SubscriptionController extends Subscription
             $result = $this->index($_SESSION["username"]);
             Blade::render("/subscription", compact("result"));
 
-        } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
+        } elseif (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $userData = [
                 "id" => $_SESSION["id"],
                 "subscription" => $_POST["subscription"],
                 "username" => $_SESSION["username"]
             ];
-            $this->create($userData);
-            $result = $this->index($_SESSION["username"]);
-            Blade::render("/subscription", compact("result"));
+            $success = $this->subscribe($userData);
+            if (!$success) {
+                 $error = "Card problem";
+                $result = $this->index($_SESSION["username"]);
+                Blade::render("/subscription", compact("result", "error"));
+            }else {
+                $result = $this->index($_SESSION["username"]);
+                Blade::render("/subscription", compact("result"));
+            }
         }
     }
+
+
 }

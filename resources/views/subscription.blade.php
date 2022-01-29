@@ -39,6 +39,9 @@ if(!isset($_SESSION["id"])) {
                     <a class="btn btn-secondary" style="color: white" href="/profile">Cancel</a>
                     <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
                 </div>
+                @if(isset($error))
+                    <p>{{$error}}</p>
+                @endif
             </form>
         @endif
         @if( isset($result))

@@ -6,9 +6,6 @@ use App\Blade\Blade;
 use App\Models\Subscription;
 use App\Models\User;
 
-
-
-
 class AuthController extends User
 {
 
@@ -77,7 +74,7 @@ class AuthController extends User
             $userData["subscription"] = $_POST["subscription"];
 
             $subscription = new Subscription;
-            $subscription->create($userData);
+            $subscription->subscribe($userData);
 
             header("Location: /login");
             Blade::render("/login");
@@ -120,21 +117,22 @@ class AuthController extends User
             }
 
             $loggedUser = $this->loginUser($userData["username"], $userData["password"]);
+            $_SESSION["id"] = $loggedUser->id;
+            $_SESSION["username"] = $loggedUser->username;
             $subscribe = new Subscription();
-            $userSubscribe = $subscribe->show($loggedUser->username);
+            $userSubscribe = $subscribe->index($_SESSION["username"]);
 
             if (! $userSubscribe) {
                 $userData = [
+                    "username" => $_SESSION["username"],
                     "id" => $loggedUser->id,
                     "subscription" => "Free",
                 ];
-                $subscribe->create($userData);
+                $subscribe->subscribe($userData);
             }
 
-            $_SESSION["id"] = $loggedUser->id;
-            $_SESSION["username"] = $loggedUser->username;
             $_SESSION["role"] = $loggedUser->role;
-            $_SESSION["plan"] = $userSubscribe->plan;
+            $_SESSION["plan"] = $userSubscribe[0]->plan;
             header("Location: /profile");
             Blade::render("/profile");
         }

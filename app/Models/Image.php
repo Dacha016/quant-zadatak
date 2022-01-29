@@ -266,7 +266,7 @@ class Image extends Model
      * @param $imageData
      * @return void
      */
-    protected function updateImage($imageData):void
+    public function active($imageData):void
     {
         $this->conn->queryPrepare("UPDATE image SET hidden =:hidden, nsfw = :nsfw WHERE id = :id");
         $this->conn->bindParam(":hidden", $imageData["hidden"]);
