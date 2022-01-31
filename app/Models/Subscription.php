@@ -144,7 +144,7 @@ class Subscription extends Model implements Subscribe
                 $this->conn->execute();
                 $subscribe = $this->selectLast($_SESSION["id"]);
                 $this->active($subscribe->id);
-                $subscribe = $this->selecActivated($_SESSION["id"]);
+                $subscribe = $this->selectActivated($_SESSION["id"]);
                 $this->deactive($subscribe->id);
             }
         } elseif ($userData["subscription"] == "Month") {
@@ -167,7 +167,7 @@ class Subscription extends Model implements Subscribe
                 $this->conn->execute();
                 $subscribe = $this->selectLast($_SESSION["id"]);
                 $this->active($subscribe->id);
-                $subscribe = $this->selecActivated($_SESSION["id"]);
+                $subscribe = $this->selectActivated($_SESSION["id"]);
                 $this->deactive($subscribe->id);
             }
         } elseif ($userData["subscription"] == "6 months") {
@@ -189,7 +189,7 @@ class Subscription extends Model implements Subscribe
                 $this->conn->execute();
                 $subscribe = $this->selectLast($_SESSION["id"]);
                 $this->active($subscribe->id);
-                $subscribe = $this->selecActivated($_SESSION["id"]);
+                $subscribe = $this->selectActivated($_SESSION["id"]);
                 $this->deactive($subscribe->id);
             }
         } elseif ($userData["subscription"] == "Year") {
@@ -206,7 +206,7 @@ class Subscription extends Model implements Subscribe
 
             $subscribe = $this->selectLast($_SESSION["id"]);
             $this->active($subscribe->id);
-            $subscribe = $this->selecActivated($_SESSION["id"]);
+            $subscribe = $this->selectActivated($_SESSION["id"]);
             $this->deactive($subscribe->id);
 
         }
@@ -225,12 +225,23 @@ class Subscription extends Model implements Subscribe
         $this->conn->execute();
     }
 
+    /**
+     * Set active status to 0
+     * @param $id
+     * @return void
+     */
     public function deactive($id)
     {
         $this->conn->queryPrepare("update subscription set active = 0 where id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
     }
+
+    /**
+     * Select next plan (after active plan)
+     * @param $id
+     * @return mixed
+     */
     public function selectNext($id)
     {
         $this->conn->queryPrepare(
@@ -242,6 +253,11 @@ class Subscription extends Model implements Subscribe
         return $this->conn->single();
     }
 
+    /**
+     * Select users last plan
+     * @param $id
+     * @return mixed
+     */
     public function selectLast($id)
     {
         $this->conn->queryPrepare("select id from subscription where user_id =:id order by id desc limit 1");
@@ -250,7 +266,12 @@ class Subscription extends Model implements Subscribe
         return $this->conn->single();
     }
 
-    public function selecActivated($id)
+    /**
+     * Select active plan when user subscribes new plan
+     * @param $id
+     * @return mixed
+     */
+    public function selectActivated($id)
     {
         $this->conn->queryPrepare("select id from subscription where user_id =:id and active = 1  limit 1");
         $this->conn->bindParam(":id", $id);

@@ -229,18 +229,6 @@ class User extends Model implements Card
     }
 
     /**
-     * Change value of payment
-     * @param $id
-     * @return mixed
-     */
-    public function active($id)
-    {
-        $this->conn->queryPrepare("update user set payment = 0 where id =:id");
-        $this->conn->bindParam(":id", $id);
-        return $this->conn->execute();
-    }
-
-    /**
      * Find user by username adn compare passwords
      * @param $username
      * @param $password
@@ -283,6 +271,18 @@ class User extends Model implements Card
         } else {
             return false;
         }
+    }
+
+    /**
+     * Change value of payment
+     * @param $id
+     * @return mixed
+     */
+    public function active($id)
+    {
+        $this->conn->queryPrepare("update user set payment = 0 where id =:id");
+        $this->conn->bindParam(":id", $id);
+        return $this->conn->execute();
     }
 
     /**
