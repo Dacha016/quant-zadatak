@@ -9,15 +9,16 @@ if (isset($_SESSION["id"])) {
 
     function paySubscription(Payment $payment)
     {
-      if ($payment->isValid()) {
-          return $payment->pay();
-      }
-      return false;
+        if ($payment->isValid()) {
+            return $payment->pay();
+        }
+        return false;
     }
 
     $user = new User();
     $user = $user->show($_SESSION["username"]);
-    $user = new PaymentAdapter(new User($user->username, $user->email, $user->password, $user->api_key, $user->role, $user->nsfw, $user->active, $user->payment, $user->valid_until));
+
+    $user = new PaymentAdapter(new User());
     paySubscription($user);
 
     $subscribe = new Subscription;
@@ -32,7 +33,7 @@ if (isset($_SESSION["id"])) {
     $days = abs($interval->format('%r%a'));
     $plans = $subscribe->index($_SESSION["username"]);
     $n = count($plans);
-    $lastPlanId = $plans[$n-1]->id;
+    $lastPlanId = $plans[$n - 1]->id;
 
     //Change value when user first log in
     if ($userSubscribeAll[0]->id == $lastPlanId) {
@@ -41,7 +42,7 @@ if (isset($_SESSION["id"])) {
     }
 
     if (paySubscription($user) == true && $days == 0) {
-        if($userSubscribe->id < $lastPlanId) {
+        if ($userSubscribe->id < $lastPlanId) {
             $next = $subscribe->selectNext($_SESSION["id"]);
             $subscribe->active($next->id);
             $subscribe->deactive($userSubscribe->id);
@@ -55,8 +56,8 @@ if (isset($_SESSION["id"])) {
         ];
 
         $subscribe->subscribe($userData);
-    } elseif ( paySubscription($user) == false && $days == 0) {
-        if($userSubscribe->id < $lastPlanId) {
+    } elseif (paySubscription($user) == false && $days == 0) {
+        if ($userSubscribe->id < $lastPlanId) {
             $next = $subscribe->selectNext($_SESSION["id"]);
             $subscribe->active($next);
             $subscribe->deactive($userSubscribe->id);

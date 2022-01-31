@@ -10,6 +10,7 @@
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
+
 namespace App\Controllers;
 
 use App\Blade\Blade;
@@ -26,8 +27,14 @@ use App\Models\User;
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
-class UserController extends User
+class UserController extends Controller
 {
+
+    public function __construct()
+    {
+        parent::__construct(new User());
+    }
+
 
     /**
      * List of users in users tab
@@ -36,9 +43,10 @@ class UserController extends User
     public function indexUsers()
     {
 
-        $pages = $this->getPages();
-        $result = $this->index($_SESSION["username"]);
+        $pages = $this->model->getPages();
+        $result = $this->model->index($_SESSION["username"]);
         Blade::render("/users", compact("result", "pages"));
+
     }
 
     /**
@@ -47,7 +55,7 @@ class UserController extends User
      */
     public function updateAccount()
     {
-        $result = $this->show($_SESSION["username"]);
+        $result = $this->model->show($_SESSION["username"]);
 
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/updateAccount", compact("result"));
@@ -55,7 +63,7 @@ class UserController extends User
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $userData = [
-                "id" =>$_SESSION["id"],
+                "id" => $_SESSION["id"],
                 "username" => trim($_POST["username"]),
                 "password" => trim($_POST["password"]),
                 "rPassword" => trim($_POST["rPassword"]),
@@ -77,15 +85,15 @@ class UserController extends User
             //password length and password mach
             if (strlen($userData["password"]) < 6) {
                 $error = "Password must be longer than 6 characters";
-               Blade::render("/updateAccount", compact("error", "result"));
+                Blade::render("/updateAccount", compact("error", "result"));
                 exit();
             } else if ($userData["password"] !== $userData["rPassword"]) {
                 $error = "Password does not match";
-               Blade::render("/updateAccount", compact("error", "result"));
+                Blade::render("/updateAccount", compact("error", "result"));
                 exit();
             }
             $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-            $this->updateLoggedUserAccount($userData, $_SESSION["id"]);
+            $this->model->updateLoggedUserAccount($userData, $_SESSION["id"]);
             $_SESSION["username"] = $userData["username"];
             header("Location: /profile");
         }
@@ -98,7 +106,7 @@ class UserController extends User
      */
     public function updateUser($slug)
     {
-        $result = $this->show($slug);
+        $result = $this->model->show($slug);
 
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
             Blade::render("/updateUsers", compact("result"));
@@ -113,12 +121,12 @@ class UserController extends User
                 "active" => (int)$_POST["active"],
                 "userId" => (int)$_POST["userId"]
             ];
-            $this->updateNotLoggedUser($updateData);
+            $this->model->updateNotLoggedUser($updateData);
 
             if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
                 $updateData["username"] = $_POST["username"];
                 $updateData["moderatorsUsername"] = $_SESSION["username"];
-                $this->createLogg($updateData);
+                $this->model->createLogg($updateData);
             }
             header("Location: /profile/users?page=" . $_POST["page"]);
         }

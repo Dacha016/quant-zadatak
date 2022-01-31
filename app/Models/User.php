@@ -41,17 +41,17 @@ class User extends Model implements Card
     /**
      * Constructor
      */
-    public function __construct($username = "", $email = "", $password = "", $api_key = "", $role = "user", $nsfw = 0, $active = 0, $payment = 0, $valid_until = "" )
+    public function __construct()
     {
-        $this->username = $username;
-        $this->email = $email;
-        $this->password = $password;
-        $this->api_key = $api_key;
-        $this->role = $role;
-        $this->nsfw = $nsfw;
-        $this->active = $active;
-        $this->payment = $payment;
-        $this->valid_until = $valid_until;
+//        $this->username = $username;
+//        $this->email = $email;
+//        $this->password = $password;
+//        $this->api_key = $api_key;
+//        $this->role = $role;
+//        $this->nsfw = $nsfw;
+//        $this->active = $active;
+//        $this->payment = $payment;
+//        $this->valid_until = $valid_until;
         parent::__construct();
     }
 
@@ -172,7 +172,7 @@ class User extends Model implements Card
      * @param $updateData
      * @return void
      */
-    protected function createLogg($updateData): void
+    public function createLogg($updateData): void
     {
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)
@@ -191,7 +191,7 @@ class User extends Model implements Card
      * @param $id
      * @return void
      */
-    protected function updateLoggedUserAccount($userData,$id):void
+    public function updateLoggedUserAccount($userData,$id):void
     {
         $this->conn->queryPrepare(
             "update user set 
@@ -211,7 +211,7 @@ class User extends Model implements Card
      * @param $updateData
      * @return void
      */
-    protected function updateNotLoggedUser($updateData):void
+    public function updateNotLoggedUser($updateData):void
     {
         $redis = new Client();
         $redis->del("users_page_{$_POST['page']}");

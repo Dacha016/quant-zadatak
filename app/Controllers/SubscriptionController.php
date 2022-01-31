@@ -6,8 +6,12 @@ use App\Blade\Blade;
 use App\Models\Subscription;
 
 
-class SubscriptionController extends Subscription
+class SubscriptionController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct(new Subscription());
+    }
     /**
      * Not logged user subscription list
      * @param $username
@@ -15,13 +19,13 @@ class SubscriptionController extends Subscription
      */
     public function indexSubscriptionList($username)
     {
-        $user = $this->show($username);
+        $user = $this->model->show($username);
         if (! $user) {
             $noData = "No data";
             Blade::render("/subscription", compact("noData"));
 
         } else {
-            $result = $this->index($username);
+            $result = $this->model->index($username);
             Blade::render("/subscription", compact("result", "user"));
         }
     }
@@ -34,7 +38,7 @@ class SubscriptionController extends Subscription
     public function subscription()
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $result = $this->index($_SESSION["username"]);
+            $result = $this->model->index($_SESSION["username"]);
             Blade::render("/subscription", compact("result"));
 
         } elseif (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
@@ -43,13 +47,13 @@ class SubscriptionController extends Subscription
                 "subscription" => $_POST["subscription"],
                 "username" => $_SESSION["username"]
             ];
-            $success = $this->subscribe($userData);
+            $success = $this->model->subscribe($userData);
             if (!$success) {
                  $error = "Card problem";
-                $result = $this->index($_SESSION["username"]);
+                $result = $this->model->index($_SESSION["username"]);
                 Blade::render("/subscription", compact("result", "error"));
             }else {
-                $result = $this->index($_SESSION["username"]);
+                $result = $this->model->index($_SESSION["username"]);
                 Blade::render("/subscription", compact("result"));
             }
         }
