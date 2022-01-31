@@ -47,7 +47,7 @@ class Image extends Model
      * Pictures on home page which are not hidden or nsfw
      * @return array
      */
-    protected function indexHomePage() :array
+    public function indexHomePage() :array
     {
         $redis = new Client();
         $key = "home_image";
@@ -70,7 +70,7 @@ class Image extends Model
      * @param $id
      * @return array
      */
-    protected function indexProfilePage($id):array
+    public function indexProfilePage($id):array
     {
         $redis = new Client();
         $key = "user_{$id}_profile_image";
@@ -97,7 +97,7 @@ class Image extends Model
      * @param $id
      * @return array
      */
-    protected function imageComments($id):array
+    public function imageComments($id):array
     {
         $redis = new Client();
         $key = "image_{$id}_comments";
@@ -174,7 +174,7 @@ class Image extends Model
      * @param $id
      * @return mixed
      */
-    protected function showInGallery ($id)
+    public function showInGallery ($id)
     {
         $this->conn->queryPrepare(
             "select i.id as 'imageId', i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden', i.file_name as 'file_name', i.user_id as 'userId', u.username as 'username', g.id as 'galleryId' 
@@ -193,7 +193,7 @@ class Image extends Model
      * @param $imageData
      * @return void
      */
-    protected function createImage($imageData):void
+    public function createImage($imageData):void
     {
         $redis = new Client();
         $redis->del("user_{$imageData['userId']}_profile_image");
@@ -214,7 +214,7 @@ class Image extends Model
      * @param $imageData
      * @return void
      */
-    protected function insertImageInGallery($imageData):void
+    public function insertImageInGallery($imageData):void
     {
         $redis = new Client();
         $redis->del("image_of_gallery_{$imageData['galleryId']}");
@@ -231,7 +231,7 @@ class Image extends Model
      * @param $commentData
      * @return void
      */
-    protected function createImageComments($commentData):void
+    public function createImageComments($commentData):void
     {
         $redis = new Client();
         $redis->del("image_{$commentData['imageId']}_comments");
@@ -247,7 +247,7 @@ class Image extends Model
      * @param $imageData
      * @return void
      */
-    protected function createLogg($imageData):void
+    public function createLogg($imageData):void
     {
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username,gallery_id, image_name, image_nsfw, image_hidden)
@@ -280,7 +280,7 @@ class Image extends Model
      * @param $id
      * @return void
      */
-    protected function deleteImage($id):void
+    public function deleteImage($id):void
     {
         $redis = new Client();
         $redis->del( "image_of_gallery_{$_POST['galleryId']}");
@@ -295,7 +295,7 @@ class Image extends Model
      * @param $id
      * @return mixed
      */
-    protected function selectLastImageId($id)
+    public function selectLastImageId($id)
     {
         $this->conn->queryPrepare(
             "select id from image where user_id =:id order by id desc limit 1");
@@ -310,7 +310,7 @@ class Image extends Model
      * @param $start
      * @return mixed
      */
-    protected function imageCount($id, $start)
+    public function imageCount($id, $start)
     {
         $this->conn->queryPrepare(
             "select count(*) as 'row' from image 

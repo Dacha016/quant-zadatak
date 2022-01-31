@@ -6,16 +6,20 @@ namespace App\Controllers;
 use App\Models\Gallery;
 use App\Blade\Blade;
 
-class GalleryController extends Gallery
+class GalleryController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct(new Gallery());
+    }
     /**
      * List of logged user galleries
      * @return void
      */
     public function indexGalleries()
     {
-        $pages = $this->getPages($_SESSION["username"]);
-        $result = $this->index($_SESSION["username"]);
+        $pages = $this->model->getPages($_SESSION["username"]);
+        $result = $this->model->index($_SESSION["username"]);
         Blade::render("/galleries", compact("result","pages"));
     }
 
@@ -26,8 +30,8 @@ class GalleryController extends Gallery
      */
     public function indexGalleryComments($id)
     {
-        $result = $this->indexComments($id);
-        $gallery = $this->show($id);
+        $result = $this->model->indexComments($id);
+        $gallery = $this->model->show($id);
         Blade::render("/galleryComments", compact("result","gallery"));
     }
 
@@ -39,11 +43,11 @@ class GalleryController extends Gallery
     public function notLoggedUserGalleries($slug)
     {
         if ($_SESSION["role"] === "user") {
-            $pages = $this->getPagesVisible($slug);
-            $result = $this->indexHiddenOrNsfw($slug);
+            $pages = $this->model->getPagesVisible($slug);
+            $result = $this->model->indexHiddenOrNsfw($slug);
         } else {
-            $result = $this->index($slug);
-            $pages = $this->getPages($slug);
+            $result = $this->model->index($slug);
+            $pages = $this->model->getPages($slug);
         }
         Blade::render("/galleries", compact("result", "pages"));
     }
@@ -72,7 +76,7 @@ class GalleryController extends Gallery
                 "hidden" => $hidden,
                 "nsfw" => $nsfw
             ];
-            $this->createGallery($galleryData);
+            $this->model->createGallery($galleryData);
             header("Location: /profile/galleries?page=1");
         }
     }
@@ -88,7 +92,7 @@ class GalleryController extends Gallery
             "userId" => $_SESSION["id"],
             "comment" => $_POST["comment"]
         ];
-        $this->createGalleryComment($commentData);
+        $this->model->createGalleryComment($commentData);
             header("Location: /comments/galleries/{$_POST["galleryId"]}");
     }
 
@@ -99,7 +103,7 @@ class GalleryController extends Gallery
     public function updateGallery($id)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $result = $this->show( $id);
+            $result = $this->model->show( $id);
             Blade::render("/updateGallery", compact("result"));
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
             $hidden = isset($_POST['hidden']) ? '1' : '0';
@@ -116,9 +120,9 @@ class GalleryController extends Gallery
                 "sessionName" =>$_SESSION["username"]
             ];
             if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
-                $this->createLogg($galleryData);
+                $this->model->createLogg($galleryData);
             }
-            $this->active($galleryData);
+            $this->model->active($galleryData);
             if ($galleryData["userId"] == $_SESSION["id"]) {
                 header("Location: /profile/galleries?page=1" );
             }
@@ -135,10 +139,10 @@ class GalleryController extends Gallery
     public function delete($id)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
-            $result = $this->show($id);
+            $result = $this->model->show($id);
             Blade::render("/deleteGallery", compact("result"));
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $this->deleteGallery($_POST["galleryId"]);
+            $this->model->deleteGallery($_POST["galleryId"]);
             if ($_POST["userId"] === $_SESSION["id"]) {
                 header("Location: /profile/galleries?page=1");
             } else {
