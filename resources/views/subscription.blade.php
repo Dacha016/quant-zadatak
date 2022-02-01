@@ -1,14 +1,14 @@
 @extends("layout.main")
 <?php
-if(!isset($_SESSION["id"])) {
+if (!isset($_SESSION["id"])) {
     header("Location: /home");
 }
 ?>
 @section("content")
     <div style="width: 1200px; margin: 10px auto">
-        <h1  style="text-align: center">Subscription</h1>
-        @if( isset($noData) )
-            <h2  style="text-align: center">{{$noData}}</h2>
+        <h1 style="text-align: center">Subscription</h1>
+        @if( isset($error) )
+            <h2 style="text-align: center">{{$error}}</h2>
         @endif
         @if(!isset($user) && isset($result))
             <form action="/profile/subscription" method="post" class="p-2 float-left" style=" margin:50px ; border:black 1px solid;

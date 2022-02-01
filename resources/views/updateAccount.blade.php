@@ -1,6 +1,6 @@
 @extends("layout.main")
 <?php
-if(!isset($_SESSION["id"])) {
+if (!isset($_SESSION["id"])) {
     header("Location: /home");
 }
 ?>
@@ -16,24 +16,50 @@ if(!isset($_SESSION["id"])) {
         </div>
         <div class="mb-3 mt-3 b">
             <label for="username" class="form-label" style="font-size:18px; margin-left:15px;">Username:</label>
-            <input type="text" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" id="username" name="username" value="{{$result->username}}">
+            <input type="username" class="form- control d-block p-2"
+                   style="width:95%;margin:10px auto; border-radius:10px"
+                   id="username" name="username" value="{{$result->username}}">
         </div>
 
         <div class="mb-3 mt-3">
             <label for="email" class="form-label" style="font-size:18px; margin-left:15px;">Email:</label>
-            <input type="email" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" id="email" name="email" value="{{$result->email}}">
+            <input type="email" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px"
+                   id="email" name="email" value="{{$result->email}}">
         </div>
 
         <div class="mb-3">
             <label for="password" class="form-label" style="font-size:18px; margin-left:15px;">Password:
-                <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="password" value="">
+                <input type="password" class="form- control d-block p-2"
+                       style="width:95%;margin:10px auto; border-radius:10px" name="password" value="">
             </label>
         </div>
 
         <div class="mb-3">
             <label for="rPassword" class="form-label" style="font-size:18px; margin-left:15px;">Retype password:
-                <input type="password" class="form- control d-block p-2" style="width:95%;margin:10px auto; border-radius:10px" name="rPassword">
+                <input type="password" class="form- control d-block p-2"
+                       style="width:95%;margin:10px auto; border-radius:10px" name="rPassword">
             </label>
+        </div>
+
+        <div class="mb-3">
+            <label for="valid_until" class="form-label" style="font-size:18px; margin-left:15px;">Card valid:
+                <input type="date" class="form- control d-block p-2"
+                       style="width:95%;margin:10px auto; border-radius:10px" name="valid_until"
+                       value={{$result->valid_until}}>
+            </label>
+        </div>
+
+        </div>
+
+        <div class="form-check ml-3">
+            @if($result->payment)
+                <input class="form-check-input" type="checkbox" id="payment" name="payment"
+                       value={{$result->payment}} checked>
+            @endif
+            @if(!$result->payment)
+                <input class="form-check-input" type="checkbox" id="payment" name="payment" value="0">
+            @endif
+            <label class="form-check-label" for="payment">Payment</label>
         </div>
 
         <div class="m-3">

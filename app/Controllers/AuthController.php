@@ -37,15 +37,6 @@ class AuthController extends Controller
 
             } else {
 
-                $userData["username"] = $_POST["username"];
-                $result = $this->model->show($userData["username"]);
-
-                $userData["id"] = $result->id;
-                $userData["subscription"] = $_POST["subscription"];
-
-                $subscription = new Subscription;
-                $subscription->subscribe($userData);
-
                 header("Location: /login");
 
             }

@@ -82,20 +82,37 @@ class Gallery extends Model
             $redis->set($key, serialize($galleries));
             $redis->expire($key, 300);
 
-            return $galleries;
+            if (isset($galleries)) {
+
+                $response["data"] = [
+                    "galleries" => $galleries,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+            }
 
         } else {
-
-            return unserialize($redis->get($key));
+            $response["data"] = [
+                "galleries" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
         }
+
+        return $response;
     }
 
     /**
      * Show all comments of gallery
      * @param $id
-     * @return mixed
+     * @return array
      */
-    public function indexComments($id): mixed
+    public function indexComments($id): array
     {
 
         $redis = new Client();
@@ -120,12 +137,30 @@ class Gallery extends Model
             $redis->set($key, serialize($comments));
             $redis->expire($key, 300);
 
-            return $comments;
+            if (isset($comments)) {
 
+                $response["data"] = [
+                    "comments" => $comments,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+
+            }
         } else {
 
-            return unserialize($redis->get($key));
+            $response["data"] = [
+                "comments" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
         }
+
+        return $response;
     }
 
     /**
@@ -161,20 +196,37 @@ class Gallery extends Model
             $redis->set($key, serialize($galleries));
             $redis->expire($key, 300);
 
-            return $galleries;
+            if (isset($galleries)) {
+
+                $response["data"] = [
+                    "galleries" => $galleries,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+            }
 
         } else {
-
-            return unserialize($redis->get($key));
+            $response["data"] = [
+                "galleries" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
         }
+
+        return $response;
     }
 
     /**
      * Show all images in gallery
      * @param $id
-     * @return mixed
+     * @return array
      */
-    public function show($id): mixed
+    public function show($id): array
     {
 
         $this->conn->queryPrepare(
@@ -184,18 +236,82 @@ class Gallery extends Model
             WHERE gallery.id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+        $result = $this->conn->single();
 
-        return $this->conn->single();
+        if (!$result) {
+
+            $response["data"] = [
+                "status_code" => 'HTTP/1.1 404 Not found'
+            ];
+        } else {
+
+            $response["data"] = [
+                "gallery" => $result,
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+        }
+
+        return $response;
+
 
     }
 
     /**
      * Create gallery
-     * @param $galleryData
      * @return void
      */
-    public function createGallery($galleryData): void
+    public function createGallery()
     {
+
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $name = trim($_POST["name"]);
+        $hidden = isset($_POST['hidden']) ? '1' : '0';
+        $nsfw = isset($_POST['nsfw']) ? '1' : '0';
+        $slug = str_replace(" ", "-", $name);
+        $slug = strtolower($slug);
+
+        $galleryData = [
+            "userId" => $_SESSION["id"],
+            "name" => trim($_POST["name"]),
+            "slug" => $slug,
+            "description" => trim($_POST["description"]),
+            "hidden" => $hidden,
+            "nsfw" => $nsfw
+        ];
+
+
+        if (empty($galleryData["name"]) || empty($galleryData["description"])) {
+
+            $response["data"] = [
+                "error" => "An empty field is not allowed!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+        }
+
+        if (!preg_match("/^[a-zA-Z0-9]*$/", $galleryData["name"])) {
+
+            $response["data"] = [
+                "error" => "The gallery name may contain only letters and numbers",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        if (!preg_match("/^[a-zA-Z0-9-\\s]*$/", $galleryData["description"])) {
+
+            $response["data"] = [
+                "error" => "The gallery description may contain only letters and numbers",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
 
         $this->conn->queryPrepare(
             "insert into gallery (user_id, name, nsfw, hidden, description, slug)
@@ -208,6 +324,12 @@ class Gallery extends Model
         $this->conn->bindParam(":slug", $galleryData["slug"]);
         $this->conn->execute();
 
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
+
     }
 
     /**
@@ -215,7 +337,7 @@ class Gallery extends Model
      * @param $galleryData
      * @return void
      */
-    public function createLogg($galleryData): void
+    public function createLogg($galleryData)
     {
 
         $this->conn->queryPrepare(
@@ -228,6 +350,12 @@ class Gallery extends Model
         $this->conn->bindParam(":gallery_hidden", $galleryData["hidden"]);
         $this->conn->execute();
 
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
+
     }
 
     /**
@@ -235,11 +363,39 @@ class Gallery extends Model
      * @param $commentData
      * @return mixed
      */
-    public function createGalleryComment($commentData): void
+    public function createGalleryComment()
     {
+
+        $commentData = [
+            "galleryId" => $_POST["galleryId"],
+            "userId" => $_SESSION["id"],
+            "comment" => trim($_POST["comment"])
+        ];
+
+        if (empty($commentData["comment"])) {
+
+            $response["data"] = [
+                "error" => "An empty field is not allowed!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+        }
+
+        if (!preg_match("/^[a-zA-Z0-9]*$/", $commentData["comment"])) {
+
+            $response["data"] = [
+                "error" => "The comment may contain only letters and numbers",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
 
         $redis = new Client();
         $redis->del("gallery_{$commentData['galleryId']}_comments");
+
 
         $this->conn->queryPrepare("insert into comment (user_id, gallery_id, comment) values (:user_id, :gallery_id, :comment)");
         $this->conn->bindParam(":user_id", $commentData["userId"]);
@@ -247,15 +403,34 @@ class Gallery extends Model
         $this->conn->bindParam(":comment", $commentData["comment"]);
         $this->conn->execute();
 
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
     }
 
     /**
      * Update gallery data
-     * @param $galleryData
-     * @return void
+     * @return
      */
-    public function active($galleryData): void
+    public function update()
     {
+
+        $hidden = isset($_POST['hidden']) ? '1' : '0';
+        $nsfw = isset($_POST['nsfw']) ? '1' : '0';
+
+        $galleryData = [
+            "userId" => $_POST["userId"],
+            "galleryId" => $_POST["galleryId"],
+            "name" => trim($_POST["name"]),
+            "slug" => trim($_POST["slug"]),
+            "description" => trim($_POST["description"]),
+            "hidden" => $hidden,
+            "nsfw" => $nsfw,
+            "userUsername" => $_POST["userUsername"],
+            "sessionName" => $_SESSION["username"]
+        ];
 
         $redis = new Client();
         $redis->del("galleries_of_user_{$galleryData['userUsername']}_page_{$_POST['page']}");
@@ -272,6 +447,16 @@ class Gallery extends Model
         $this->conn->bindParam(":id", $galleryData["galleryId"]);
         $this->conn->execute();
 
+        if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+            $this->createLogg($galleryData);
+        }
+
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
+
     }
 
     /**
@@ -279,7 +464,7 @@ class Gallery extends Model
      * @param $id
      * @return void
      */
-    public function deleteGallery($id): void
+    public function deleteGallery($id)
     {
 
         $redis = new Client();
@@ -288,6 +473,12 @@ class Gallery extends Model
         $this->conn->queryPrepare("DELETE FROM gallery WHERE id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
 
     }
 

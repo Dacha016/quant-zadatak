@@ -14,13 +14,14 @@ class ImageController extends Controller
     {
         parent::__construct(new Image());
     }
+
     /**
      * List of image on home page which are not hidden or nsfw
      * @return void
      */
     public function indexHome()
     {
-        $result =$this->model->indexHomePage();
+        $result = $this->model->indexHomePage();
         Blade::render("/home", compact("result"));
     }
 
@@ -44,13 +45,14 @@ class ImageController extends Controller
         $result = $this->model->index($id);
         $gallery = new Gallery;
         $gallery = $gallery->show($id);
-        Blade::render("/images", compact("result", "gallery"));}
+        Blade::render("/images", compact("result", "gallery"));
+    }
 
     /**
      * Show not logged users images
      * @return void
      */
-    public function notLoggedUserImages($slug,$id)
+    public function notLoggedUserImages($slug, $id)
     {
         $result = $this->model->index($id);
         $gallery = new Gallery;
@@ -75,7 +77,7 @@ class ImageController extends Controller
      * @param $id
      * @return void
      */
-    public function loggedUserImageComments($galleryId,$id)
+    public function loggedUserImageComments($galleryId, $id)
     {
         $this->comments($id);
     }
@@ -87,7 +89,7 @@ class ImageController extends Controller
      * @param $id
      * @return void
      */
-    public function notLoggedUserImageComments($slug,$galleryId,$id)
+    public function notLoggedUserImageComments($slug, $galleryId, $id)
     {
         $this->comments($id);
     }
@@ -107,7 +109,7 @@ class ImageController extends Controller
                 $image = $this->model->show($id);
             }
             Blade::render("/imageComment", compact("result", "image", "error"));
-        }else {
+        } else {
             $image = $this->model->showInGallery($id);
             if (!$image) {
                 $image = $this->model->show($id);
@@ -123,7 +125,7 @@ class ImageController extends Controller
     public function showImage($id)
     {
         $result = $this->model->show($id);
-        Blade::render("/imageUpdate", compact("result") );
+        Blade::render("/imageUpdate", compact("result"));
     }
 
     /**
@@ -132,10 +134,10 @@ class ImageController extends Controller
      * @param $id
      * @return void
      */
-    public function showImageInGallery($slug,$id)
+    public function showImageInGallery($slug, $id)
     {
-         $result = $this->model->showInGallery($id);
-         Blade::render("/imageUpdate", compact("result") );
+        $result = $this->model->showInGallery($id);
+        Blade::render("/imageUpdate", compact("result"));
     }
 
     /**
@@ -148,7 +150,7 @@ class ImageController extends Controller
     public function showImageInNotLoggedUserGallery($slug, $galleryId, $id)
     {
         $result = $this->model->showInGallery($id);
-        Blade::render("/imageUpdate", compact("result") );
+        Blade::render("/imageUpdate", compact("result"));
     }
 
     /**
@@ -157,7 +159,7 @@ class ImageController extends Controller
      */
     public function create()
     {
-        $slug = str_replace(" ","-", $_POST["fileName"]);
+        $slug = str_replace(" ", "-", $_POST["fileName"]);
         $slug = strtolower($slug);
         $imageData = [
             "userId" => $_SESSION["id"],
@@ -177,7 +179,7 @@ class ImageController extends Controller
      */
     public function insertInGallery($id)
     {
-        $slug = str_replace(" ","-", $_POST["fileName"]);
+        $slug = str_replace(" ", "-", $_POST["fileName"]);
         $slug = strtolower($slug);
         $imageData = [
             "userId" => $_SESSION["id"],
@@ -200,7 +202,7 @@ class ImageController extends Controller
      */
     public function updateImage($id)
     {
-        $hidden = isset($_POST['hidden'])  ? '1' : '0';
+        $hidden = isset($_POST['hidden']) ? '1' : '0';
         $nsfw = isset($_POST['nsfw']) ? '1' : '0';
         $imageData = [
             "imageId" => $_POST["imageId"],
@@ -217,9 +219,9 @@ class ImageController extends Controller
             $imageData["galleryId"] = $_POST["galleryId"];
             if ($_SESSION["username"] == $_POST["userUsername"]) {
                 header("Location: /profile/galleries/" . $imageData["galleryId"] . "page=1");
-            } else{
+            } else {
                 $this->model->createLogg($imageData);
-                header("Location: /profile/users/".$imageData["userUsername"]."/" . $imageData["galleryId"]."page=1");
+                header("Location: /profile/users/" . $imageData["userUsername"] . "/" . $imageData["galleryId"] . "page=1");
             }
         } else {
             header("Location: /profile");
@@ -242,10 +244,9 @@ class ImageController extends Controller
 
         if (isset($_POST["galleryId"]) && $commentData["userId"] !== $_POST["userId"]) {
             header("Location: /comments/users/{$commentData['username']}/{$_POST["galleryId"]}/{$commentData['imageId']}");
-        } elseif (isset($_POST["galleryId"]) && $commentData["userId"] == $_POST["userId"]){
-             header("Location: /profile/comments/galleries/{$_POST["galleryId"]}/{$commentData['imageId']}");
-        }
-        else {
+        } elseif (isset($_POST["galleryId"]) && $commentData["userId"] == $_POST["userId"]) {
+            header("Location: /profile/comments/galleries/{$_POST["galleryId"]}/{$commentData['imageId']}");
+        } else {
             header("Location: /profile/comments/images/{$commentData['imageId']}");
         }
     }
@@ -257,15 +258,15 @@ class ImageController extends Controller
     public function delete($id)
     {
         $imageData = [
-            "galleryId" =>$_POST["galleryId"],
+            "galleryId" => $_POST["galleryId"],
             "userId" => $_POST["userId"],
-            "imageId" =>$_POST["imageId"]
+            "imageId" => $_POST["imageId"]
         ];
         $this->model->deleteImage($imageData["imageId"]);
 
         if (isset($imageData["galleryId"])) {
             if ($imageData["userId"] == $_SESSION["id"]) {
-                header("Location: /profile/galleries/".$imageData["galleryId"]."?page=0");
+                header("Location: /profile/galleries/" . $imageData["galleryId"] . "?page=0");
             } else {
                 header("Location: /profile/users/" . $imageData["userId"] . "/" . $imageData["galleryId"] . "?page=0");
             }
@@ -282,7 +283,7 @@ class ImageController extends Controller
     {
         $userSubscription = new Subscription;
         $user = $userSubscription->index($_SESSION["username"]);
-        $date = $user[0]->start;
+        $date = $user["data"]["subscriptions"][0]->start;
         return $this->model->imageCount($_SESSION["id"], $date);
     }
 }

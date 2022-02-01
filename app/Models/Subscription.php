@@ -65,19 +65,40 @@ class Subscription extends Model implements Subscribe
             $this->conn->bindParam(":username", $username);
             $this->conn->execute();
 
-            $subscription = [];
+            $subscriptions = [];
 
             while ($row = $this->conn->single()) {
-                $subscription[] = $row;
+                $subscriptions[] = $row;
             }
 
-            $redis->set($key, serialize($subscription));
+            $redis->set($key, serialize($subscriptions));
             $redis->expire($key, 300);
 
-            return $subscription;
+            if (isset($subscriptions)) {
+
+                $response["data"] = [
+                    "subscriptions" => $subscriptions,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+
+            }
+
         } else {
-            return unserialize($redis->get($key));
+
+            $response["data"] = [
+                "subscriptions" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
         }
+        return $response;
     }
 
     /**
@@ -89,30 +110,42 @@ class Subscription extends Model implements Subscribe
     {
 
         $this->conn->queryPrepare(
-            "SELECT subscription.* FROM subscription
+            "select subscription.* from subscription
             inner join user u on subscription.user_id = u.id
-            WHERE u.username = :username");
+            where u.username = :username and subscription.active = 1");
         $this->conn->bindParam(":username", $username);
         $this->conn->execute();
-        $result = $this->conn->multi();
 
-        foreach ($result as $row) {
+        $result = $this->conn->single();
 
-            if ($row->active == 1) {
-                return $row;
-            }
+        if (!$result) {
+
+            $response["data"] = [
+                "error" => "Content not found",
+                "status_code" => 'HTTP/1.1 404 Not Found'
+            ];
+
+        } else {
+
+            $response["data"] = [
+                "subscription" => $result,
+                "status_code" => 'HTTP/1.1 404 Not Found'
+            ];
         }
+
+        return $response;
     }
 
     /**
      * @param $userData
-     * @return bool
+     * @return
      * @throws \Exception
      */
-    public function subscribe($userData): bool
+    public function subscribe($userData)
     {
 
         $subscribe = $this->show($userData["username"]);
+        $subscribe = $subscribe["data"]["subscription"];
 
         if ($_SESSION["id"]) {
 
@@ -122,7 +155,13 @@ class Subscription extends Model implements Subscribe
             $user = new PaymentAdapter(new User());
 
             if (!$user->pay()) {
-                return false;
+
+                $response["data"] = [
+                    "error" => "Payment problem",
+                    "status_code" => 'HTTP/1.1 402 Payment Required'
+                ];
+
+                return $response;
             }
         }
 
@@ -159,7 +198,7 @@ class Subscription extends Model implements Subscribe
                 $this->active($subscribe->id);
 
                 $subscribe = $this->selectActivated($_SESSION["id"]);
-                $this->deactive($subscribe->id);
+                $this->deactivate($subscribe->id);
 
             }
         } elseif ($userData["subscription"] == "Month") {
@@ -189,7 +228,7 @@ class Subscription extends Model implements Subscribe
                 $this->active($subscribe->id);
 
                 $subscribe = $this->selectActivated($_SESSION["id"]);
-                $this->deactive($subscribe->id);
+                $this->deactivate($subscribe->id);
 
             }
         } elseif ($userData["subscription"] == "6 months") {
@@ -219,7 +258,7 @@ class Subscription extends Model implements Subscribe
                 $this->active($subscribe->id);
 
                 $subscribe = $this->selectActivated($_SESSION["id"]);
-                $this->deactive($subscribe->id);
+                $this->deactivate($subscribe->id);
 
             }
         } elseif ($userData["subscription"] == "Year") {
@@ -240,11 +279,16 @@ class Subscription extends Model implements Subscribe
             $this->active($subscribe->id);
 
             $subscribe = $this->selectActivated($_SESSION["id"]);
-            $this->deactive($subscribe->id);
+            $this->deactivate($subscribe->id);
 
         }
 
-        return true;
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
+
     }
 
     /**
@@ -254,7 +298,7 @@ class Subscription extends Model implements Subscribe
      */
     public function active($id): void
     {
-        
+
         $this->conn->queryPrepare("update subscription set active = 1 where id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
@@ -266,7 +310,7 @@ class Subscription extends Model implements Subscribe
      * @param $id
      * @return void
      */
-    public function deactive($id): void
+    public function deactivate($id): void
     {
 
         $this->conn->queryPrepare("update subscription set active = 0 where id =:id");

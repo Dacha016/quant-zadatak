@@ -123,11 +123,31 @@ class User extends Model implements Card
             $redis->set($key, serialize($users));
             $redis->expire($key, 300);
 
-            return $users;
+            if (isset($users)) {
+
+                $response["data"] = [
+                    "users" => $users,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+
+            }
 
         } else {
-            return unserialize($redis->get($key));
+
+            $response["data"] = [
+                "users" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
         }
+        return $response;
     }
 
     /**
@@ -141,30 +161,41 @@ class User extends Model implements Card
         $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
         $this->conn->bindParam(":username", $username);
         $this->conn->execute();
+
         $result = $this->conn->single();
 
         if ($result) {
-            return $result;
+
+            $response["data"] = [
+                "user" => $result,
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
+            return $response;
+
         } else {
+
             return false;
         }
     }
 
     /**
      * Register new user
-     * @param $userData
-     * @return void
+     * @return array
      */
-    public function register()
+    public function register(): array
     {
 
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
+        $payment = isset($_POST['payment']) ? '1' : '0';
         $userData = [
             "username" => trim($_POST["username"]),
             "password" => trim($_POST["password"]),
             "rPassword" => trim($_POST["rPassword"]),
             "email" => trim($_POST["email"]),
+            "valid_until" => $_POST["valid_until"],
+            "payment" => $payment
         ];
 
         if (empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["email"])) {
@@ -241,10 +272,9 @@ class User extends Model implements Card
         $userData["active"] = $this->getActive();
         $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 30), 6));
 
-
         $this->conn->queryPrepare(
-            "INSERT INTO user (username, email, password, role, api_key, nsfw, active) 
-            VALUES (:username, :email, :password, :role, :api_key, :nsfw, :active)");
+            "INSERT INTO user (username, email, password, role, api_key, nsfw, active, payment, valid_until) 
+            VALUES (:username, :email, :password, :role, :api_key, :nsfw, :active, :payment, :valid_until)");
         $this->conn->bindParam(":username", $userData["username"]);
         $this->conn->bindParam(":email", $userData["email"]);
         $this->conn->bindParam(":password", $userData["password"]);
@@ -252,16 +282,33 @@ class User extends Model implements Card
         $this->conn->bindParam(":api_key", $userData["api_key"]);
         $this->conn->bindParam(":nsfw", $userData["nsfw"]);
         $this->conn->bindParam(":active", $userData["active"]);
+        $this->conn->bindParam(":payment", $userData["payment"]);
+        $this->conn->bindParam(":valid_until", $userData["valid_until"]);
         $this->conn->execute();
+
+        $result = $this->show($userData["username"]);
+
+        $userData["id"] = $result["data"]["user"]->id;
+        $userData["subscription"] = $_POST["subscription"];
+
+        $subscription = new Subscription;
+        $subscription->subscribe($userData);
+
+
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
 
     }
 
     /**
      * Insert data in moderator_logging
      * @param $updateData
-     * @return void
+     * @return array
      */
-    public function createLogg($updateData): void
+    public function createLogg($updateData): array
     {
 
         $this->conn->queryPrepare(
@@ -274,41 +321,138 @@ class User extends Model implements Card
         $this->conn->bindParam(":user_username", $updateData["username"]);
         $this->conn->execute();
 
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
+
     }
 
     /**
      * Update logged user account
-     * @param $userData
-     * @param $id
-     * @return void
+     * @return array
      */
-    public function updateLoggedUserAccount($userData, $id): void
+    public function updateLoggedUserAccount(): array
     {
+
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $payment = isset($_POST['payment']) ? '1' : '0';
+
+        $userData = [
+            "username" => trim($_POST["username"]),
+            "password" => trim($_POST["password"]),
+            "rPassword" => trim($_POST["rPassword"]),
+            "email" => trim($_POST["email"]),
+            "payment" => $payment,
+            "valid_until" => $_POST["valid_until"]
+        ];
+
+        if (empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["email"])) {
+
+            $response["data"] = [
+                "error" => "Empty fields are not allowed!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        //Check if username contain letters or numbers
+        if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
+
+            $response["data"] = [
+                "error" => "The username may contain only letters and numbers",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        //Email check
+        if (!filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
+
+            $response["data"] = [
+                "error" => "Enter the correct email",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        //password length and password mach
+        if (strlen($userData["password"]) < 6) {
+
+            $response["data"] = [
+                "error" => "Password must be longer than 6 characters",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        } else if ($userData["password"] !== $userData["rPassword"]) {
+
+            $response["data"] = [
+                "error" => "Password does not match",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
 
         $this->conn->queryPrepare(
             "update user set 
                 username = :username,
                 email = :email,
-                password = :password
+                password = :password,
+                payment = :payment,
+                valid_until = :valid_until
                 where id =:id");
+        $this->conn->bindParam(":id", $_SESSION["id"]);
         $this->conn->bindParam(":username", $userData["username"]);
         $this->conn->bindParam(":email", $userData["email"]);
         $this->conn->bindParam(":password", $userData["password"]);
-        $this->conn->bindParam(":id", $id);
+        $this->conn->bindParam(":payment", $userData["payment"]);
+        $this->conn->bindParam(":valid_until", $userData["valid_until"]);
         $this->conn->execute();
 
+        $_SESSION["username"] = $userData["username"];
+
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
     }
 
     /**
      * Update not logged user account
-     * @param $updateData
-     * @return void
+     * @return array
      */
-    public function updateNotLoggedUser($updateData): void
+    public function updateNotLoggedUser(): array
     {
 
         $redis = new Client();
         $redis->del("users_page_{$_POST['page']}");
+
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $nsfw = isset($_POST['nsfw']) ? '1' : '0';
+        $active = isset($_POST['active']) ? '1' : '0';
+
+        $updateData = [
+            "role" => trim($_POST["role"]),
+            "nsfw" => $nsfw,
+            "active" => $active,
+            "userId" => $_POST["userId"]
+        ];
 
         $this->conn->queryPrepare(
             "update user set 
@@ -322,6 +466,17 @@ class User extends Model implements Card
         $this->conn->bindParam(":id", $updateData["userId"]);
         $this->conn->execute();
 
+        if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+            $updateData["username"] = $_POST["username"];
+            $updateData["moderatorsUsername"] = $_SESSION["username"];
+            $this->createLogg($updateData);
+        }
+
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
     }
 
     /**
@@ -352,9 +507,10 @@ class User extends Model implements Card
     }
 
     /**
-     * @return mixed
+     * Log in user
+     * @return array
      */
-    public function loginUser(): mixed
+    public function loginUser(): array
     {
 
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -422,7 +578,7 @@ class User extends Model implements Card
      * @param $id
      * @return mixed
      */
-    public function active($id)
+    public function deactivate($id)
     {
 
         $this->conn->queryPrepare("update user set payment = 0 where id =:id");
@@ -460,13 +616,12 @@ class User extends Model implements Card
 
         $user = $this->show($_SESSION["username"]);
 
-        if ($now >= $user->valid_until) {
-            $this->active($_SESSION["id"]);
+        if ($now == $user["data"]["user"]->valid_until) {
+            $this->deactivate($_SESSION["id"]);
         }
 
         $this->conn->queryPrepare("select payment from user where id =:id and payment = 1");
         $this->conn->bindParam(":id", $_SESSION["id"]);
-        $this->conn->execute();
         $this->conn->execute();
 
         return $this->conn->single();
@@ -481,4 +636,5 @@ class User extends Model implements Card
     {
         return $this->isValid();
     }
+
 }

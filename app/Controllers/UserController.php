@@ -44,6 +44,7 @@ class UserController extends Controller
 
         $pages = $this->model->getPages();
         $result = $this->model->index($_SESSION["username"]);
+        $result = $result["data"]["users"];
 
         Blade::render("/users", compact("result", "pages"));
 
@@ -56,6 +57,7 @@ class UserController extends Controller
     public function updateAccount()
     {
         $result = $this->model->show($_SESSION["username"]);
+        $result = $result["data"]["user"];
 
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
 
@@ -63,42 +65,18 @@ class UserController extends Controller
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
 
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $result = $this->model->updateLoggedUserAccount();
 
-            $userData = [
-                "id" => $_SESSION["id"],
-                "username" => trim($_POST["username"]),
-                "password" => trim($_POST["password"]),
-                "rPassword" => trim($_POST["rPassword"]),
-                "email" => trim($_POST["email"])
-            ];
-            //Check if username contain letters or numbers
-            if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
-                $error = "The username may contain only letters and numbers";
-                Blade::render("/updateAccount", compact("error", "result"));
-                exit();
-            }
-            //Email check
-            if (!filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
-                $error = "Enter the correct email";
-                Blade::render("/updateAccount", compact("error", "result"));
-                exit();
+            if (isset($result["data"]["error"])) {
 
+                $error = $result["data"]["error"];
+
+                Blade::render("/updateAccount", compact("error"));
+
+            } else {
+
+                header("Location: /profile");
             }
-            //password length and password mach
-            if (strlen($userData["password"]) < 6) {
-                $error = "Password must be longer than 6 characters";
-                Blade::render("/updateAccount", compact("error", "result"));
-                exit();
-            } else if ($userData["password"] !== $userData["rPassword"]) {
-                $error = "Password does not match";
-                Blade::render("/updateAccount", compact("error", "result"));
-                exit();
-            }
-            $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-            $this->model->updateLoggedUserAccount($userData, $_SESSION["id"]);
-            $_SESSION["username"] = $userData["username"];
-            header("Location: /profile");
         }
     }
 
@@ -110,27 +88,16 @@ class UserController extends Controller
     public function updateUser($slug)
     {
         $result = $this->model->show($slug);
+        $result = $result["data"]["user"];
 
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
+
             Blade::render("/updateUsers", compact("result"));
 
-        } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $_POST["nsfw"] = isset($_POST['nsfw']) ? '1' : '0';
-            $_POST["active"] = isset($_POST['active']) ? '1' : '0';
-            $updateData = [
-                "role" => trim($_POST["role"]),
-                "nsfw" => (int)$_POST["nsfw"],
-                "active" => (int)$_POST["active"],
-                "userId" => (int)$_POST["userId"]
-            ];
-            $this->model->updateNotLoggedUser($updateData);
+        } elseif (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
 
-            if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
-                $updateData["username"] = $_POST["username"];
-                $updateData["moderatorsUsername"] = $_SESSION["username"];
-                $this->model->createLogg($updateData);
-            }
+            $this->model->updateNotLoggedUser();
+
             header("Location: /profile/users?page=" . $_POST["page"]);
         }
     }

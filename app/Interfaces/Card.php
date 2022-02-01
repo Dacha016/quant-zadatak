@@ -5,7 +5,7 @@ namespace App\Interfaces;
 interface Card
 {
 
-    public function active($id);
+    public function deactivate($id);
 
     public function isValid();
 

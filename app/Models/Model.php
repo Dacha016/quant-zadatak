@@ -24,5 +24,4 @@ abstract class Model
 
     abstract public function show($id);
 
-    abstract public function active($id);
 }

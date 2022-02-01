@@ -1,6 +1,6 @@
 @extends("layout.main")
 <?php
-if(!isset($_SESSION["id"])) {
+if (!isset($_SESSION["id"])) {
     header("Location: /home");
 }
 ?>
@@ -60,7 +60,9 @@ if(!isset($_SESSION["id"])) {
                             <p>{{$row->active}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white" href="/profile/update/users/{{$row->username}}?page={{$_GET['page']}}"><i class="fas fa-pen"></i></a></button>
+                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white"
+                                                                                         href="/profile/update/users/{{$row->username}}?page={{$_GET['page']}}"><i
+                                            class="fas fa-pen"></i></a></button>
                         </td>
                     </tr>
                 @endforeach
@@ -69,13 +71,13 @@ if(!isset($_SESSION["id"])) {
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
                 @if($_GET["page"] > 1)
-                    <li class="page-item" >
-                        <a class="page-link" href="?page=1" > << </a>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1"> << </a>
                     </li>
                 @endif
                 @if($_GET["page"] === 1)
-                        <a class="page-link" href="?page=1" disabled> << </a>
-                    @endif
+                    <a class="page-link" href="?page=1" disabled> << </a>
+                @endif
                 @if($_GET["page"] < 1)
                     <li class="page-item disabled">
                         <a class="page-link" href="?page=1">Previous</a>
@@ -97,13 +99,13 @@ if(!isset($_SESSION["id"])) {
                     </li>
                 @endif
                 @if($_GET["page"] < $pages)
-                    <li class="page-item" >
-                        <a class="page-link" href="?page={{$pages}}" > >> </a>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{$pages}}"> >> </a>
                     </li>
                 @endif
                 @if($_GET["page"] === $pages)
                     <li class="page-item" disabled>
-                        <a class="page-link" href="?page={{$pages}}" > >> </a>
+                        <a class="page-link" href="?page={{$pages}}"> >> </a>
                     </li>
                 @endif
             </ul>
