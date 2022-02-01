@@ -20,7 +20,7 @@ if (isset($_SESSION["id"])) {
 
     $user = new PaymentAdapter(new User());
     paySubscription($user);
-
+    var_dump(paySubscription($user));
     $subscribe = new Subscription;
     $userSubscribe = $subscribe->show($_SESSION["username"]);
     $userSubscribeAll = $subscribe->index($_SESSION["username"]);

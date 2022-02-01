@@ -15,34 +15,35 @@ class Gallery extends Model
 
     public function __construct()
     {
-      parent::__construct();
+        parent::__construct();
     }
 
-    public function getUserId():int
+    public function getUserId(): int
     {
         return $this->user_id;
     }
 
-    public function getName():string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getDescription():string
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function getSlug():string
+    public function getSlug(): string
     {
         return $this->slug;
     }
-    public function getNsfw():int
+
+    public function getNsfw(): int
     {
         return $this->nsfw;
     }
 
-    public function getHidden():int
+    public function getHidden(): int
     {
         return $this->hidden;
     }
@@ -57,26 +58,34 @@ class Gallery extends Model
 
         $redis = new Client();
         $key = "hidden_galleries_of_user_{$slug}_page_{$_GET['page']}";
-        $limit =50;
-        $page = $_GET["page"] - 1;
-        $offset = abs($page * $limit);
-        $this->conn->queryPrepare(
-            "select gallery.id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden, u.username as 'username' 
-            from gallery
-            inner join user u on gallery.user_id = u.id
-            where u.username =:slug and gallery.hidden = 0 and gallery.nsfw = 0 limit $limit offset $offset");
-        $this->conn->bindParam(":slug", $slug);
-        $this->conn->execute();
 
         if (!$redis->exists($key)) {
+
+            $limit = 50;
+            $page = $_GET["page"] - 1;
+            $offset = abs($page * $limit);
+
+            $this->conn->queryPrepare(
+                "select gallery.id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden, u.username as 'username' 
+                from gallery
+                inner join user u on gallery.user_id = u.id
+                where u.username =:slug and gallery.hidden = 0 and gallery.nsfw = 0 limit $limit offset $offset");
+            $this->conn->bindParam(":slug", $slug);
+            $this->conn->execute();
+
             $galleries = [];
+
             while ($row = $this->conn->single()) {
                 $galleries[] = $row;
             }
+
             $redis->set($key, serialize($galleries));
             $redis->expire($key, 300);
-            return  $galleries;
-        }else {
+
+            return $galleries;
+
+        } else {
+
             return unserialize($redis->get($key));
         }
     }
@@ -86,27 +95,35 @@ class Gallery extends Model
      * @param $id
      * @return mixed
      */
-    public function indexComments($id):mixed
+    public function indexComments($id): mixed
     {
+
         $redis = new Client();
         $key = "gallery_{$id}_comments";
-        $this->conn->queryPrepare(
-            "select  g.name as 'galleryName', u.username as 'username', comment from comment
-            inner join gallery g on comment.gallery_id = g.id
-            inner join user u on comment.user_id = u.id
-            where gallery_id =:id");
-        $this->conn->bindParam(":id",$id);
-        $this->conn->execute();
 
         if (!$redis->exists($key)) {
+
+            $this->conn->queryPrepare(
+                "select  g.name as 'galleryName', u.username as 'username', comment from comment
+                inner join gallery g on comment.gallery_id = g.id
+                inner join user u on comment.user_id = u.id
+                where gallery_id =:id");
+            $this->conn->bindParam(":id", $id);
+            $this->conn->execute();
+
             $comments = [];
+
             while ($row = $this->conn->single()) {
                 $comments[] = $row;
             }
+
             $redis->set($key, serialize($comments));
             $redis->expire($key, 300);
+
             return $comments;
-        }else {
+
+        } else {
+
             return unserialize($redis->get($key));
         }
     }
@@ -120,26 +137,34 @@ class Gallery extends Model
     {
         $redis = new Client();
         $key = "galleries_of_user_{$username}_page_{$_GET['page']}";
-        $limit =50;
-        $page =$_GET["page"] -1;
-        $offset = abs($page * $limit);
-        $this->conn->queryPrepare(
-            "SELECT  gallery.id as 'galleryId', description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden,  u.username as 'username' 
-            FROM gallery 
-            inner join user u on gallery.user_id = u.id
-            WHERE u.username =:username limit $limit offset $offset");
-        $this->conn->bindParam(":username", $username);
-        $this->conn->execute();
 
         if (!$redis->exists($key)) {
+
+            $limit = 50;
+            $page = $_GET["page"] - 1;
+            $offset = abs($page * $limit);
+
+            $this->conn->queryPrepare(
+                "SELECT  gallery.id as 'galleryId', description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden,  u.username as 'username' 
+                FROM gallery 
+                inner join user u on gallery.user_id = u.id
+                WHERE u.username =:username limit $limit offset $offset");
+            $this->conn->bindParam(":username", $username);
+            $this->conn->execute();
+
             $galleries = [];
+
             while ($row = $this->conn->single()) {
                 $galleries[] = $row;
             }
+
             $redis->set($key, serialize($galleries));
             $redis->expire($key, 300);
+
             return $galleries;
-        }else {
+
+        } else {
+
             return unserialize($redis->get($key));
         }
     }
@@ -149,8 +174,9 @@ class Gallery extends Model
      * @param $id
      * @return mixed
      */
-    public function show($id):mixed
+    public function show($id): mixed
     {
+
         $this->conn->queryPrepare(
             "SELECT gallery.id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden, u.username as 'userUsername' 
             FROM gallery
@@ -158,7 +184,9 @@ class Gallery extends Model
             WHERE gallery.id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
         return $this->conn->single();
+
     }
 
     /**
@@ -166,8 +194,9 @@ class Gallery extends Model
      * @param $galleryData
      * @return void
      */
-    public function createGallery($galleryData):void
+    public function createGallery($galleryData): void
     {
+
         $this->conn->queryPrepare(
             "insert into gallery (user_id, name, nsfw, hidden, description, slug)
             values (:user_id, :name, :nsfw, :hidden, :description, :slug)");
@@ -178,6 +207,7 @@ class Gallery extends Model
         $this->conn->bindParam(":description", $galleryData["description"]);
         $this->conn->bindParam(":slug", $galleryData["slug"]);
         $this->conn->execute();
+
     }
 
     /**
@@ -187,6 +217,7 @@ class Gallery extends Model
      */
     public function createLogg($galleryData): void
     {
+
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username,gallery_id, gallery_nsfw, gallery_hidden)
             values (:moderator_username, :user_username, :gallery_id, :gallery_nsfw, :gallery_hidden)");
@@ -196,6 +227,7 @@ class Gallery extends Model
         $this->conn->bindParam(":gallery_nsfw", $galleryData["nsfw"]);
         $this->conn->bindParam(":gallery_hidden", $galleryData["hidden"]);
         $this->conn->execute();
+
     }
 
     /**
@@ -203,15 +235,18 @@ class Gallery extends Model
      * @param $commentData
      * @return mixed
      */
-    public function createGalleryComment($commentData):void
+    public function createGalleryComment($commentData): void
     {
+
         $redis = new Client();
         $redis->del("gallery_{$commentData['galleryId']}_comments");
+
         $this->conn->queryPrepare("insert into comment (user_id, gallery_id, comment) values (:user_id, :gallery_id, :comment)");
         $this->conn->bindParam(":user_id", $commentData["userId"]);
         $this->conn->bindParam(":gallery_id", $commentData["galleryId"]);
         $this->conn->bindParam(":comment", $commentData["comment"]);
         $this->conn->execute();
+
     }
 
     /**
@@ -221,8 +256,10 @@ class Gallery extends Model
      */
     public function active($galleryData): void
     {
+
         $redis = new Client();
         $redis->del("galleries_of_user_{$galleryData['userUsername']}_page_{$_POST['page']}");
+
         $this->conn->queryPrepare(
             "update gallery 
             set name =:name, slug =:slug, description =:description, hidden =:hidden, nsfw =:nsfw
@@ -234,6 +271,7 @@ class Gallery extends Model
         $this->conn->bindParam(":nsfw", $galleryData["nsfw"]);
         $this->conn->bindParam(":id", $galleryData["galleryId"]);
         $this->conn->execute();
+
     }
 
     /**
@@ -241,14 +279,16 @@ class Gallery extends Model
      * @param $id
      * @return void
      */
-    public function deleteGallery($id):void
+    public function deleteGallery($id): void
     {
 
         $redis = new Client();
         $redis->del("galleries_of_user_{$_POST['userUsername']}_page_{$_POST['page']}");
+
         $this->conn->queryPrepare("DELETE FROM gallery WHERE id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
     }
 
     /**
@@ -258,16 +298,20 @@ class Gallery extends Model
      */
     public function getPages($slug): float
     {
-        $limit =50;
+        $limit = 50;
+
         $this->conn->queryPrepare(
             "select count(*) as 'row' from gallery 
             inner join user u on gallery.user_id = u.id
             where u.username = :slug");
         $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
+
         $result = $this->conn->single();
         $rows = $result->row;
-        return ceil($rows/$limit);
+
+        return ceil($rows / $limit);
+
     }
 
     /**
@@ -277,15 +321,19 @@ class Gallery extends Model
      */
     public function getPagesVisible($slug): float
     {
-        $limit =50;
+
+        $limit = 50;
+
         $this->conn->queryPrepare(
             "select count(*) as 'row' from gallery 
             inner join user u on gallery.user_id = u.id
             where u.username = :slug and gallery.hidden = 0 and gallery.nsfw =0");
         $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
+
         $result = $this->conn->single();
         $rows = $result->row;
-        return ceil($rows/$limit);
+
+        return ceil($rows / $limit);
     }
 }

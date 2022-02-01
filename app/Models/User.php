@@ -10,6 +10,7 @@
  * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
  * @link     http://github.com/Dacha016/quant-zadatak
  */
+
 namespace App\Models;
 
 use App\Interfaces\Card;
@@ -43,58 +44,50 @@ class User extends Model implements Card
      */
     public function __construct()
     {
-//        $this->username = $username;
-//        $this->email = $email;
-//        $this->password = $password;
-//        $this->api_key = $api_key;
-//        $this->role = $role;
-//        $this->nsfw = $nsfw;
-//        $this->active = $active;
-//        $this->payment = $payment;
-//        $this->valid_until = $valid_until;
         parent::__construct();
     }
 
-    public function getUsername():string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-//    public function getEmail():string
-//    {
-//        return $this->email;
-//    }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
 
-    public function getPassword():string
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function getApi_key():string
+    public function getApi_key(): string
     {
         return $this->api_key;
     }
 
-    public function getRole():string
+    public function getRole(): string
     {
         return $this->role;
     }
 
-    public function getNsfw():int
+    public function getNsfw(): int
     {
         return $this->nsfw;
     }
 
-    public function getActive():int
+    public function getActive(): int
     {
         return $this->active;
     }
 
-    public function getPayment():int
+    public function getPayment(): int
     {
         return $this->payment;
     }
-    public function  getValidUntil():string
+
+    public function getValidUntil(): string
     {
         return $this->valid_until;
     }
@@ -106,24 +99,33 @@ class User extends Model implements Card
      */
     public function index($username): array
     {
+
         $redis = new Client();
         $key = "users_page_{$_GET["page"]}";
-        $limit =50;
-        $page = $_GET["page"]-1;
-        $offset = abs($page * $limit);
-        $this->conn->queryPrepare(
-            "select * from user where username != :username limit $limit offset $offset");
-        $this->conn->bindParam(":username", $username);
-        $this->conn->execute();
+
         if (!$redis->exists($key)) {
+
+            $limit = 50;
+            $page = $_GET["page"] - 1;
+            $offset = abs($page * $limit);
+
+            $this->conn->queryPrepare(
+                "select * from user where username != :username limit $limit offset $offset");
+            $this->conn->bindParam(":username", $username);
+            $this->conn->execute();
+
             $users = [];
+
             while ($row = $this->conn->single()) {
                 $users[] = $row;
             }
+
             $redis->set($key, serialize($users));
             $redis->expire($key, 300);
+
             return $users;
-        }else {
+
+        } else {
             return unserialize($redis->get($key));
         }
     }
@@ -135,12 +137,13 @@ class User extends Model implements Card
      */
     public function show($username): mixed
     {
+
         $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
         $this->conn->bindParam(":username", $username);
         $this->conn->execute();
         $result = $this->conn->single();
 
-        if ($result){
+        if ($result) {
             return $result;
         } else {
             return false;
@@ -152,8 +155,93 @@ class User extends Model implements Card
      * @param $userData
      * @return void
      */
-    protected function register($userData):void
+    public function register()
     {
+
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $userData = [
+            "username" => trim($_POST["username"]),
+            "password" => trim($_POST["password"]),
+            "rPassword" => trim($_POST["rPassword"]),
+            "email" => trim($_POST["email"]),
+        ];
+
+        if (empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["email"])) {
+
+            $response["data"] = [
+                "error" => "Empty fields are not allowed!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        //Check if username contain letters or numbers
+        if (!preg_match("/^[a-zA-Z0-9]*$/", $userData["username"])) {
+
+            $response["data"] = [
+                "error" => "The username may contain only letters and numbers",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        //Email check
+        if (!filter_var($userData["email"], FILTER_VALIDATE_EMAIL)) {
+
+            $response["data"] = [
+                "error" => "Enter the correct email",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        //password length and password mach
+        if (strlen($userData["password"]) < 6) {
+
+            $response["data"] = [
+                "error" => "Password must be longer than 6 characters",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        } else if ($userData["password"] !== $userData["rPassword"]) {
+
+            $response["data"] = [
+                "error" => "Password does not match",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        //Check if user exist
+        if ($this->show($userData["username"])) {
+
+            $response["data"] = [
+                "error" => "User already exists",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
+
+        $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
+        $userData["role"] = $this->getRole();
+        $userData["nsfw"] = $this->getNsfw();
+        $userData["active"] = $this->getActive();
+        $userData["api_key"] = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 30), 6));
+
+
         $this->conn->queryPrepare(
             "INSERT INTO user (username, email, password, role, api_key, nsfw, active) 
             VALUES (:username, :email, :password, :role, :api_key, :nsfw, :active)");
@@ -165,6 +253,7 @@ class User extends Model implements Card
         $this->conn->bindParam(":nsfw", $userData["nsfw"]);
         $this->conn->bindParam(":active", $userData["active"]);
         $this->conn->execute();
+
     }
 
     /**
@@ -174,6 +263,7 @@ class User extends Model implements Card
      */
     public function createLogg($updateData): void
     {
+
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)
             values (:moderator_username, :user_username, :user_active, :user_nsfw, :user_role)");
@@ -183,6 +273,7 @@ class User extends Model implements Card
         $this->conn->bindParam(":user_active", $updateData["active"]);
         $this->conn->bindParam(":user_username", $updateData["username"]);
         $this->conn->execute();
+
     }
 
     /**
@@ -191,8 +282,9 @@ class User extends Model implements Card
      * @param $id
      * @return void
      */
-    public function updateLoggedUserAccount($userData,$id):void
+    public function updateLoggedUserAccount($userData, $id): void
     {
+
         $this->conn->queryPrepare(
             "update user set 
                 username = :username,
@@ -204,6 +296,7 @@ class User extends Model implements Card
         $this->conn->bindParam(":password", $userData["password"]);
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
     }
 
     /**
@@ -211,10 +304,12 @@ class User extends Model implements Card
      * @param $updateData
      * @return void
      */
-    public function updateNotLoggedUser($updateData):void
+    public function updateNotLoggedUser($updateData): void
     {
+
         $redis = new Client();
         $redis->del("users_page_{$_POST['page']}");
+
         $this->conn->queryPrepare(
             "update user set 
                 role = :role,
@@ -226,6 +321,7 @@ class User extends Model implements Card
         $this->conn->bindParam(":active", $updateData["active"]);
         $this->conn->bindParam(":id", $updateData["userId"]);
         $this->conn->execute();
+
     }
 
     /**
@@ -234,14 +330,16 @@ class User extends Model implements Card
      * @param $password
      * @return bool
      */
-    protected function findByUsername($username, $password): bool
+    public function findByUsername($username, $password): bool
     {
+
         $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
         $this->conn->bindParam(":username", $username);
         $this->conn->execute();
+
         $result = $this->conn->single();
 
-        if (! $result) {
+        if (!$result) {
             return false;
         }
         $hashedPassword = $result->password;
@@ -254,23 +352,69 @@ class User extends Model implements Card
     }
 
     /**
-     * @param $username
-     * @param $password
      * @return mixed
      */
-    protected function loginUser($username, $password): mixed
+    public function loginUser(): mixed
     {
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
-        $this->conn->bindParam(":username", $username);
-        $this->conn->execute();
-        $result = $this->conn->single();
-        $hashedPassword = $result->password;
 
-        if (password_verify($password, $hashedPassword)) {
-            return $result;
-        } else {
-            return false;
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $userData = [
+            "username" => trim($_POST["username"]),
+            "password" => trim($_POST["password"]),
+        ];
+
+        if (empty($_POST["username"]) && empty($_POST["password"])) {
+
+            $response["data"] = [
+                "error" => "Empty fields are not allowed!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
         }
+
+        if (empty($_POST["username"]) && !empty($_POST["password"])) {
+
+            $response["data"] = [
+                "error" => "Please enter username!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+        }
+
+        if (!empty($_POST["username"]) && empty($_POST["password"])) {
+
+            $response["data"] = [
+                "error" => "Please enter password!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+        }
+
+        if (!$this->findByUsername($userData["username"], $userData["password"])) {
+
+            $response["data"] = [
+                "error" => "Username and password do not match",
+                "status_code" => 'HTTP/1.1 403 Forbidden'
+            ];
+
+            return $response;
+        }
+
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
+        $this->conn->bindParam(":username", $userData["username"]);
+        $this->conn->execute();
+
+        $response["data"] = [
+            "user" => $this->conn->single(),
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+        return $response;
+
     }
 
     /**
@@ -280,8 +424,10 @@ class User extends Model implements Card
      */
     public function active($id)
     {
+
         $this->conn->queryPrepare("update user set payment = 0 where id =:id");
         $this->conn->bindParam(":id", $id);
+
         return $this->conn->execute();
     }
 
@@ -291,12 +437,16 @@ class User extends Model implements Card
      */
     public function getPages(): float
     {
-        $limit =50;
+
+        $limit = 50;
+
         $this->conn->queryPrepare("select count(*) as 'row' from user");
         $this->conn->execute();
+
         $result = $this->conn->single();
         $rows = $result->row;
-        return ceil($rows/$limit);
+
+        return ceil($rows / $limit);
     }
 
     /**
@@ -305,7 +455,9 @@ class User extends Model implements Card
      */
     public function isValid()
     {
+
         $now = date("Y-m-d");
+
         $user = $this->show($_SESSION["username"]);
 
         if ($now >= $user->valid_until) {
@@ -316,6 +468,7 @@ class User extends Model implements Card
         $this->conn->bindParam(":id", $_SESSION["id"]);
         $this->conn->execute();
         $this->conn->execute();
+
         return $this->conn->single();
 
     }
@@ -326,8 +479,6 @@ class User extends Model implements Card
      */
     public function pay()
     {
-
         return $this->isValid();
-
     }
 }

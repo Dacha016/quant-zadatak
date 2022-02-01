@@ -9,40 +9,40 @@ use Predis\Client;
 
 class Subscription extends Model implements Subscribe
 {
-   private string $user_id = "";
-   private string $plan = "Free";
-   private string $start = "";
-   private string $end = "";
-   private int $active = 0;
+    private string $user_id = "";
+    private string $plan = "Free";
+    private string $start = "";
+    private string $end = "";
+    private int $active = 0;
 
     public function __construct()
     {
-       parent::__construct();
+        parent::__construct();
     }
 
     public function getUserId()
     {
-       return $this->user_id;
+        return $this->user_id;
     }
 
     public function getPlan()
     {
-       return $this->plan;
+        return $this->plan;
     }
 
     public function getStart()
     {
-       return $this->start;
+        return $this->start;
     }
 
     public function getEnd()
     {
-       return $this->end;
+        return $this->end;
     }
 
     public function getActive()
     {
-       return$this->active;
+        return $this->active;
     }
 
     /**
@@ -52,24 +52,30 @@ class Subscription extends Model implements Subscribe
      */
     public function index($username)
     {
+
         $redis = new Client();
         $key = "users_subscription_{$_SESSION['id']}";
-        $this->conn->queryPrepare(
-            "SELECT  subscription.* FROM subscription
-            inner join user u on subscription.user_id = u.id
-            WHERE u.username = :username");
-        $this->conn->bindParam(":username", $username);
-        $this->conn->execute();
 
         if (!$redis->exists($key)) {
+
+            $this->conn->queryPrepare(
+                "SELECT  subscription.* FROM subscription
+                inner join user u on subscription.user_id = u.id
+                WHERE u.username = :username");
+            $this->conn->bindParam(":username", $username);
+            $this->conn->execute();
+
             $subscription = [];
+
             while ($row = $this->conn->single()) {
                 $subscription[] = $row;
             }
+
             $redis->set($key, serialize($subscription));
             $redis->expire($key, 300);
+
             return $subscription;
-        }else {
+        } else {
             return unserialize($redis->get($key));
         }
     }
@@ -81,6 +87,7 @@ class Subscription extends Model implements Subscribe
      */
     public function show($username)
     {
+
         $this->conn->queryPrepare(
             "SELECT subscription.* FROM subscription
             inner join user u on subscription.user_id = u.id
@@ -99,21 +106,22 @@ class Subscription extends Model implements Subscribe
 
     /**
      * @param $userData
-     * @return string|void
+     * @return bool
      * @throws \Exception
      */
-    public function subscribe($userData)
+    public function subscribe($userData): bool
     {
+
         $subscribe = $this->show($userData["username"]);
+
         if ($_SESSION["id"]) {
+
             $redis = new Client();
             $redis->del("users_subscription_{$_SESSION['id']}");
 
-            $user = new User();
-            $user = $user->show($_SESSION["username"]);
-            $user = new PaymentAdapter(new User($user->username, $user->email, $user->password, $user->api_key, $user->role, $user->nsfw, $user->active, $user->payment, $user->valid_until));
+            $user = new PaymentAdapter(new User());
 
-            if ( !$user->pay()) {
+            if (!$user->pay()) {
                 return false;
             }
         }
@@ -132,84 +140,110 @@ class Subscription extends Model implements Subscribe
                 $this->conn->bindParam(":end", date("Y-m-d", strtotime($subscribe->end . "+100 years")));
                 $this->conn->bindParam(":active", $this->getActive());
                 $this->conn->execute();
+
             } else {
+
                 $this->conn->bindParam(":start", date("Y-m-d"));
                 $this->conn->bindParam(":end", date("Y-m-d", strtotime('+100 years')));
+                $this->conn->bindParam(":active", $this->getActive());
+                $this->conn->execute();
+
                 $now = new \DateTime();
                 $ends = new \DateTime(date("Y-m-d", strtotime('+100 years')));
                 $interval = $now->diff($ends);
+
                 $_SESSION["plans end"] = $interval->format('%r%a days');
-                $this->conn->bindParam(":active", $this->getActive());
                 $_SESSION["plan"] = $userData["subscription"];
-                $this->conn->execute();
+
                 $subscribe = $this->selectLast($_SESSION["id"]);
                 $this->active($subscribe->id);
+
                 $subscribe = $this->selectActivated($_SESSION["id"]);
                 $this->deactive($subscribe->id);
+
             }
         } elseif ($userData["subscription"] == "Month") {
 
             if ($subscribe->plan == "6 months" || $subscribe->plan == "Year") {
+
                 $this->conn->bindParam(":start", $subscribe->end);
                 $this->conn->bindParam(":end", date("Y-m-d", strtotime($subscribe->end . "+1 month")));
                 $this->conn->bindParam(":active", $this->getActive());
                 $this->conn->execute();
+
             } else {
 
                 $this->conn->bindParam(":start", date("Y-m-d"));
                 $this->conn->bindParam(":end", date("Y-m-d", strtotime('+1 month')));
+                $this->conn->bindParam(":active", $this->getActive());
+                $this->conn->execute();
+
                 $now = new \DateTime();
                 $ends = new \DateTime(date("Y-m-d", strtotime('+1 month')));
                 $interval = $now->diff($ends);
+
                 $_SESSION["plans end"] = $interval->format('%r%a days');
-                $this->conn->bindParam(":active", $this->getActive());
                 $_SESSION["plan"] = $userData["subscription"];
-                $this->conn->execute();
+
                 $subscribe = $this->selectLast($_SESSION["id"]);
                 $this->active($subscribe->id);
+
                 $subscribe = $this->selectActivated($_SESSION["id"]);
                 $this->deactive($subscribe->id);
+
             }
         } elseif ($userData["subscription"] == "6 months") {
 
             if ($subscribe->plan == "Year") {
+
                 $this->conn->bindParam(":start", $subscribe->end);
                 $this->conn->bindParam(":end", date("Y-m-d", strtotime($subscribe->end . "+6 months")));
                 $this->conn->bindParam(":active", $this->getActive());
                 $this->conn->execute();
+
             } else {
+
                 $this->conn->bindParam(":start", date("Y-m-d"));
                 $this->conn->bindParam(":end", date("Y-m-d", strtotime('+6 months')));
+                $this->conn->bindParam(":active", $this->getActive());
+                $this->conn->execute();
+
                 $now = new \DateTime();
                 $ends = new \DateTime(date("Y-m-d", strtotime('+6 month')));
                 $interval = $now->diff($ends);
+
                 $_SESSION["plans end"] = $interval->format('%r%a days');
-                $this->conn->bindParam(":active", $this->getActive());
                 $_SESSION["plan"] = $userData["subscription"];
-                $this->conn->execute();
+
                 $subscribe = $this->selectLast($_SESSION["id"]);
                 $this->active($subscribe->id);
+
                 $subscribe = $this->selectActivated($_SESSION["id"]);
                 $this->deactive($subscribe->id);
+
             }
         } elseif ($userData["subscription"] == "Year") {
 
             $this->conn->bindParam(":start", date("Y-m-d"));
             $this->conn->bindParam(":end", date("Y-m-d", strtotime('+1 year')));
+            $this->conn->bindParam(":active", $this->getActive());
+            $this->conn->execute();
+
             $now = new \DateTime();
             $ends = new \DateTime(date("Y-m-d", strtotime('+1 month')));
             $interval = $now->diff($ends);
+
             $_SESSION["plans end"] = $interval->format('%r%a days');
-            $this->conn->bindParam(":active", $this->getActive());
             $_SESSION["plan"] = $userData["subscription"];
-            $this->conn->execute();
 
             $subscribe = $this->selectLast($_SESSION["id"]);
             $this->active($subscribe->id);
+
             $subscribe = $this->selectActivated($_SESSION["id"]);
             $this->deactive($subscribe->id);
 
         }
+
         return true;
     }
 
@@ -218,11 +252,13 @@ class Subscription extends Model implements Subscribe
      * @param $id
      * @return void
      */
-    public function active($id)
+    public function active($id): void
     {
+        
         $this->conn->queryPrepare("update subscription set active = 1 where id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
     }
 
     /**
@@ -230,11 +266,13 @@ class Subscription extends Model implements Subscribe
      * @param $id
      * @return void
      */
-    public function deactive($id)
+    public function deactive($id): void
     {
+
         $this->conn->queryPrepare("update subscription set active = 0 where id =:id");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
     }
 
     /**
@@ -244,13 +282,16 @@ class Subscription extends Model implements Subscribe
      */
     public function selectNext($id)
     {
+
         $this->conn->queryPrepare(
             "select id from subscription  
                 where user_id =:id and 
                 id  > (select id from subscription where user_id =:id and active = 1) limit 1");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
         return $this->conn->single();
+
     }
 
     /**
@@ -260,10 +301,13 @@ class Subscription extends Model implements Subscribe
      */
     public function selectLast($id)
     {
+
         $this->conn->queryPrepare("select id from subscription where user_id =:id order by id desc limit 1");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
         return $this->conn->single();
+
     }
 
     /**
@@ -273,9 +317,12 @@ class Subscription extends Model implements Subscribe
      */
     public function selectActivated($id)
     {
+
         $this->conn->queryPrepare("select id from subscription where user_id =:id and active = 1  limit 1");
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
+
         return $this->conn->single();
+
     }
 }

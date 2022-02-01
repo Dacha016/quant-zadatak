@@ -8,7 +8,6 @@ class Controller
 
     public function __construct($model)
     {
-        $this->model=$model;
-
+        $this->model = $model;
     }
 }

@@ -35,7 +35,6 @@ class UserController extends Controller
         parent::__construct(new User());
     }
 
-
     /**
      * List of users in users tab
      * @return void
@@ -45,6 +44,7 @@ class UserController extends Controller
 
         $pages = $this->model->getPages();
         $result = $this->model->index($_SESSION["username"]);
+
         Blade::render("/users", compact("result", "pages"));
 
     }
@@ -58,10 +58,13 @@ class UserController extends Controller
         $result = $this->model->show($_SESSION["username"]);
 
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
+
             Blade::render("/updateAccount", compact("result"));
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
+
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
             $userData = [
                 "id" => $_SESSION["id"],
                 "username" => trim($_POST["username"]),
