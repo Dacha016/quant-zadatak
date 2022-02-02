@@ -112,11 +112,11 @@ class Gallery extends Model
      * @param $id
      * @return array
      */
-    public function indexComments($id): array
+    public function indexComments($slug): array
     {
 
         $redis = new Client();
-        $key = "gallery_{$id}_comments";
+        $key = "gallery_{$slug}_comments";
 
         if (!$redis->exists($key)) {
 
@@ -124,8 +124,8 @@ class Gallery extends Model
                 "select  g.name as 'galleryName', u.username as 'username', comment from comment
                 inner join gallery g on comment.gallery_id = g.id
                 inner join user u on comment.user_id = u.id
-                where gallery_id =:id");
-            $this->conn->bindParam(":id", $id);
+                where g.slug =:slug");
+            $this->conn->bindParam(":slug", $slug);
             $this->conn->execute();
 
             $comments = [];
@@ -226,15 +226,15 @@ class Gallery extends Model
      * @param $id
      * @return array
      */
-    public function show($id): array
+    public function show($slug): array
     {
 
         $this->conn->queryPrepare(
             "SELECT gallery.id as 'galleryId',description, name, user_id as 'userId', slug, gallery.nsfw as 'nsfw', hidden, u.username as 'userUsername' 
             FROM gallery
             inner join user u on gallery.user_id = u.id
-            WHERE gallery.id =:id");
-        $this->conn->bindParam(":id", $id);
+            WHERE gallery.slug =:slug");
+        $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
         $result = $this->conn->single();
 
@@ -370,6 +370,7 @@ class Gallery extends Model
     {
 
         $commentData = [
+            "slug" => $_POST["slug"],
             "galleryId" => $_POST["galleryId"],
             "userId" => $_SESSION["id"],
             "comment" => trim($_POST["comment"])
@@ -397,7 +398,7 @@ class Gallery extends Model
         }
 
         $redis = new Client();
-        $redis->del("gallery_{$commentData['galleryId']}_comments");
+        $redis->del("gallery_{$commentData['slug']}_comments");
 
 
         $this->conn->queryPrepare("insert into comment (user_id, gallery_id, comment) values (:user_id, :gallery_id, :comment)");
@@ -440,14 +441,14 @@ class Gallery extends Model
 
         $this->conn->queryPrepare(
             "update gallery 
-            set name =:name, slug =:slug, description =:description, hidden =:hidden, nsfw =:nsfw
-            where id =:id");
+            set name =:name, description =:description, hidden =:hidden, nsfw =:nsfw
+            where slug =:slug");
         $this->conn->bindParam(":name", $galleryData["name"]);
         $this->conn->bindParam(":slug", $galleryData["slug"]);
         $this->conn->bindParam(":description", $galleryData["description"]);
         $this->conn->bindParam(":hidden", $galleryData["hidden"]);
         $this->conn->bindParam(":nsfw", $galleryData["nsfw"]);
-        $this->conn->bindParam(":id", $galleryData["galleryId"]);
+//        $this->conn->bindParam(":id", $galleryData["galleryId"]);
         $this->conn->execute();
 
         if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
@@ -467,14 +468,14 @@ class Gallery extends Model
      * @param $id
      * @return void
      */
-    public function deleteGallery($id)
+    public function deleteGallery($slug)
     {
 
         $redis = new Client();
         $redis->del("galleries_of_user_{$_POST['userUsername']}_page_{$_POST['page']}");
 
-        $this->conn->queryPrepare("DELETE FROM gallery WHERE id =:id");
-        $this->conn->bindParam(":id", $id);
+        $this->conn->queryPrepare("DELETE FROM gallery WHERE slug =:slug");
+        $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
 
         $response["data"] = [
@@ -490,15 +491,15 @@ class Gallery extends Model
      * @param $slug
      * @return float
      */
-    public function getPages($slug): float
+    public function getPages($username): float
     {
         $limit = 50;
 
         $this->conn->queryPrepare(
             "select count(*) as 'row' from gallery 
             inner join user u on gallery.user_id = u.id
-            where u.username = :slug");
-        $this->conn->bindParam(":slug", $slug);
+            where u.username = :username");
+        $this->conn->bindParam(":username", $username);
         $this->conn->execute();
 
         $result = $this->conn->single();
@@ -513,7 +514,7 @@ class Gallery extends Model
      * @param $slug
      * @return float
      */
-    public function getPagesVisible($slug): float
+    public function getPagesVisible($username): float
     {
 
         $limit = 50;
@@ -521,8 +522,8 @@ class Gallery extends Model
         $this->conn->queryPrepare(
             "select count(*) as 'row' from gallery 
             inner join user u on gallery.user_id = u.id
-            where u.username = :slug and gallery.hidden = 0 and gallery.nsfw =0");
-        $this->conn->bindParam(":slug", $slug);
+            where u.username = :username and gallery.hidden = 0 and gallery.nsfw =0");
+        $this->conn->bindParam(":username", $username);
         $this->conn->execute();
 
         $result = $this->conn->single();

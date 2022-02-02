@@ -10,6 +10,7 @@ if (!isset($_SESSION["id"])) {
         <div>
             <h1>{{$gallery->name}}</h1>
             <form action="/gallery/comment" method="post">
+                <input type="hidden" name="slug" value="{{$gallery->slug}}">
                 <input type="hidden" name="userId" value="{{$gallery->userId}}">
                 <input type="hidden" value="{{$gallery->galleryId}}" name="galleryId">
                 <label>

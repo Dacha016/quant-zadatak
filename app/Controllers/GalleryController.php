@@ -23,6 +23,7 @@ class GalleryController extends Controller
         $pages = $this->model->getPages($_SESSION["username"]);
         $result = $this->model->index($_SESSION["username"]);
 
+
         $result = $result["data"]["galleries"];
 
         Blade::render("/galleries", compact("result", "pages"));
@@ -34,12 +35,12 @@ class GalleryController extends Controller
      * @param $id
      * @return void
      */
-    public function indexGalleryComments($id)
+    public function indexGalleryComments($slug)
     {
 
-        $result = $this->model->indexComments($id);
+        $result = $this->model->indexComments($slug);
         $result = $result["data"]["comments"];
-        $gallery = $this->model->show($id);
+        $gallery = $this->model->show($slug);
         $gallery = $gallery["data"]["gallery"];
 
         Blade::render("/galleryComments", compact("result", "gallery"));
@@ -113,11 +114,11 @@ class GalleryController extends Controller
         if (isset($result["data"]["error"])) {
 
             $error = $result["data"]["error"];
-//            Blade::render("/createComment", compact("error"));
+            Blade::render("/createComment", compact("error"));
 
         }
 
-        header("Location: /comments/galleries/{$_POST["galleryId"]}");
+        header("Location: /comments/galleries/{$_POST["slug"]}");
 
     }
 
@@ -125,11 +126,11 @@ class GalleryController extends Controller
      * Update gallery of logger user and other users
      * @return void
      */
-    public function updateGallery($id)
+    public function updateGallery($slug)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
 
-            $result = $this->model->show($id);
+            $result = $this->model->show($slug);
             $result = $result["data"]["gallery"];
 
             Blade::render("/updateGallery", compact("result"));
@@ -155,18 +156,18 @@ class GalleryController extends Controller
      * Delete all data from gallery and aly other table with gallery_id
      * @return void
      */
-    public function delete($id)
+    public function delete($slug)
     {
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
 
-            $result = $this->model->show($id);
+            $result = $this->model->show($slug);
             $result = $result["data"]["gallery"];
 
             Blade::render("/deleteGallery", compact("result"));
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
 
-            $this->model->deleteGallery($_POST["galleryId"]);
+            $this->model->deleteGallery($_POST["slug"]);
 
             if ($_POST["userId"] === $_SESSION["id"]) {
 

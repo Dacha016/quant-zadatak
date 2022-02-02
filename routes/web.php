@@ -24,8 +24,8 @@ $router->post('/login', "AuthController@login");
 $router->get('/logout', "AuthController@logout");
 
 $router->get('/profile', "ImageController@indexProfile"); // images on the main page
-$router->get("/profile/galleries/newGallery","GalleryController@create"); // get form
-$router->post("/profile/galleries/newGallery","GalleryController@create"); //post data
+$router->get("/profile/galleries/newGallery", "GalleryController@create"); // get form
+$router->post("/profile/galleries/newGallery", "GalleryController@create"); //post data
 $router->get('/profile/galleries', "GalleryController@indexGalleries"); // galleries in profile
 $router->get("/profile/galleries/{id}/{id}", "ImageController@showImageInGallery"); //get single image from gallery
 $router->get('/profile/galleries/{id}', "ImageController@indexImage");  //images from gallery
@@ -46,22 +46,22 @@ $router->get("/profile/comments/images/{id}", "ImageController@indexComments"); 
 
 $router->post('/image/comments', "ImageController@createComments"); //create comment
 // gallery comments
-$router->get("/comments/galleries/{id}", "GalleryController@indexGalleryComments"); // comments of  gallery
-$router->get("/profile/comments/users/{slug}/{id}", "GalleryController@indexComments"); // comments of other users gallery
+$router->get("/comments/galleries/{slug}", "GalleryController@indexGalleryComments"); // comments of  gallery
+$router->get("/profile/comments/users/{slug}/{slug}", "GalleryController@indexComments"); // comments of other users gallery
 $router->post('/gallery/comment', "GalleryController@createComment"); //create comment
 
-$router->get("/profile/update/gallery/{id}","GalleryController@updateGallery");
-$router->post("/profile/update/gallery/{id}","GalleryController@updateGallery");
+$router->get("/profile/update/gallery/{slug}", "GalleryController@updateGallery");
+$router->post("/profile/update/gallery/{slug}", "GalleryController@updateGallery");
 
-$router->get("/profile/updateAccount","UserController@updateAccount");
-$router->post("/profile/updateAccount","UserController@updateAccount");
+$router->get("/profile/updateAccount", "UserController@updateAccount");
+$router->post("/profile/updateAccount", "UserController@updateAccount");
 
-$router->get("/profile/update/users/{slug}","UserController@updateUser");
-$router->post("/profile/update/users/{slug}","UserController@updateUser");
+$router->get("/profile/update/users/{slug}", "UserController@updateUser");
+$router->post("/profile/update/users/{slug}", "UserController@updateUser");
 
 $router->post('/delete/image/{id}', "ImageController@delete");
-$router->get('/delete/gallery/{id}', "GalleryController@delete");
-$router->post('/delete/gallery/{id}', "GalleryController@delete");
+$router->get('/delete/gallery/{slug}', "GalleryController@delete");
+$router->post('/delete/gallery/{slug}', "GalleryController@delete");
 
 $router->post("/addImage/galleries/{id}", "ImageController@insertInGallery");
 $router->post("/addImage", "ImageController@create");

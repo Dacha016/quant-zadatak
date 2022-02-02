@@ -8,10 +8,10 @@ if (!isset($_SESSION["id"])) {
 
     @if(($_SESSION["role"]==="moderator" && $result->userId === $_SESSION["id"]) || $_SESSION["role"]==="admin" || ($_SESSION["role"]==="user" && $result->userId === $_SESSION["id"]) )
         @if(($_SESSION["role"]==="admin" && $result->userId !== $_SESSION["id"]))
-            <form action="/profile/update/gallery/{{$result->galleryId}}" method="post" class="p-2 align-self-center"
+            <form action="/profile/update/gallery/{{$result->slug}}" method="post" class="p-2 align-self-center"
                   style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
                 @endif
-                <form action="/profile/update/gallery/{{$result->galleryId}}" method="post"
+                <form action="/profile/update/gallery/{{$result->slug}}" method="post"
                       class="p-2 align-self-center"
                       style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
 
@@ -33,13 +33,6 @@ if (!isset($_SESSION["id"])) {
                         <textarea type="text" class="form- control d-block p-2"
                                   style="width:95%;margin:10px auto; border-radius:10px" id="description"
                                   name="description">{{$result->description}}</textarea>
-                    </div>
-
-                    <div class="mb-3 pt-3 ">
-                        <label for="slug" class="form-label" style="font-size:18px; margin-left:15px;">Slug:</label>
-                        <input type="text" class="form- control d-block p-2"
-                               style="width:95%;margin:10px auto; border-radius:10px" id="slug" name="slug"
-                               value="{{$result->slug}}">
                     </div>
 
                     <div class="form-check mb-3 ml-3">
@@ -83,7 +76,7 @@ if (!isset($_SESSION["id"])) {
                 </form>
                 @endif
                 @if(($_SESSION["role"]==="moderator" && $result->userId !== $_SESSION["id"]))
-                    <form action="/profile/update/gallery/{{$result->galleryId}}" method="post"
+                    <form action="/profile/update/gallery/{{$result->slug}}" method="post"
                           class="p-2 align-self-center"
                           style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
                         <h2 class="mb-2 pt-4" style="text-align:center">Update</h2>
@@ -93,7 +86,6 @@ if (!isset($_SESSION["id"])) {
                         <input type="hidden" name="userUsername" value="{{$result->userUsername}}">
                         <input type="hidden" name="name" value="{{$result->name}}">
                         <input type="hidden" name="description" value="{{$result->description}}">
-                        <input type="hidden" name="slug" value="{{$result->slug}}">
                         <input type="hidden" name="page" value={{$_GET["page"]}}>
                         <div class="form-check mb-3 ml-3">
                             <label class="form-check-label" for="hidden">

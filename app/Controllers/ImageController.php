@@ -87,7 +87,8 @@ class ImageController extends Controller
 
         $result = $this->model->index($id);
         $result = $result["data"]["images"];
-
+        var_dump($result);
+        die();
         $galleryId = $result[0]->galleryId;
         $userId = $result[0]->userId;
 
@@ -102,6 +103,8 @@ class ImageController extends Controller
      */
     public function indexComments($id)
     {
+        var_dump($id);
+        die();
         $this->comments($id);
     }
 
@@ -113,6 +116,8 @@ class ImageController extends Controller
      */
     public function loggedUserImageComments($galleryId, $id)
     {
+        var_dump($id);
+        die();
         $this->comments($id);
     }
 
@@ -155,7 +160,7 @@ class ImageController extends Controller
         } else {
 
             $image = $this->model->showInGallery($id);
-            
+
             if (isset($image["data"]["error"])) {
 
                 $image = $this->model->show($id);
