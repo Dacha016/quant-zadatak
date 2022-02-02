@@ -129,7 +129,7 @@ class Subscription extends Model implements Subscribe
 
             $response["data"] = [
                 "subscription" => $result,
-                "status_code" => 'HTTP/1.1 404 Not Found'
+                "status_code" => 'HTTP/1.1 200 Success'
             ];
         }
 

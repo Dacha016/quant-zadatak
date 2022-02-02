@@ -67,11 +67,31 @@ class Image extends Model
             $redis->set($key, serialize($images));
             $redis->expire($key, 300);
 
-            return $images;
+            if (isset($images)) {
+
+                $response["data"] = [
+                    "images" => $images,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+
+            }
+
         } else {
 
-            return unserialize($redis->get($key));
+            $response["data"] = [
+                "images" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
         }
+        return $response;
     }
 
     /**
@@ -101,12 +121,31 @@ class Image extends Model
             $redis->set($key, serialize($images));
             $redis->expire($key, 300);
 
-            return $images;
+            if (isset($images)) {
+
+                $response["data"] = [
+                    "images" => $images,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+
+            }
 
         } else {
 
-            return unserialize($redis->get($key));
+            $response["data"] = [
+                "images" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
         }
+        return $response;
     }
 
     /**
@@ -138,12 +177,35 @@ class Image extends Model
             $redis->set($key, serialize($comments));
             $redis->expire($key, 300);
 
-            return $comments;
+            if (isset($comments)) {
+
+                $response["data"] = [
+                    "comments" => $comments,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            }
+
+            if (!isset($comments[0]->comment)) {
+
+                $response["data"] = [
+                    "error" => "Be the first to comment",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+
+                return $response;
+
+            }
 
         } else {
 
-            return unserialize($redis->get($key));
+            $response["data"] = [
+                "comments" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
         }
+        return $response;
     }
 
     /**
@@ -176,12 +238,32 @@ class Image extends Model
             $redis->set($key, serialize($images));
             $redis->expire($key, 300);
 
-            return $images;
+            if (isset($images)) {
+
+                $response["data"] = [
+                    "images" => $images,
+                    "status_code" => 'HTTP/1.1 200 Success'
+                ];
+
+            } else {
+
+                $response["data"] = [
+                    "error" => "Content not found, something is wrong",
+                    "status_code" => 'HTTP/1.1 404 Not Found'
+                ];
+
+            }
 
         } else {
 
-            return unserialize($redis->get($key));
+            $response["data"] = [
+                "images" => unserialize($redis->get($key)),
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
         }
+
+        return $response;
     }
 
     /**
@@ -199,7 +281,22 @@ class Image extends Model
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
 
-        return $this->conn->single();
+        $result = $this->conn->single();
+
+        if ($result) {
+            $response["data"] = [
+                "image" => $result,
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+        } else {
+
+            $response["data"] = [
+                "error" => "Image not found",
+                "status_code" => 'HTTP/1.1 404 Not Found'
+            ];
+        }
+
+        return $response;
 
     }
 
@@ -221,7 +318,22 @@ class Image extends Model
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
 
-        return $this->conn->single();
+        $result = $this->conn->single();
+
+        if ($result) {
+            $response["data"] = [
+                "image" => $result,
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+        } else {
+
+            $response["data"] = [
+                "error" => "Image not found",
+                "status_code" => 'HTTP/1.1 404 Not Found'
+            ];
+        }
+
+        return $response;
 
     }
 
@@ -230,22 +342,61 @@ class Image extends Model
      * @param $imageData
      * @return void
      */
-    public function createImage($imageData): void
+    public function createImage()
     {
 
-        $redis = new Client();
-        $redis->del("user_{$imageData['userId']}_profile_image");
+        $slug = str_replace(" ", "-", $_POST["fileName"]);
+        $slug = strtolower($slug);
 
-        $this->conn->queryPrepare(
-            "insert into image (user_id, file_name, slug, nsfw, hidden, added)
+        $imageData = [
+            "userId" => $_SESSION["id"],
+            "fileName" => $_POST["fileName"],
+            "nsfw" => $this->getNsfw(),
+            "hidden" => $this->getHidden(),
+            "slug" => $slug
+        ];
+
+        if (empty($imageData["fileName"])) {
+
+            $response["data"] = [
+                "error" => "Empty fields are not allowed!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+        } else {
+
+            $redis = new Client();
+            $redis->del("user_{$imageData['userId']}_profile_image");
+
+            $this->conn->queryPrepare(
+                "insert into image (user_id, file_name, slug, nsfw, hidden, added)
             values (:user_id, :file_name, :slug, :nsfw, :hidden, :added)");
-        $this->conn->bindParam(":user_id", $imageData["userId"]);
-        $this->conn->bindParam(":file_name", $imageData["fileName"]);
-        $this->conn->bindParam(":slug", $imageData["slug"]);
-        $this->conn->bindParam(":nsfw", $imageData["nsfw"]);
-        $this->conn->bindParam(":hidden", $imageData["hidden"]);
-        $this->conn->bindParam(":added", date("Y-m-d"));
-        $this->conn->execute();
+            $this->conn->bindParam(":user_id", $imageData["userId"]);
+            $this->conn->bindParam(":file_name", $imageData["fileName"]);
+            $this->conn->bindParam(":slug", $imageData["slug"]);
+            $this->conn->bindParam(":nsfw", $imageData["nsfw"]);
+            $this->conn->bindParam(":hidden", $imageData["hidden"]);
+            $this->conn->bindParam(":added", date("Y-m-d"));
+            $this->conn->execute();
+
+
+            if (isset($_POST["galleryId"])) {
+                $imageId = $this->selectLastImageId($imageData["userId"]);
+
+                $imageData = [
+                    "imageId" => $imageId->id,
+                    "galleryId" => $_POST["galleryId"]
+                ];
+
+                $this->insertImageInGallery($imageData);
+            }
+            $response["data"] = [
+
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
+        }
+        return $response;
 
     }
 
@@ -271,11 +422,37 @@ class Image extends Model
 
     /**
      * Create comment
-     * @param $commentData
      * @return void
      */
-    public function createImageComments($commentData): void
+    public function createImageComments()
     {
+
+        $commentData = [
+            "imageId" => $_POST["imageId"],
+            "userId" => $_SESSION["id"],
+            "comment" => $_POST["comment"]
+        ];
+
+        if (empty($commentData["comment"])) {
+
+            $response["data"] = [
+                "error" => "An empty field is not allowed!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+        }
+
+        if (!preg_match("/^[a-zA-Z0-9-\\s]*$/", $commentData["comment"])) {
+
+            $response["data"] = [
+                "error" => "The comment may contain only letters and numbers",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+            return $response;
+
+        }
 
         $redis = new Client();
         $redis->del("image_{$commentData['imageId']}_comments");
@@ -286,15 +463,31 @@ class Image extends Model
         $this->conn->bindParam(":comment", $commentData["comment"]);
         $this->conn->execute();
 
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 201 Created'
+        ];
+
+        return $response;
+
     }
 
     /**
      * Insert data in moderator_logging
-     * @param $imageData
      * @return void
      */
-    public function createLogg($imageData): void
+    public function createLogg($galleryId)
     {
+
+        $hidden = isset($_POST['hidden']) ? '1' : '0';
+        $nsfw = isset($_POST['nsfw']) ? '1' : '0';
+
+        $imageData = [
+            "hidden" => $hidden,
+            "nsfw" => $nsfw,
+            "imageName" => $_POST["imageName"],
+            "userUsername" => $_POST["userUsername"],
+            "sessionUsername" => $_SESSION["username"],
+        ];
 
         $this->conn->queryPrepare(
             "insert into moderator_logging (moderator_username, user_username,gallery_id, image_name, image_nsfw, image_hidden)
@@ -302,10 +495,16 @@ class Image extends Model
         $this->conn->bindParam(":moderator_username", $imageData["sessionUsername"]);
         $this->conn->bindParam(":user_username", $imageData["userUsername"]);
         $this->conn->bindParam(":image_name", $imageData["imageName"]);
-        $this->conn->bindParam(":gallery_id", $imageData["galleryId"]);
+        $this->conn->bindParam(":gallery_id", $galleryId);
         $this->conn->bindParam(":image_nsfw", $imageData["nsfw"]);
         $this->conn->bindParam(":image_hidden", $imageData["hidden"]);
         $this->conn->execute();
+
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 201 Created'
+        ];
+
+        return $response;
 
     }
 
@@ -314,8 +513,17 @@ class Image extends Model
      * @param $imageData
      * @return void
      */
-    public function active($imageData): void
+    public function update(): void
     {
+
+        $hidden = isset($_POST['hidden']) ? '1' : '0';
+        $nsfw = isset($_POST['nsfw']) ? '1' : '0';
+
+        $imageData = [
+            "imageId" => $_POST["imageId"],
+            "hidden" => $hidden,
+            "nsfw" => $nsfw
+        ];
 
         $this->conn->queryPrepare("UPDATE image SET hidden =:hidden, nsfw = :nsfw WHERE id = :id");
         $this->conn->bindParam(":hidden", $imageData["hidden"]);
@@ -326,11 +534,10 @@ class Image extends Model
     }
 
     /**
-     * Delete image
      * @param $id
-     * @return void
+     * @return array
      */
-    public function deleteImage($id): void
+    public function deleteImage($id)
     {
 
         $redis = new Client();
@@ -341,6 +548,12 @@ class Image extends Model
         $this->conn->bindParam(":id", $id);
         $this->conn->execute();
 
+        $response["data"] = [
+
+            "status_code" => 'HTTP/1.1 200 Success'
+        ];
+
+        return $response;
     }
 
     /**
@@ -381,5 +594,19 @@ class Image extends Model
 
         return $result->row;
 
+    }
+
+    /**
+     * Number of uploaded images in last month
+     * @return mixed
+     */
+    public function lastMonthImages()
+    {
+        $userSubscription = new Subscription;
+        $user = $userSubscription->index($_SESSION["username"]);
+
+        $date = $user["data"]["subscriptions"][0]->start;
+
+        return $this->imageCount($_SESSION["id"], $date);
     }
 }

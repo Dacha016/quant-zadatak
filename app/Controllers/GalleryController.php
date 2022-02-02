@@ -23,6 +23,8 @@ class GalleryController extends Controller
         $pages = $this->model->getPages($_SESSION["username"]);
         $result = $this->model->index($_SESSION["username"]);
 
+        $result = $result["data"]["galleries"];
+
         Blade::render("/galleries", compact("result", "pages"));
 
     }
@@ -55,11 +57,15 @@ class GalleryController extends Controller
         if ($_SESSION["role"] === "user") {
 
             $pages = $this->model->getPagesVisible($slug);
+
             $result = $this->model->indexHiddenOrNsfw($slug);
+            $result = $result["data"]["galleries"];
 
         } else {
 
             $result = $this->model->index($slug);
+            $result = $result["data"]["galleries"];
+
             $pages = $this->model->getPages($slug);
 
         }

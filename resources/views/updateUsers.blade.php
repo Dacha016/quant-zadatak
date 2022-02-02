@@ -5,23 +5,25 @@ if (!isset($_SESSION["id"])) {
 }
 ?>
 @section("content")
-    <form action="/profile/update/users/{{$result->username}}" method="post"
+    <?php  $page = $_GET["page"] ?>
+    <form action="/profile/update/users/{{$result->username}}?page={{$page}}" method="post"
           class="p-2 align-self-center"
           style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-2 pt-4" style="text-align:center">Update</h2>
         <h3 style="text-align:center">{{$result->username}}</h3>
-        <?php
-        if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {?>
-        <div class="mb-3 mt-3 b">
-            <p>{{$error}}</p>
-            <?php }?>
-        </div>
+        @if(isset($error))
+            <div class="mb-3 mt-3 b">
+                <p>{{$error}}</p>
+
+            </div>
+        @endif
         <input type="hidden" name="userId" value={{$result->id}}>
         <input type="hidden" name="username" value={{$result->username}}>
-        <input type="hidden" name="page" value={{$_GET["page"]}}>
+        <input type="hidden" name="page" value={{$page}}>
         <div>
             <label for="role">Choose a role:</label>
             <select id="role" name="role">
+                <option value="">Select</option>
                 <option value="admin">Admin</option>
                 <option value="moderator">Moderator</option>
                 <option value="user">User</option>
@@ -56,7 +58,7 @@ if (!isset($_SESSION["id"])) {
         </div>
 
         <div class="m-3">
-            <a class="btn btn-secondary" style="color: white" href="/profile/users?page={{$_GET['page']}}">Cancel</a>
+            <a class="btn btn-secondary" style="color: white" href="/profile/users?page={{$page}}">Cancel</a>
             <button class="btn btn-success d-inline-block float-right" type="submit">Update</button>
         </div>
     </form>

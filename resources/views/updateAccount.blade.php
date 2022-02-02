@@ -8,9 +8,9 @@ if (!isset($_SESSION["id"])) {
     <form action="/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-5 pt-4" style="text-align:center">Update account</h2>
-        <?php
-        if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {?>
         <div class="mb-3 mt-3 b">
+            <?php
+            if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {?>
             <p>{{$error}}</p>
             <?php }?>
         </div>

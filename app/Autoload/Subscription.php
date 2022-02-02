@@ -7,6 +7,18 @@ use App\Models\User;
 
 if (isset($_SESSION["id"])) {
 
+    $subscribe = new Subscription;
+    $plans = $subscribe->index($_SESSION["username"]);
+    $plans = $plans["data"]["subscriptions"];
+    $n = count($plans);
+    $lastPlanId = $plans[$n - 1]->id;
+
+    //Change value when user first log in
+    if ($plans[0]->id == $lastPlanId) {
+        $subscribe->active($plans[0]->id);
+
+    }
+
     function paySubscription(Payment $payment)
     {
         if ($payment->isValid()) {
@@ -21,17 +33,6 @@ if (isset($_SESSION["id"])) {
     $user = new PaymentAdapter(new User());
     paySubscription($user);
 
-    $subscribe = new Subscription;
-    $plans = $subscribe->index($_SESSION["username"]);
-    $plans = $plans["data"]["subscriptions"];
-    $n = count($plans);
-    $lastPlanId = $plans[$n - 1]->id;
-
-    //Change value when user first log in
-    if ($plans[0]->id == $lastPlanId) {
-        $subscribe->active($plans[0]->id);
-        exit();
-    }
 
     $userSubscribe = $subscribe->show($_SESSION["username"]);
     $userSubscribe = $userSubscribe["data"]["subscription"];

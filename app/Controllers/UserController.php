@@ -92,13 +92,25 @@ class UserController extends Controller
 
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
 
+
             Blade::render("/updateUsers", compact("result"));
 
         } elseif (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
 
-            $this->model->updateNotLoggedUser();
 
-            header("Location: /profile/users?page=" . $_POST["page"]);
+            $user = $this->model->updateNotLoggedUser();
+
+            if (isset($user["data"]["error"])) {
+
+                $error = $user["data"]["error"];
+
+                Blade::render("/updateUsers", compact("error", "result"));
+
+            } else {
+
+                header("Location: /profile/users?page=" . $_POST["page"]);
+
+            }
         }
     }
 }

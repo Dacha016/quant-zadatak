@@ -291,7 +291,7 @@ class Gallery extends Model
             return $response;
         }
 
-        if (!preg_match("/^[a-zA-Z0-9]*$/", $galleryData["name"])) {
+        if (!preg_match("/^[a-zA-Z0-9-\\s]*$/", $galleryData["name"])) {
 
             $response["data"] = [
                 "error" => "The gallery name may contain only letters and numbers",
@@ -302,7 +302,7 @@ class Gallery extends Model
 
         }
 
-        if (!preg_match("/^[a-zA-Z0-9-\\s]*$/", $galleryData["description"])) {
+        if (!preg_match("/^[a-zA-Z0-9-\\s,.]*$/", $galleryData["description"])) {
 
             $response["data"] = [
                 "error" => "The gallery description may contain only letters and numbers",
@@ -312,6 +312,9 @@ class Gallery extends Model
             return $response;
 
         }
+
+        $redis = new Client();
+        $redis->del("galleries_of_user_{$_SESSION["username"]}_page_1");
 
         $this->conn->queryPrepare(
             "insert into gallery (user_id, name, nsfw, hidden, description, slug)
@@ -382,7 +385,7 @@ class Gallery extends Model
             return $response;
         }
 
-        if (!preg_match("/^[a-zA-Z0-9]*$/", $commentData["comment"])) {
+        if (!preg_match("/^[a-zA-Z0-9-\\s]*$/", $commentData["comment"])) {
 
             $response["data"] = [
                 "error" => "The comment may contain only letters and numbers",
@@ -404,7 +407,7 @@ class Gallery extends Model
         $this->conn->execute();
 
         $response["data"] = [
-            "status_code" => 'HTTP/1.1 200 Success'
+            "status_code" => 'HTTP/1.1 201 Created'
         ];
 
         return $response;

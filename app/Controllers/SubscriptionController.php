@@ -21,7 +21,6 @@ class SubscriptionController extends Controller
     public function indexSubscriptionList($username)
     {
         $user = $this->model->show($username);
-        $user = $user["data"]["subscripton"];
 
         if (isset($user["data"]["error"])) {
 

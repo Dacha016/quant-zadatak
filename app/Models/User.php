@@ -296,7 +296,7 @@ class User extends Model implements Card
 
 
         $response["data"] = [
-            "status_code" => 'HTTP/1.1 200 Success'
+            "status_code" => 'HTTP/1.1 201 Create'
         ];
 
         return $response;
@@ -322,7 +322,7 @@ class User extends Model implements Card
         $this->conn->execute();
 
         $response["data"] = [
-            "status_code" => 'HTTP/1.1 200 Success'
+            "status_code" => 'HTTP/1.1 201 Create'
         ];
 
         return $response;
@@ -426,7 +426,7 @@ class User extends Model implements Card
         $_SESSION["username"] = $userData["username"];
 
         $response["data"] = [
-            "status_code" => 'HTTP/1.1 200 Success'
+            "status_code" => 'HTTP/1.1 201 Create'
         ];
 
         return $response;
@@ -454,27 +454,38 @@ class User extends Model implements Card
             "userId" => $_POST["userId"]
         ];
 
-        $this->conn->queryPrepare(
-            "update user set 
+        if (empty($updateData["role"])) {
+
+            $response["data"] = [
+                "error" => "Select role!",
+                "status_code" => 'HTTP/1.1 422 Unprocessable entity'
+            ];
+
+        } else {
+
+            $this->conn->queryPrepare(
+                "update user set 
                 role = :role,
                 nsfw = :nsfw,
                 active = :active
                 where id =:id");
-        $this->conn->bindParam(":role", $updateData["role"]);
-        $this->conn->bindParam(":nsfw", $updateData["nsfw"]);
-        $this->conn->bindParam(":active", $updateData["active"]);
-        $this->conn->bindParam(":id", $updateData["userId"]);
-        $this->conn->execute();
+            $this->conn->bindParam(":role", $updateData["role"]);
+            $this->conn->bindParam(":nsfw", $updateData["nsfw"]);
+            $this->conn->bindParam(":active", $updateData["active"]);
+            $this->conn->bindParam(":id", $updateData["userId"]);
+            $this->conn->execute();
 
-        if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
-            $updateData["username"] = $_POST["username"];
-            $updateData["moderatorsUsername"] = $_SESSION["username"];
-            $this->createLogg($updateData);
+            if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+                $updateData["username"] = $_POST["username"];
+                $updateData["moderatorsUsername"] = $_SESSION["username"];
+                $this->createLogg($updateData);
+            }
+
+            $response["data"] = [
+                "status_code" => 'HTTP/1.1 201 Create'
+            ];
+
         }
-
-        $response["data"] = [
-            "status_code" => 'HTTP/1.1 200 Success'
-        ];
 
         return $response;
     }
@@ -495,13 +506,18 @@ class User extends Model implements Card
         $result = $this->conn->single();
 
         if (!$result) {
+
             return false;
         }
+
         $hashedPassword = $result->password;
 
         if (password_verify($password, $hashedPassword)) {
+
             return true;
+
         } else {
+
             return false;
         }
     }

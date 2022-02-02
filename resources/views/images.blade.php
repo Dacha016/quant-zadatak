@@ -7,16 +7,63 @@ if (!isset($_SESSION["id"])) {
 @section("content")
     <div style="width: 1200px; margin: 10px auto">
         <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
-        @if($_SESSION["id"] == $gallery->userId)
-            <form id="imageForm" action="/addImage/galleries/{{$gallery->galleryId}}" method="post"
-                  class="p-2 align-self-center"
-                  style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
-                <input type="file" id="fileName" name="fileName"/>
-                <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
-            </form>
+        @if($_SESSION["id"] == $userId)
+            @if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures < 5 )
+                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                      class="p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    @if(isset($error))
+                        <p>{{$error}}</p>
+                    @endif
+                    <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
+                </form>
+                <p id="error"></p>
+            @endif
+            @if($_SESSION["plan"] == "Month" && $monthlyNumberOfPictures < 20 )
+                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                      class="p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    @if(isset($error))
+                        <p>{{$error}}</p>
+                    @endif
+                    <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
+                </form>
+            @endif
+            @if($_SESSION["plan"] == "6 months" && $monthlyNumberOfPictures < 30 )
+                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                      class="p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    @if(isset($error))
+                        <p>{{$error}}</p>
+                    @endif
+                    <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
+                </form>
+            @endif
+            @if($_SESSION["plan"] == "Year" && $monthlyNumberOfPictures < 50 )
+                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                      class="p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    @if(isset($error))
+                        <p>{{$error}}</p>
+                    @endif
+                    <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
+                </form>
+            @endif
+            @if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures == 5 || $_SESSION["plan"] == "Month" && $monthlyNumberOfPictures == 20 ||
+                $_SESSION["plan"] == "6 months" && $monthlyNumberOfPictures == 30 || $_SESSION["plan"] == "Year" && $monthlyNumberOfPictures == 50)
+                <h2>Upgrade subscription plan</h2>
+            @endif
         @endif
-        @foreach($result["data"]["galleries"] as $row)
-            @if(($_SESSION["role"] === "admin" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "moderator" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "user" && $row->userId ===$_SESSION["id"]))
+        @foreach($result as $row)
+            @if(($_SESSION["role"] === "admin" && $row->userId === $_SESSION["id"]) || ($_SESSION["role"] === "moderator" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "user" && $row->userId ===$_SESSION["id"]))
                 <div class="d-inline-block m-1">
                     <div>
                         <a href="/profile/comments/galleries/{{$row->galleryId}}/{{$row->imageId}}"

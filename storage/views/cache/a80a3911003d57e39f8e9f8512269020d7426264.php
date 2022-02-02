@@ -1,5 +1,5 @@
 <?php
-if(!isset($_SESSION["id"])) {
+if (!isset($_SESSION["id"])) {
     header("Location: /home");
 }
 ?>
@@ -8,28 +8,44 @@ if(!isset($_SESSION["id"])) {
         <div>
             <h1 class="d-block mb-5 " style="text-align:center">IMGUR Clone</h1>
             <?php if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures < 5 ): ?>
-                <form id="imageForm" action ="/addImage" method="post" class=" d-inline-block p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
-                    <input type="file" id="fileName" name="fileName" />
-                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload" />
+                <form id="imageForm" action="/addImage" method="post" class=" d-inline-block p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    <?php if(isset($error)): ?>
+                        <p><?php echo e($error); ?></p>
+                    <?php endif; ?>
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
                 </form>
                 <p id="error"></p>
             <?php endif; ?>
             <?php if($_SESSION["plan"] == "Month" && $monthlyNumberOfPictures < 20 ): ?>
-            <form id="imageForm" action ="/addImage" method="post" class=" d-inline-block p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
-                <input type="file" id="fileName" name="fileName" />
-                <input class="float-right" type="submit" id="submit" name="submit" value="Upload" />
-            </form>
+                <form id="imageForm" action="/addImage" method="post" class=" d-inline-block p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    <?php if(isset($error)): ?>
+                        <p><?php echo e($error); ?></p>
+                    <?php endif; ?>
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
+                </form>
             <?php endif; ?>
             <?php if($_SESSION["plan"] == "6 months" && $monthlyNumberOfPictures < 30 ): ?>
-                <form id="imageForm" action ="/addImage" method="post" class=" d-inline-block p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
-                    <input type="file" id="fileName" name="fileName" />
-                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload" />
+                <form id="imageForm" action="/addImage" method="post" class=" d-inline-block p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    <?php if(isset($error)): ?>
+                        <p><?php echo e($error); ?></p>
+                    <?php endif; ?>
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
                 </form>
             <?php endif; ?>
             <?php if($_SESSION["plan"] == "Year" && $monthlyNumberOfPictures < 50 ): ?>
-                <form id="imageForm" action ="/addImage" method="post" class=" d-inline-block p-2 align-self-center" style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden" >
-                    <input type="file" id="fileName" name="fileName" />
-                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload" />
+                <form id="imageForm" action="/addImage" method="post" class=" d-inline-block p-2 align-self-center"
+                      style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
+                    <?php if(isset($error)): ?>
+                        <p><?php echo e($error); ?></p>
+                    <?php endif; ?>
+                    <input type="file" id="fileName" name="fileName"/>
+                    <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
                 </form>
             <?php endif; ?>
             <?php if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures == 5 || $_SESSION["plan"] == "Month" && $monthlyNumberOfPictures == 20 ||
@@ -39,22 +55,21 @@ if(!isset($_SESSION["id"])) {
             <a href="/profile/subscription" class="btn-light btn float-right">Subscription plan</a>
         </div>
         <div>
-            <?php if(!$result): ?>
-                <h3 class="d-block " style="text-align:center">ADD IMAGE</h3>
-            <?php endif; ?>
-            <?php if($result): ?>
-                    <h2 class="m-5" style="text-align:center">Profile images</h2>
+            <?php if(isset($result)): ?>
+                <h2 class="m-5" style="text-align:center">Profile images</h2>
                 <?php $__currentLoopData = $result; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="d-inline-block m-3" >
+                    <div class="d-inline-block m-3">
                         <div>
-                            <a href="/profile/comments/images/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px">
-                                <img class="mt-2" alt="<?php echo e($row->file_name); ?>" src=<?php echo e($row->file_name); ?>  >
+                            <a href="/profile/comments/images/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block"
+                               style="padding: 10px">
+                                <img class="mt-2" alt="<?php echo e($row->file_name); ?>" src=<?php echo e($row->file_name); ?> >
                             </a>
                         </div>
                         <div class="text-center">
-                            <a href="/profile/images/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block" style="padding: 10px"><i class="fas fa-pen"></i></a>
+                            <a href="/profile/images/<?php echo e($row->imageId); ?>" class="btn btn-info d-inline-block"
+                               style="padding: 10px"><i class="fas fa-pen"></i></a>
 
-                            <form action ="/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
+                            <form action="/delete/image/<?php echo e($row->imageId); ?>" method="post" class="d-inline-block m-1">
                                 <input type="hidden" value="<?php echo e($row->imageId); ?>" name="imageId">
                                 <button class="btn btn-danger" type="submit"><i class="fas fa-trash"></i></button>
                             </form>

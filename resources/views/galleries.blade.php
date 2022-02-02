@@ -6,7 +6,7 @@ if (!isset($_SESSION["id"])) {
 ?>
 @section("content")
     <h1 class="d-block " style="text-align:center">Galleries</h1>
-    @if($result["data"]["galleries"])
+    @if($result)
         <div style="margin: 20px auto; max-width: 1000px;">
             <table style="text-align: center;">
                 <tr>
@@ -16,7 +16,7 @@ if (!isset($_SESSION["id"])) {
                     <th style="border: 1px solid black">Hidden</th>
                     <th style="border: 1px solid black">Nsfw</th>
                 </tr>
-                @foreach($result["data"]["galleries"] as $row)
+                @foreach($result as $row)
                     <tr>
                         @if($_SESSION["role"] === "admin" && $row->userId === $_SESSION["id"])
 
@@ -240,7 +240,7 @@ if (!isset($_SESSION["id"])) {
             </nav>
         </div>
     @endif
-    @if(!$result["data"]["galleries"])
+    @if(!$result)
         <h3 class="d-block " style="text-align:center">ADD GALLERIES</h3>
     @endif
 @endsection
