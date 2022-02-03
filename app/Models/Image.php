@@ -108,7 +108,7 @@ class Image extends Model
         if (!$redis->exists($key)) {
 
             $this->conn->queryPrepare(
-                "select file_name, id as 'imageId' from image where user_id =:id limit 150");
+                "select file_name, id as 'imageId', slug from image where user_id =:id limit 150");
             $this->conn->bindParam(":id", $id);
             $this->conn->execute();
 
@@ -153,10 +153,10 @@ class Image extends Model
      * @param $id
      * @return array
      */
-    public function imageComments($id): array
+    public function imageComments($slug): array
     {
         $redis = new Client();
-        $key = "image_{$id}_comments";
+        $key = "image_{$slug}_comments";
 
         if (!$redis->exists($key)) {
 
@@ -164,8 +164,8 @@ class Image extends Model
                 "select  i.file_name as 'file_name', u.username as 'username', comment from comment
                 inner join image i on comment.image_id = i.id
                 inner join user u on comment.user_id = u.id
-                where image_id =:id");
-            $this->conn->bindParam(":id", $id);
+                where i.slug =:slug");
+            $this->conn->bindParam(":slug", $slug);
             $this->conn->execute();
 
             $comments = [];
@@ -213,20 +213,20 @@ class Image extends Model
      * @param $username $id of logged user
      * @return array
      */
-    public function index($username): array
+    public function index($slug): array
     {
         $redis = new Client();
-        $key = "image_of_gallery_$username";
+        $key = "image_of_gallery_$slug";
 
         if (!$redis->exists($key)) {
 
             $this->conn->queryPrepare(
-                "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', u.username as 'username',  g.id as 'galleryId'  from image_gallery
+                "select i.id as 'imageId', i.file_name as 'file_name', i.slug as 'slug', i.hidden as 'hidden', i.nsfw as 'nsfw', i.user_id as 'userId', u.username as 'username',  g.id as 'galleryId', g.slug as 'gallerySlug'  from image_gallery
                     inner join image i on image_gallery.image_id = i.id     
                     inner join gallery g on image_gallery.gallery_id = g.id
                     inner join user u on i.user_id = u.id
-                    where image_gallery.gallery_id =:id");
-            $this->conn->bindParam(":id", $username);
+                    where g.slug =:slug");
+            $this->conn->bindParam(":slug", $slug);
             $this->conn->execute();
 
             $images = [];
@@ -271,14 +271,14 @@ class Image extends Model
      * @param $id
      * @return mixed
      */
-    public function show($id): mixed
+    public function show($slug): mixed
     {
 
         $this->conn->queryPrepare(
-            "select image.id as 'imageId', image.file_name as 'file_name',image.hidden as 'hidden', image.nsfw as 'nsfw', u.username as 'username', u.id as 'userId' from image
+            "select image.id as 'imageId', image.file_name as 'file_name',image.hidden as 'hidden', image.nsfw as 'nsfw', image.slug as 'slug', u.username as 'username', u.id as 'userId' from image
             inner join user u on image.user_id = u.id
-            where image.id =:id");
-        $this->conn->bindParam(":id", $id);
+            where image.slug =:slug");
+        $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
 
         $result = $this->conn->single();
@@ -305,17 +305,17 @@ class Image extends Model
      * @param $id
      * @return mixed
      */
-    public function showInGallery($id)
+    public function showInGallery($slug)
     {
 
         $this->conn->queryPrepare(
-            "select i.id as 'imageId', i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden', i.file_name as 'file_name', i.user_id as 'userId', u.username as 'username', g.id as 'galleryId' 
+            "select i.id as 'imageId', i.slug as 'slug', i.nsfw as 'nsfw', i.hidden as 'hidden', i.file_name as 'file_name', i.user_id as 'userId', u.username as 'username', g.id as 'galleryId',g.slug as 'gallerySlug' 
             from image_gallery 
             inner join image i on image_gallery.image_id = i.id
             inner join gallery g on image_gallery.gallery_id = g.id
             inner join user u on i.user_id = u.id
-            where i.id =:id");
-        $this->conn->bindParam(":id", $id);
+            where i.slug =:slug");
+        $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
 
         $result = $this->conn->single();
@@ -455,7 +455,7 @@ class Image extends Model
         }
 
         $redis = new Client();
-        $redis->del("image_{$commentData['imageId']}_comments");
+        $redis->del("image_{$_POST['slug']}_comments");
 
         $this->conn->queryPrepare("insert into comment (user_id, image_id, comment) values (:user_id, :image_id, :comment)");
         $this->conn->bindParam(":user_id", $commentData["userId"]);
@@ -537,15 +537,15 @@ class Image extends Model
      * @param $id
      * @return array
      */
-    public function deleteImage($id)
+    public function deleteImage($slug)
     {
 
         $redis = new Client();
-        $redis->del("image_of_gallery_{$_POST['galleryId']}");
+        $redis->del("image_of_gallery_{$_POST['gallerySlug']}");
         $redis->del("user_{$_SESSION['id']}_profile_image");
 
-        $this->conn->queryPrepare("DELETE FROM image WHERE id =:id");
-        $this->conn->bindParam(":id", $id);
+        $this->conn->queryPrepare("DELETE FROM image WHERE slug =:slug");
+        $this->conn->bindParam(":slug", $slug);
         $this->conn->execute();
 
         $response["data"] = [

@@ -66,18 +66,16 @@ if (!isset($_SESSION["id"])) {
             @if(($_SESSION["role"] === "admin" && $row->userId === $_SESSION["id"]) || ($_SESSION["role"] === "moderator" && $row->userId ===$_SESSION["id"]) || ($_SESSION["role"] === "user" && $row->userId ===$_SESSION["id"]))
                 <div class="d-inline-block m-1">
                     <div>
-                        <a href="/profile/comments/galleries/{{$row->galleryId}}/{{$row->imageId}}"
+                        <a href="/images/{{$row->slug}}"
                            class="btn btn-info d-inline-block" style="padding: 10px">
                             <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                         </a>
                     </div>
                     <div class="text-center">
-                        <a href="/profile/galleries/{{$row->galleryId}}/{{$row->imageId}}"
+                        <a href="/update/images/{{$row->slug}}"
                            class="btn btn-info d-inline-block" style="padding: 10px"><i class="fas fa-pen"></i></a>
-                        <form action="/delete/image/{{$row->imageId}}" method="post" class="d-inline-block m-1">
-                            <input type="hidden" value="{{$row->galleryId}}" name="galleryId">
-                            <input type="hidden" value="{{$row->userId}}" name="userId">
-                            <input type="hidden" value="{{$row->imageId}}" name="imageId">
+                        <form action="/delete/images/{{$row->slug}}" method="post" class="d-inline-block m-1">
+                            <input type="hidden" value="{{$row->gallerySlug}}" name="gallerySlug">
                             <button class="btn btn-danger" type="submit"><i class="fas fa-trash"></i></button>
                         </form>
                     </div>
@@ -86,18 +84,16 @@ if (!isset($_SESSION["id"])) {
             @if($_SESSION["role"] === "admin" && $row->userId !==$_SESSION["id"])
                 <div class="d-inline-block m-1">
                     <div class="text-center">
-                        <a href="/comments/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}"
+                        <a href="/images/{{$row->slug}}"
                            class="btn btn-info d-inline-block" style="padding: 10px">
                             <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                         </a>
                     </div>
                     <div>
-                        <a href="/profile/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}"
+                        <a href="/update/images/{{$row->slug}}"
                            class="btn btn-info d-inline-block" style="padding: 10px"><i class="fas fa-pen"></i></a>
-                        <form action="/delete/image/{{$row->imageId}}" method="post" class="d-inline-block m-1">
-                            <input type="hidden" value="{{$row->galleryId}}" name="galleryId">
-                            <input type="hidden" value="{{$row->userId}}" name="userId">
-                            <input type="hidden" value="{{$row->imageId}}" name="imageId">
+                        <form action="/delete/images/{{$row->slug}}" method="post" class="d-inline-block m-1">
+                            <input type="hidden" value="{{$row->gallerySlug}}" name="gallerySlug">
                             <button class="btn btn-danger" type="submit"><i class="fas fa-trash"></i></button>
                         </form>
                     </div>
@@ -106,20 +102,20 @@ if (!isset($_SESSION["id"])) {
             @if($_SESSION["role"] === "moderator" && $row->userId !==$_SESSION["id"])
                 <div class="d-inline-block m-1">
                     <div>
-                        <a href="/comments/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}"
+                        <a href="/images/{{$row->slug}}"
                            class="btn btn-info d-inline-block" style="padding: 10px">
                             <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                         </a>
                     </div>
                     <div class="text-center">
-                        <a href="/profile/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}"
+                        <a href="/update/images/{{$row->slug}}"
                            class="btn btn-info d-inline-block" style="padding: 10px"><i class="fas fa-pen"></i></a>
                     </div>
                 </div>
             @endif
             @if($_SESSION["role"] === "user" && $row->userId !==$_SESSION["id"])
                 <div class="d-inline-block m-1">
-                    <a href="/comments/users/{{$row->username}}/{{$row->galleryId}}/{{$row->imageId}}"
+                    <a href="/images/{{$row->slug}}"
                        class="btn btn-info d-inline-block" style="padding: 10px">
                         <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                     </a>

@@ -12,12 +12,14 @@
                 <p>{{$error}}</p>
             @endif
             @if(isset($_SESSION["id"]))
+
                 <form action="/image/comments" method="post">
                     <input type="hidden" name="userId" value="{{$image->userId}}">
                     <input type="hidden" name="username" value="{{$image->username}}">
                     <input type="hidden" name="imageId" value="{{$image->imageId}}">
-                    @if(isset($image->galleryId))
-                        <input type="hidden" value="{{$image->galleryId}}" name="galleryId">
+                    <input type="hidden" name="slug" value="{{$image->slug}}">
+                    @if(isset($image->gallerySlug))
+                        <input type="hidden" value="{{$image->gallerySlug}}" name="gallerySlug">
                     @endif
                     <label>
                         <input type="text" placeholder="Add comment" name="comment">

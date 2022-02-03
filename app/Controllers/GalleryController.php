@@ -17,12 +17,22 @@ class GalleryController extends Controller
      * List of logged user galleries
      * @return void
      */
-    public function indexGalleries()
+    public function indexGalleries($slug)
     {
 
-        $pages = $this->model->getPages($_SESSION["username"]);
-        $result = $this->model->index($_SESSION["username"]);
+        if ($_SESSION["role"] === "user") {
 
+            $pages = $this->model->getPagesVisible($slug);
+
+            $result = $this->model->indexHiddenOrNsfw($slug);
+
+        } else {
+
+            $result = $this->model->index($slug);
+
+            $pages = $this->model->getPages($slug);
+
+        }
 
         $result = $result["data"]["galleries"];
 
@@ -48,34 +58,6 @@ class GalleryController extends Controller
     }
 
     /**
-     * Show not logged user galleries.
-     * If logged user role is "user" show galleries which are not hidden or nsfw
-     * if logged user role is "admin" or "moderator" show all galleries
-     */
-    public function notLoggedUserGalleries($slug)
-    {
-
-        if ($_SESSION["role"] === "user") {
-
-            $pages = $this->model->getPagesVisible($slug);
-
-            $result = $this->model->indexHiddenOrNsfw($slug);
-            $result = $result["data"]["galleries"];
-
-        } else {
-
-            $result = $this->model->index($slug);
-            $result = $result["data"]["galleries"];
-
-            $pages = $this->model->getPages($slug);
-
-        }
-
-        Blade::render("/galleries", compact("result", "pages"));
-
-    }
-
-    /**
      * Create new gallery
      * @return void
      */
@@ -97,7 +79,7 @@ class GalleryController extends Controller
 
             } else {
 
-                header("Location: /profile/galleries?page=1");
+                header("Location: /users/{$_SESSION['username']}?page=1");
             }
         }
     }
@@ -137,18 +119,11 @@ class GalleryController extends Controller
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
 
+            $this->model->update($slug);
 
-            $this->model->update();
 
-            if ($_POST["userId"] == $_SESSION["id"]) {
+            header("Location: /users/" . $_POST["userUsername"] . "?page=1");
 
-                header("Location: /profile/galleries?page=1");
-            }
-
-            if ($_POST["userId"] !== $_SESSION["id"]) {
-
-                header("Location: /profile/users/" . $_POST["userUsername"] . "?page=1");
-            }
         }
     }
 
@@ -158,6 +133,7 @@ class GalleryController extends Controller
      */
     public function delete($slug)
     {
+
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "get") {
 
             $result = $this->model->show($slug);
@@ -169,14 +145,8 @@ class GalleryController extends Controller
 
             $this->model->deleteGallery($_POST["slug"]);
 
-            if ($_POST["userId"] === $_SESSION["id"]) {
+            header("Location: /users/" . $_POST["userUsername"] . "?page={$_POST['page']}");
 
-                header("Location: /profile/galleries?page=1");
-
-            } else {
-
-                header("Location: /profile/users/" . $_POST["userUsername"] . "?page=1");
-            }
         }
     }
 }

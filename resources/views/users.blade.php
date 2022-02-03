@@ -16,7 +16,7 @@ if (!isset($_SESSION["id"])) {
                 @foreach($result as $row)
                     <tr>
                         <td style="text-align: center; border: 1px solid black ">
-                            <a href="/profile/users/{{$row->username}}?page=1"> {{$row->username}}</a>
+                            <a href="/users/{{$row->username}}?page=1"> {{$row->username}}</a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p>{{$row->email}}</p>
@@ -40,7 +40,7 @@ if (!isset($_SESSION["id"])) {
                 @foreach($result as $row)
                     <tr>
                         <td style="text-align: center; border: 1px solid black ">
-                            <a href="/profile/users/{{$row->username}}?page=1"> {{$row->username}}</a>
+                            <a href="/users/{{$row->username}}?page=1"> {{$row->username}}</a>
                         </td>
                         <td style="text-align: center; border: 1px solid black ">
                             <p>{{$row->email}}</p>
@@ -60,9 +60,12 @@ if (!isset($_SESSION["id"])) {
                             <p>{{$row->active}}</p>
                         </td>
                         <td>
-                            <button class="btn btn-info d-inline-block" type="submit"><a style="color: white"
-                                                                                         href="/profile/update/users/{{$row->username}}?page={{$_GET['page']}}"><i
-                                            class="fas fa-pen"></i></a></button>
+                            <button class="btn btn-info d-inline-block" type="submit">
+                                <a style="color: white"
+                                   href="/profile/update/users/{{$row->username}}?page={{$_GET['page']}}">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                            </button>
                         </td>
                     </tr>
                 @endforeach

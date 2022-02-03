@@ -61,17 +61,17 @@ if (!isset($_SESSION["id"])) {
                 @foreach($result as $row)
                     <div class="d-inline-block m-3">
                         <div>
-                            <a href="/profile/comments/images/{{$row->imageId}}" class="btn btn-info d-inline-block"
+                            <a href="/images/{{$row->slug}}" class="btn btn-info d-inline-block"
                                style="padding: 10px">
                                 <img class="mt-2" alt="{{$row->file_name}}" src={{$row->file_name}} >
                             </a>
                         </div>
                         <div class="text-center">
-                            <a href="/profile/images/{{$row->imageId}}" class="btn btn-info d-inline-block"
+                            <a href="/update/images/{{$row->slug}}" class="btn btn-info d-inline-block"
                                style="padding: 10px"><i class="fas fa-pen"></i></a>
 
-                            <form action="/delete/image/{{$row->imageId}}" method="post" class="d-inline-block m-1">
-                                <input type="hidden" value="{{$row->imageId}}" name="imageId">
+                            <form action="/delete/images/{{$row->slug}}" method="post" class="d-inline-block m-1">
+                                <input type="hidden" value="{{$row->slug}}" name="imageSlug">
                                 <button class="btn btn-danger" type="submit"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>

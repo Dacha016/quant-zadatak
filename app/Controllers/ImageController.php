@@ -50,17 +50,19 @@ class ImageController extends Controller
      * List of images in gallery
      * @return void
      */
-    public function indexImage($id)
+    public function indexImage($slug)
     {
 
-        $result = $this->model->index($id);
+        $result = $this->model->index($slug);
         $result = $result["data"]["images"];
 
         $monthlyNumberOfPictures = $this->model->lastMonthImages();
 
         if ($result == null) {
+
             $gallery = new Gallery();
-            $gallery = $gallery->show($id);
+            $gallery = $gallery->show($slug);
+
             $galleryId = $gallery["data"]["gallery"]->galleryId;
             $userId = $gallery["data"]["gallery"]->userId;
 
@@ -71,66 +73,8 @@ class ImageController extends Controller
 
         }
 
-
         Blade::render("/images", compact("result", "galleryId", "userId", "monthlyNumberOfPictures"));
 
-    }
-
-    /**
-     * Show not logged users images
-     * @return void
-     */
-    public function notLoggedUserImages($slug, $id)
-    {
-
-        $monthlyNumberOfPictures = $this->model->lastMonthImages();
-
-        $result = $this->model->index($id);
-        $result = $result["data"]["images"];
-        var_dump($result);
-        die();
-        $galleryId = $result[0]->galleryId;
-        $userId = $result[0]->userId;
-
-        Blade::render("/images", compact("result", "galleryId", "userId", "monthlyNumberOfPictures"));
-
-    }
-
-    /**
-     * Comments of image on profile page
-     * @param $id
-     * @return void
-     */
-    public function indexComments($id)
-    {
-        var_dump($id);
-        die();
-        $this->comments($id);
-    }
-
-    /**
-     * Comments of image in logged user gallery
-     * @param $galleryId
-     * @param $id
-     * @return void
-     */
-    public function loggedUserImageComments($galleryId, $id)
-    {
-        var_dump($id);
-        die();
-        $this->comments($id);
-    }
-
-    /**
-     * Comments of not logged user picture
-     * @param $slug
-     * @param $galleryId
-     * @param $id
-     * @return void
-     */
-    public function notLoggedUserImageComments($slug, $galleryId, $id)
-    {
-        $this->comments($id);
     }
 
     /**
@@ -138,20 +82,20 @@ class ImageController extends Controller
      * @param $id
      * @return void
      */
-    public function comments($id)
+    public function comments($slug)
     {
 
-        $result = $this->model->imageComments($id);
+        $result = $this->model->imageComments($slug);
 
         if (isset($result["data"]["error"])) {
 
             $error = $result["data"]["error"];
-            $image = $this->model->showInGallery($id);
+            $image = $this->model->showInGallery($slug);
             $image = $image["data"]["image"];
 
             if (!$image) {
 
-                $image = $this->model->show($id);
+                $image = $this->model->show($slug);
                 $image = $image["data"]["image"];
             }
 
@@ -159,11 +103,11 @@ class ImageController extends Controller
 
         } else {
 
-            $image = $this->model->showInGallery($id);
+            $image = $this->model->showInGallery($slug);
 
             if (isset($image["data"]["error"])) {
 
-                $image = $this->model->show($id);
+                $image = $this->model->show($slug);
 
             }
 
@@ -178,43 +122,16 @@ class ImageController extends Controller
      * Get only one image to update
      * @return void
      */
-    public function showImage($id)
+    public function showImage($slug)
     {
 
-        $result = $this->model->show($id);
-        $result = $result["data"]["image"];
+        $result = $this->model->show($slug);
 
-        Blade::render("/imageUpdate", compact("result"));
+        if (!$result) {
 
-    }
+            $result = $this->model->showInGallery($slug);
+        }
 
-    /**
-     * Show image in gallery
-     * @param $slug
-     * @param $id
-     * @return void
-     */
-    public function showImageInGallery($slug, $id)
-    {
-
-        $result = $this->model->showInGallery($id);
-        $result = $result["data"]["image"];
-
-        Blade::render("/imageUpdate", compact("result"));
-
-    }
-
-    /**
-     * Show image in not logged user gallery
-     * @param $slug
-     * @param $galleryId
-     * @param $id
-     * @return void
-     */
-    public function showImageInNotLoggedUserGallery($slug, $galleryId, $id)
-    {
-
-        $result = $this->model->showInGallery($id);
         $result = $result["data"]["image"];
 
         Blade::render("/imageUpdate", compact("result"));
@@ -274,11 +191,11 @@ class ImageController extends Controller
      * Update image
      * @return void
      */
-    public function updateImage($id)
+    public function updateImage($slug)
     {
 
         $this->model->update();
-        $result = $this->model->showInGallery($id);
+        $result = $this->model->showInGallery($slug);
         $result = $result["data"]["image"];
 
         if ($result) {
@@ -287,11 +204,9 @@ class ImageController extends Controller
 
                 $this->model->createLogg($result->galleryId);
 
-                header("Location: /profile/users/" . $result->username . "/" . $result->galleryId . "page=1");
-
             } else {
 
-                header("Location: /profile/galleries/" . $result->galleryId . "page=1");
+                header("Location: /galleries/" . $result->gallerySlug);
 
             }
         } else {
@@ -313,12 +228,12 @@ class ImageController extends Controller
         if (isset($result["data"]["error"])) {
 
             $error = $result["data"]["error"];
-            $image = $this->model->showInGallery($_POST["imageId"]);
+            $image = $this->model->showInGallery($_POST["slug"]);
             $image = $image["data"]["image"];
 
             if (!$image) {
 
-                $image = $this->model->show($_POST["imageId"]);
+                $image = $this->model->show($_POST["slug"]);
                 $image = $image["data"]["image"];
             }
 
@@ -326,18 +241,7 @@ class ImageController extends Controller
 
         } else {
 
-            if (isset($_POST["galleryId"]) && $_SESSION["username"] !== $_POST["username"]) {
-
-                header("Location: /comments/users/{$_POST['username']}/{$_POST["galleryId"]}/{$_POST['imageId']}");
-            } elseif (isset($_POST["galleryId"]) && $_SESSION["username"] == $_POST["username"]) {
-
-                header("Location: /profile/comments/galleries/{$_POST["galleryId"]}/{$_POST['imageId']}");
-
-            } else {
-
-                header("Location: /profile/comments/images/{$_POST['imageId']}");
-
-            }
+            header("Location: /images/{$_POST['slug']}");
 
         }
 
@@ -347,22 +251,15 @@ class ImageController extends Controller
      * Delete image
      * @return void
      */
-    public function delete($id)
+    public function delete($slug)
     {
 
-        $this->model->deleteImage($id);
+        $this->model->deleteImage($slug);
 
-        if (isset($_POST["galleryId"])) {
+        if (isset($_POST["gallerySlug"])) {
 
-            if ($_POST["userId"] == $_SESSION["id"]) {
+            header("Location: /galleries/" . $_POST["gallerySlug"]);
 
-                header("Location: /profile/galleries/" . $_POST["galleryId"] . "?page=0");
-
-            } else {
-
-                header("Location: /profile/users/" . $_POST["userId"] . "/" . $_POST["galleryId"] . "?page=0");
-
-            }
         } else {
 
             header("Location: /profile");

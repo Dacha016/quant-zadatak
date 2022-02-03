@@ -171,7 +171,7 @@ class Gallery extends Model
     public function index($username): array
     {
         $redis = new Client();
-        $key = "galleries_of_user_{$username}_page_{$_GET['page']}";
+        $key = "galleries_of_user_{$username}";
 
         if (!$redis->exists($key)) {
 
@@ -418,7 +418,7 @@ class Gallery extends Model
      * Update gallery data
      * @return
      */
-    public function update()
+    public function update($slug)
     {
 
         $hidden = isset($_POST['hidden']) ? '1' : '0';
@@ -428,7 +428,7 @@ class Gallery extends Model
             "userId" => $_POST["userId"],
             "galleryId" => $_POST["galleryId"],
             "name" => trim($_POST["name"]),
-            "slug" => trim($_POST["slug"]),
+            "slug" => trim($slug),
             "description" => trim($_POST["description"]),
             "hidden" => $hidden,
             "nsfw" => $nsfw,
@@ -437,7 +437,7 @@ class Gallery extends Model
         ];
 
         $redis = new Client();
-        $redis->del("galleries_of_user_{$galleryData['userUsername']}_page_{$_POST['page']}");
+        $redis->del("galleries_of_user_{$galleryData['userUsername']}");
 
         $this->conn->queryPrepare(
             "update gallery 
@@ -448,10 +448,10 @@ class Gallery extends Model
         $this->conn->bindParam(":description", $galleryData["description"]);
         $this->conn->bindParam(":hidden", $galleryData["hidden"]);
         $this->conn->bindParam(":nsfw", $galleryData["nsfw"]);
-//        $this->conn->bindParam(":id", $galleryData["galleryId"]);
         $this->conn->execute();
 
         if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+
             $this->createLogg($galleryData);
         }
 
