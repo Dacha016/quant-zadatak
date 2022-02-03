@@ -8,12 +8,12 @@ if (!isset($_SESSION["id"])) {
     <form action="/profile/updateAccount" method="post" class="p-2 align-self-center" style="margin-left: 35vw; margin-top:20Vh; border:black 1px solid;
    width:500px; background:white; border-radius: 15px; overflow:hidden">
         <h2 class="mb-5 pt-4" style="text-align:center">Update account</h2>
-        <div class="mb-3 mt-3 b">
-            <?php
-            if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {?>
-            <p>{{$error}}</p>
-            <?php }?>
-        </div>
+        @if(isset($error))
+            <div class="mb-3 mt-3 b">
+                <p>{{$error}}</p>
+
+            </div>
+        @endif
         <div class="mb-3 mt-3 b">
             <label for="username" class="form-label" style="font-size:18px; margin-left:15px;">Username:</label>
             <input type="username" class="form- control d-block p-2"

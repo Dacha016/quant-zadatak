@@ -64,54 +64,44 @@ class ImageController extends Controller
             $gallery = $gallery->show($slug);
 
             $galleryId = $gallery["data"]["gallery"]->galleryId;
+            $gallerySlug = $gallery["data"]["gallery"]->slug;
             $userId = $gallery["data"]["gallery"]->userId;
 
         } else {
 
             $galleryId = $result[0]->galleryId;
+            $gallerySlug = $result[0]->gallerySlug;
             $userId = $result[0]->userId;
 
         }
 
-        Blade::render("/images", compact("result", "galleryId", "userId", "monthlyNumberOfPictures"));
+        Blade::render("/images", compact("result", "galleryId", "gallerySlug", "userId", "monthlyNumberOfPictures"));
 
     }
 
     /**
      * Find image and bind with comments
-     * @param $id
+     * @param $slug
      * @return void
      */
     public function comments($slug)
     {
+        $image = $this->model->show($slug);
 
         $result = $this->model->imageComments($slug);
 
         if (isset($result["data"]["error"])) {
 
             $error = $result["data"]["error"];
-            $image = $this->model->showInGallery($slug);
+
             $image = $image["data"]["image"];
-
-            if (!$image) {
-
-                $image = $this->model->show($slug);
-                $image = $image["data"]["image"];
-            }
 
             Blade::render("/imageComment", compact("image", "error"));
 
         } else {
 
-            $image = $this->model->showInGallery($slug);
-
-            if (isset($image["data"]["error"])) {
-
-                $image = $this->model->show($slug);
-
-            }
-
             $image = $image["data"]["image"];
+
             $result = $result["data"]["comments"];
 
             Blade::render("/imageComment", compact("result", "image"));
@@ -139,7 +129,7 @@ class ImageController extends Controller
     }
 
     /**
-     * Insert image in image table
+     * Insert image
      * @return void
      */
     public function create()
@@ -154,37 +144,19 @@ class ImageController extends Controller
             $error = $result["data"]["error"];
 
             Blade::render("/profile", compact("error", "monthlyNumberOfPictures"));
+
+        }
+
+        if (isset($_POST["gallerySlug"])) {
+
+            header("Location: /galleries/{$_POST['gallerySlug']}");
+
         } else {
 
             header("Location: /profile");
 
         }
 
-    }
-
-    /**
-     * Insert image in image_gallery table
-     * @param $id
-     * @return void
-     */
-    public function insertInGallery($id)
-    {
-
-        $result = $this->model->createImage();
-
-        $monthlyNumberOfPictures = $this->model->lastMonthImages();
-
-        if (isset($result["data"]["error"])) {
-
-            $error = $result["data"]["error"];
-
-            Blade::render("/profile", compact("error", "monthlyNumberOfPictures"));
-
-        } else {
-
-            header("Location: /profile/galleries/{$id}");
-
-        }
     }
 
     /**
@@ -204,11 +176,8 @@ class ImageController extends Controller
 
                 $this->model->createLogg($result->galleryId);
 
-            } else {
-
-                header("Location: /galleries/" . $result->gallerySlug);
-
             }
+            header("Location: /galleries/" . $result->gallerySlug);
         } else {
 
             header("Location: /profile");

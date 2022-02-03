@@ -35,6 +35,7 @@ class UserController extends Controller
         parent::__construct(new User());
     }
 
+
     /**
      * List of users in users tab
      * @return void
@@ -49,6 +50,7 @@ class UserController extends Controller
         Blade::render("/users", compact("result", "pages"));
 
     }
+
 
     /**
      * Update logged user account
@@ -65,13 +67,13 @@ class UserController extends Controller
 
         } else if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
 
-            $result = $this->model->updateLoggedUserAccount();
+            $update = $this->model->updateLoggedUserAccount();
 
-            if (isset($result["data"]["error"])) {
+            if (isset($update["data"]["error"])) {
 
-                $error = $result["data"]["error"];
+                $error = $update["data"]["error"];
 
-                Blade::render("/updateAccount", compact("error"));
+                Blade::render("/updateAccount", compact("error", "result"));
 
             } else {
 
@@ -79,6 +81,7 @@ class UserController extends Controller
             }
         }
     }
+
 
     /**
      * Update not logged user account

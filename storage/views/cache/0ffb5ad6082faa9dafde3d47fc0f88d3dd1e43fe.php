@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
           integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <script type="text/javascript" src="../../js/index.js"></script>
     <title>Document</title>
 </head>
 <body class=" justify-content-center" style="background:aqua; box-sizing:border-box; height:100vh">
@@ -52,5 +53,7 @@
 </nav>
 
 <?php echo $__env->yieldContent("content"); ?>
+
 </body>
+
 </html><?php /**PATH /var/www/html/quant-zadatak/resources/views/layout/main.blade.php ENDPATH**/ ?>

@@ -81,4 +81,3 @@ if (!isset($_SESSION["id"])) {
         </div>
     </div>
 @endsection
-<script type="text/javascript" href="../js/index.js"></script>

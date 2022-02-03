@@ -50,7 +50,7 @@ if (isset($_SESSION["id"])) {
         if ($userSubscribe->id < $lastPlanId) {
             $next = $subscribe->selectNext($_SESSION["id"]);
             $subscribe->active($next->id);
-            $subscribe->deactive($userSubscribe->id);
+            $subscribe->deactivate($userSubscribe->id);
             exit();
         }
 

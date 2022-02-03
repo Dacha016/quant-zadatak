@@ -62,7 +62,7 @@ $router->post('/delete/images/{slug}', "ImageController@delete");
 $router->get('/delete/galleries/{slug}', "GalleryController@delete");
 $router->post('/delete/galleries/{slug}', "GalleryController@delete");
 
-$router->post("/addImage/galleries/{id}", "ImageController@insertInGallery");
+
 $router->post("/addImage", "ImageController@create");
 
 $router->get("/profile/subscription", "SubscriptionController@subscription");

@@ -43,6 +43,7 @@ class Image extends Model
         return $this->hidden;
     }
 
+
     /**
      * Pictures on home page which are not hidden or nsfw
      * @return array
@@ -93,6 +94,7 @@ class Image extends Model
         }
         return $response;
     }
+
 
     /**
      * Pictures of logged user on profile page
@@ -148,9 +150,10 @@ class Image extends Model
         return $response;
     }
 
+
     /**
      * Image comments
-     * @param $id
+     * @param $slug
      * @return array
      */
     public function imageComments($slug): array
@@ -193,8 +196,6 @@ class Image extends Model
                     "status_code" => 'HTTP/1.1 404 Not Found'
                 ];
 
-                return $response;
-
             }
 
         } else {
@@ -208,9 +209,10 @@ class Image extends Model
         return $response;
     }
 
+
     /**
      * Logged user pictures in galleries
-     * @param $username $id of logged user
+     * @param $slug $slug gallery slug
      * @return array
      */
     public function index($slug): array
@@ -266,12 +268,13 @@ class Image extends Model
         return $response;
     }
 
+
     /**
      * Show image in image table
-     * @param $id
-     * @return mixed
+     * @param $slug
+     * @return array
      */
-    public function show($slug): mixed
+    public function show($slug): array
     {
 
         $this->conn->queryPrepare(
@@ -300,12 +303,13 @@ class Image extends Model
 
     }
 
+
     /**
      * Show image in image_gallery table
-     * @param $id
-     * @return mixed
+     * @param $slug
+     * @return array
      */
-    public function showInGallery($slug)
+    public function showInGallery($slug): array
     {
 
         $this->conn->queryPrepare(
@@ -337,16 +341,15 @@ class Image extends Model
 
     }
 
+
     /**
      * Insert image in image table
-     * @param $imageData
-     * @return void
+     * @return array
      */
-    public function createImage()
+    public function createImage(): array
     {
 
-        $slug = str_replace(" ", "-", $_POST["fileName"]);
-        $slug = strtolower($slug);
+        $slug = implode('-', str_split(substr(strtolower(md5(microtime() . rand(1000, 9999))), 0, 32), 8));
 
         $imageData = [
             "userId" => $_SESSION["id"],
@@ -380,12 +383,14 @@ class Image extends Model
             $this->conn->execute();
 
 
-            if (isset($_POST["galleryId"])) {
+            if (isset($_POST["gallerySlug"])) {
+
                 $imageId = $this->selectLastImageId($imageData["userId"]);
 
                 $imageData = [
                     "imageId" => $imageId->id,
-                    "galleryId" => $_POST["galleryId"]
+                    "galleryId" => $_POST["galleryId"],
+                    "gallerySlug" => $_POST["gallerySlug"]
                 ];
 
                 $this->insertImageInGallery($imageData);
@@ -396,9 +401,11 @@ class Image extends Model
             ];
 
         }
+
         return $response;
 
     }
+
 
     /**
      * Insert image in image_gallery table
@@ -409,7 +416,7 @@ class Image extends Model
     {
 
         $redis = new Client();
-        $redis->del("image_of_gallery_{$imageData['galleryId']}");
+        $redis->del("image_of_gallery_{$imageData['gallerySlug']}");
 
         $this->conn->queryPrepare(
             "insert into image_gallery (image_id, gallery_id)
@@ -420,11 +427,12 @@ class Image extends Model
 
     }
 
+
     /**
      * Create comment
-     * @return void
+     * @return array
      */
-    public function createImageComments()
+    public function createImageComments(): array
     {
 
         $commentData = [
@@ -454,9 +462,6 @@ class Image extends Model
 
         }
 
-        $redis = new Client();
-        $redis->del("image_{$_POST['slug']}_comments");
-
         $this->conn->queryPrepare("insert into comment (user_id, image_id, comment) values (:user_id, :image_id, :comment)");
         $this->conn->bindParam(":user_id", $commentData["userId"]);
         $this->conn->bindParam(":image_id", $commentData["imageId"]);
@@ -467,15 +472,20 @@ class Image extends Model
             "status_code" => 'HTTP/1.1 201 Created'
         ];
 
+        $redis = new Client();
+        $redis->del("image_{$_POST['slug']}_comments");
+
         return $response;
 
     }
 
+
     /**
      * Insert data in moderator_logging
-     * @return void
+     * @param $galleryId
+     * @return array
      */
-    public function createLogg($galleryId)
+    public function createLogg($galleryId): array
     {
 
         $hidden = isset($_POST['hidden']) ? '1' : '0';
@@ -508,9 +518,9 @@ class Image extends Model
 
     }
 
+
     /**
      * Update image
-     * @param $imageData
      * @return void
      */
     public function update(): void
@@ -533,11 +543,12 @@ class Image extends Model
 
     }
 
+
     /**
-     * @param $id
+     * @param $slug
      * @return array
      */
-    public function deleteImage($slug)
+    public function deleteImage($slug): array
     {
 
         $redis = new Client();
@@ -556,6 +567,7 @@ class Image extends Model
         return $response;
     }
 
+
     /**
      * Select last image in image table
      * @param $id
@@ -572,6 +584,7 @@ class Image extends Model
         return $this->conn->single();
 
     }
+
 
     /**
      * The number of pictures added by the user in the last month
@@ -596,6 +609,7 @@ class Image extends Model
 
     }
 
+
     /**
      * Number of uploaded images in last month
      * @return mixed
@@ -604,7 +618,6 @@ class Image extends Model
     {
         $userSubscription = new Subscription;
         $user = $userSubscription->index($_SESSION["username"]);
-
         $date = $user["data"]["subscriptions"][0]->start;
 
         return $this->imageCount($_SESSION["id"], $date);

@@ -9,50 +9,54 @@ if (!isset($_SESSION["id"])) {
         <h1 class="d-block " style="text-align:center">IMGUR Clone</h1>
         @if($_SESSION["id"] == $userId)
             @if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures < 5 )
-                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                <form id="imageForm" action="/addImage" method="post"
                       class="p-2 align-self-center"
                       style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
                     @if(isset($error))
                         <p>{{$error}}</p>
                     @endif
                     <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="hidden" name="gallerySlug" value="{{$gallerySlug}}">
                     <input type="file" id="fileName" name="fileName"/>
                     <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
                 </form>
                 <p id="error"></p>
             @endif
             @if($_SESSION["plan"] == "Month" && $monthlyNumberOfPictures < 20 )
-                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                <form id="imageForm" action="/addImage" method="post"
                       class="p-2 align-self-center"
                       style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
                     @if(isset($error))
                         <p>{{$error}}</p>
                     @endif
                     <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="hidden" name="gallerySlug" value="{{$gallerySlug}}">
                     <input type="file" id="fileName" name="fileName"/>
                     <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
                 </form>
             @endif
             @if($_SESSION["plan"] == "6 months" && $monthlyNumberOfPictures < 30 )
-                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                <form id="imageForm" action="/addImage" method="post"
                       class="p-2 align-self-center"
                       style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
                     @if(isset($error))
                         <p>{{$error}}</p>
                     @endif
                     <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="hidden" name="gallerySlug" value="{{$gallerySlug}}">
                     <input type="file" id="fileName" name="fileName"/>
                     <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
                 </form>
             @endif
             @if($_SESSION["plan"] == "Year" && $monthlyNumberOfPictures < 50 )
-                <form id="imageForm" action="/addImage/galleries/{{$galleryId}}" method="post"
+                <form id="imageForm" action="/addImage" method="post"
                       class="p-2 align-self-center"
                       style=" border:black 1px solid;  width:500px; background:white; border-radius: 15px; overflow:hidden">
                     @if(isset($error))
                         <p>{{$error}}</p>
                     @endif
                     <input type="hidden" name="galleryId" value="{{$galleryId}}">
+                    <input type="hidden" name="gallerySlug" value="{{$gallerySlug}}">
                     <input type="file" id="fileName" name="fileName"/>
                     <input class="float-right" type="submit" id="submit" name="submit" value="Upload"/>
                 </form>
@@ -124,4 +128,3 @@ if (!isset($_SESSION["id"])) {
         @endforeach
     </div>
 @endsection
-<script type="text/javascript" src="../js/index.js"></script>

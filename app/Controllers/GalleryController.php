@@ -19,8 +19,9 @@ class GalleryController extends Controller
      */
     public function indexGalleries($slug)
     {
+        $user = $this->model->index($slug);
 
-        if ($_SESSION["role"] === "user") {
+        if ($_SESSION["role"] === "user" && $_SESSION["id"] !== $user["data"]["galleries"][0]->userId) {
 
             $pages = $this->model->getPagesVisible($slug);
 
@@ -42,7 +43,7 @@ class GalleryController extends Controller
 
     /**
      * List of gallery comments
-     * @param $id
+     * @param $slug
      * @return void
      */
     public function indexGalleryComments($slug)
@@ -106,6 +107,7 @@ class GalleryController extends Controller
 
     /**
      * Update gallery of logger user and other users
+     * @param $slug
      * @return void
      */
     public function updateGallery($slug)
@@ -129,6 +131,7 @@ class GalleryController extends Controller
 
     /**
      * Delete all data from gallery and aly other table with gallery_id
+     * @param $slug
      * @return void
      */
     public function delete($slug)

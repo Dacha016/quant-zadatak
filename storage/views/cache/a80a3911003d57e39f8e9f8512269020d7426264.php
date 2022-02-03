@@ -80,5 +80,5 @@ if (!isset($_SESSION["id"])) {
         </div>
     </div>
 <?php $__env->stopSection(); ?>
-<script type="text/javascript" href="../js/index.js"></script>
+
 <?php echo $__env->make("layout.main", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/quant-zadatak/resources/views//profile.blade.php ENDPATH**/ ?>

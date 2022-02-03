@@ -11,7 +11,7 @@ if (!session_start()) {
 abstract class Model
 {
 
-    protected $conn;
+    protected Connection $conn;
 
     public function __construct()
     {

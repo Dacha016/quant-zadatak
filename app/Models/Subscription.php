@@ -45,12 +45,13 @@ class Subscription extends Model implements Subscribe
         return $this->active;
     }
 
+
     /**
      * Users subscription
      * @param $username
-     * @return mixed
+     * @return array
      */
-    public function index($username)
+    public function index($username): array
     {
 
         $redis = new Client();
@@ -101,12 +102,13 @@ class Subscription extends Model implements Subscribe
         return $response;
     }
 
+
     /**
      * Show active subscription
      * @param $username
-     * @return mixed|void
+     * @return array
      */
-    public function show($username)
+    public function show($username): array
     {
 
         $this->conn->queryPrepare(
@@ -136,12 +138,13 @@ class Subscription extends Model implements Subscribe
         return $response;
     }
 
+
     /**
      * @param $userData
-     * @return
+     * @return array
      * @throws \Exception
      */
-    public function subscribe($userData)
+    public function subscribe($userData): array
     {
 
         $subscribe = $this->show($userData["username"]);
@@ -291,6 +294,7 @@ class Subscription extends Model implements Subscribe
 
     }
 
+
     /**
      * Set active status to 1
      * @param $id
@@ -305,6 +309,7 @@ class Subscription extends Model implements Subscribe
 
     }
 
+
     /**
      * Set active status to 0
      * @param $id
@@ -318,6 +323,7 @@ class Subscription extends Model implements Subscribe
         $this->conn->execute();
 
     }
+
 
     /**
      * Select next plan (after active plan)
@@ -338,6 +344,7 @@ class Subscription extends Model implements Subscribe
 
     }
 
+
     /**
      * Select users last plan
      * @param $id
@@ -353,6 +360,7 @@ class Subscription extends Model implements Subscribe
         return $this->conn->single();
 
     }
+
 
     /**
      * Select active plan when user subscribes new plan

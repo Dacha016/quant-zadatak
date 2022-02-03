@@ -171,7 +171,7 @@ class Gallery extends Model
     public function index($username): array
     {
         $redis = new Client();
-        $key = "galleries_of_user_{$username}";
+        $key = "galleries_of_user_{$username}_page_{$_GET['page']}";
 
         if (!$redis->exists($key)) {
 
@@ -279,6 +279,8 @@ class Gallery extends Model
             "hidden" => $hidden,
             "nsfw" => $nsfw
         ];
+//        var_dump($galleryData);
+//        die();
 
 
         if (empty($galleryData["name"]) || empty($galleryData["description"])) {
@@ -313,8 +315,6 @@ class Gallery extends Model
 
         }
 
-        $redis = new Client();
-        $redis->del("galleries_of_user_{$_SESSION["username"]}_page_1");
 
         $this->conn->queryPrepare(
             "insert into gallery (user_id, name, nsfw, hidden, description, slug)
@@ -330,6 +330,12 @@ class Gallery extends Model
         $response["data"] = [
             "status_code" => 'HTTP/1.1 200 Success'
         ];
+
+        $redis = new Client();
+
+        if ($redis->keys("*galleries*")) {
+            $redis->del($redis->keys("*galleries*"));
+        }
 
         return $response;
 
@@ -352,6 +358,7 @@ class Gallery extends Model
         $this->conn->bindParam(":gallery_nsfw", $galleryData["nsfw"]);
         $this->conn->bindParam(":gallery_hidden", $galleryData["hidden"]);
         $this->conn->execute();
+
 
         $response["data"] = [
             "status_code" => 'HTTP/1.1 200 Success'
@@ -437,7 +444,8 @@ class Gallery extends Model
         ];
 
         $redis = new Client();
-        $redis->del("galleries_of_user_{$galleryData['userUsername']}");
+        $redis->del("galleries_of_user_{$galleryData['userUsername']}_page_{$_POST["page"]}");
+        $redis->del("hidden_galleries_of_user_{$galleryData['userUsername']}_page_{$_POST["page"]}");
 
         $this->conn->queryPrepare(
             "update gallery 

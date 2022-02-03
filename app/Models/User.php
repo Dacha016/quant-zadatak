@@ -67,21 +67,6 @@ class User extends Model implements Card
         return $this->api_key;
     }
 
-    public function getRole(): string
-    {
-        return $this->role;
-    }
-
-    public function getNsfw(): int
-    {
-        return $this->nsfw;
-    }
-
-    public function getActive(): int
-    {
-        return $this->active;
-    }
-
     public function getPayment(): int
     {
         return $this->payment;
@@ -151,35 +136,6 @@ class User extends Model implements Card
     }
 
     /**
-     * Find user if exists
-     * @param $username
-     * @return mixed
-     */
-    public function show($username): mixed
-    {
-
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
-        $this->conn->bindParam(":username", $username);
-        $this->conn->execute();
-
-        $result = $this->conn->single();
-
-        if ($result) {
-
-            $response["data"] = [
-                "user" => $result,
-                "status_code" => 'HTTP/1.1 200 Success'
-            ];
-
-            return $response;
-
-        } else {
-
-            return false;
-        }
-    }
-
-    /**
      * Register new user
      * @return array
      */
@@ -189,6 +145,7 @@ class User extends Model implements Card
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
         $payment = isset($_POST['payment']) ? '1' : '0';
+
         $userData = [
             "username" => trim($_POST["username"]),
             "password" => trim($_POST["password"]),
@@ -304,29 +261,47 @@ class User extends Model implements Card
     }
 
     /**
-     * Insert data in moderator_logging
-     * @param $updateData
-     * @return array
+     * Find user if exists
+     * @param $username
+     * @return mixed
      */
-    public function createLogg($updateData): array
+    public function show($username): mixed
     {
 
-        $this->conn->queryPrepare(
-            "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)
-            values (:moderator_username, :user_username, :user_active, :user_nsfw, :user_role)");
-        $this->conn->bindParam(":moderator_username", $updateData["moderatorsUsername"]);
-        $this->conn->bindParam(":user_role", $updateData["role"]);
-        $this->conn->bindParam(":user_nsfw", $updateData["nsfw"]);
-        $this->conn->bindParam(":user_active", $updateData["active"]);
-        $this->conn->bindParam(":user_username", $updateData["username"]);
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username");
+        $this->conn->bindParam(":username", $username);
         $this->conn->execute();
 
-        $response["data"] = [
-            "status_code" => 'HTTP/1.1 201 Create'
-        ];
+        $result = $this->conn->single();
 
-        return $response;
+        if ($result) {
 
+            $response["data"] = [
+                "user" => $result,
+                "status_code" => 'HTTP/1.1 200 Success'
+            ];
+
+            return $response;
+
+        } else {
+
+            return false;
+        }
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function getNsfw(): int
+    {
+        return $this->nsfw;
+    }
+
+    public function getActive(): int
+    {
+        return $this->active;
     }
 
     /**
@@ -476,8 +451,10 @@ class User extends Model implements Card
             $this->conn->execute();
 
             if ($_POST["userId"] !== $_SESSION["id"] && $_SESSION["role"] === "moderator") {
+
                 $updateData["username"] = $_POST["username"];
                 $updateData["moderatorsUsername"] = $_SESSION["username"];
+
                 $this->createLogg($updateData);
             }
 
@@ -491,35 +468,29 @@ class User extends Model implements Card
     }
 
     /**
-     * Find user by username adn compare passwords
-     * @param $username
-     * @param $password
-     * @return bool
+     * Insert data in moderator_logging
+     * @param $updateData
+     * @return array
      */
-    public function findByUsername($username, $password): bool
+    public function createLogg($updateData): array
     {
 
-        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
-        $this->conn->bindParam(":username", $username);
+        $this->conn->queryPrepare(
+            "insert into moderator_logging (moderator_username, user_username, user_active, user_nsfw, user_role)
+            values (:moderator_username, :user_username, :user_active, :user_nsfw, :user_role)");
+        $this->conn->bindParam(":moderator_username", $updateData["moderatorsUsername"]);
+        $this->conn->bindParam(":user_role", $updateData["role"]);
+        $this->conn->bindParam(":user_nsfw", $updateData["nsfw"]);
+        $this->conn->bindParam(":user_active", $updateData["active"]);
+        $this->conn->bindParam(":user_username", $updateData["username"]);
         $this->conn->execute();
 
-        $result = $this->conn->single();
+        $response["data"] = [
+            "status_code" => 'HTTP/1.1 201 Create'
+        ];
 
-        if (!$result) {
+        return $response;
 
-            return false;
-        }
-
-        $hashedPassword = $result->password;
-
-        if (password_verify($password, $hashedPassword)) {
-
-            return true;
-
-        } else {
-
-            return false;
-        }
     }
 
     /**
@@ -590,17 +561,35 @@ class User extends Model implements Card
     }
 
     /**
-     * Change value of payment
-     * @param $id
-     * @return mixed
+     * Find user by username adn compare passwords
+     * @param $username
+     * @param $password
+     * @return bool
      */
-    public function deactivate($id)
+    public function findByUsername($username, $password): bool
     {
 
-        $this->conn->queryPrepare("update user set payment = 0 where id =:id");
-        $this->conn->bindParam(":id", $id);
+        $this->conn->queryPrepare("SELECT * FROM user WHERE username = :username ");
+        $this->conn->bindParam(":username", $username);
+        $this->conn->execute();
 
-        return $this->conn->execute();
+        $result = $this->conn->single();
+
+        if (!$result) {
+
+            return false;
+        }
+
+        $hashedPassword = $result->password;
+
+        if (password_verify($password, $hashedPassword)) {
+
+            return true;
+
+        } else {
+
+            return false;
+        }
     }
 
     /**
@@ -619,6 +608,15 @@ class User extends Model implements Card
         $rows = $result->row;
 
         return ceil($rows / $limit);
+    }
+
+    /**
+     * Pay if users card id valid
+     * @return bool
+     */
+    public function pay()
+    {
+        return $this->isValid();
     }
 
     /**
@@ -645,12 +643,17 @@ class User extends Model implements Card
     }
 
     /**
-     * Pay if users card id valid
-     * @return bool
+     * Change value of payment
+     * @param $id
+     * @return mixed
      */
-    public function pay()
+    public function deactivate($id)
     {
-        return $this->isValid();
+
+        $this->conn->queryPrepare("update user set payment = 0 where id =:id");
+        $this->conn->bindParam(":id", $id);
+
+        return $this->conn->execute();
     }
 
 }
