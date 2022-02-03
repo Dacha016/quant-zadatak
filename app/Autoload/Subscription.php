@@ -66,7 +66,7 @@ if (isset($_SESSION["id"])) {
         if ($userSubscribe->id < $lastPlanId) {
             $next = $subscribe->selectNext($_SESSION["id"]);
             $subscribe->active($next);
-            $subscribe->deactive($userSubscribe->id);
+            $subscribe->deactivate($userSubscribe->id);
             exit();
         }
         $userData = [

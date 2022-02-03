@@ -12,7 +12,8 @@
     <script type="text/javascript" src="../../js/index.js"></script>
     <title>Document</title>
 </head>
-<body class=" justify-content-center" style="background:aqua; box-sizing:border-box; height:100vh">
+<body class=" justify-content-center" style="background:aqua; box-sizing:border-box; ">
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
@@ -51,9 +52,27 @@
         </div>
     @endif
 </nav>
-
-@yield("content")
-
+<div style="overflow: scroll">
+    <section id="header-main" class="col-12"
+             style="background: linear-gradient( #FFFFFF, #00FFFF ) ">
+        @include("components.header")
+    </section>
+    <aside class="col-2 float-left "
+           style="height: 50vh; background: linear-gradient(90deg, rgba(255,255,255,1) 7%, rgba(0,255,255,1) 100%, rgba(0,212,255,1) 100%)">
+        @include("components.left")
+    </aside>
+    <section class="col-8 float-left" style="height: 78vh">
+        @yield("content")
+    </section>
+    <aside class="col-2 float-right"
+           style="height: 100%;background:  linear-gradient(90deg, rgba(0,212,255,1) 0%, rgba(0,255,255,1) 0%, rgba(255,255,255,1) 93%)">
+        @include("components.right")
+    </aside>
+</div>
 </body>
+<footer id="header-main" class="col-12"
+        style="background: linear-gradient( #00FFFF, #FFFFFF) ; position: absolute; bottom: 0">
+    @include("components.footer")
+</footer>
 
 </html>

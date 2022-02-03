@@ -14,4 +14,5 @@ $router->run();
 
 $redis = new \Predis\Client();
 
+//include realpath(dirname(__DIR__) . "/app/Autoload/Bootstrap.php");
 include realpath(dirname(__DIR__) . "/app/Autoload/Subscription.php");

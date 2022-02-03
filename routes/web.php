@@ -27,9 +27,6 @@ $router->get('/logout', "AuthController@logout");
 $router->get('/profile', "ImageController@indexProfile"); // images on the main page
 $router->get("/profile/galleries/newGallery", "GalleryController@create"); // get form
 $router->post("/profile/galleries/newGallery", "GalleryController@create"); //post data
-//$router->get('/profile/galleries', "GalleryController@indexGalleries"); // galleries in profile
-//$router->get("/profile/galleries/{id}/{id}", "ImageController@showImageInGallery"); //get single image from gallery
-//$router->get('/profile/galleries/{slug}', "ImageController@indexImage");  //images from gallery
 $router->get("/update/images/{slug}", "ImageController@showImage"); //get single image from profile
 $router->post("/update/images/{slug}", "ImageController@updateImage");  //update image from logged user gallery
 // not logged user
@@ -37,12 +34,10 @@ $router->get("/profile/users", "UserController@indexUsers");// other users
 
 $router->get("/galleries/{slug}", "ImageController@indexImage");  //images from gallery
 $router->get("/users/{slug}", "GalleryController@indexGalleries"); //  user galleries
-//$router->post("/update/images/{slug}", "ImageController@updateImage");  //update image from logged user gallery
 
 //image comments
 
 $router->get("/images/{slug}", "ImageController@comments");
-
 $router->post('/image/comments', "ImageController@createComments"); //create comment
 // gallery comments
 $router->get("/comments/galleries/{slug}", "GalleryController@indexGalleryComments"); // comments of  gallery

@@ -5,8 +5,12 @@ if (!isset($_SESSION["id"])) {
 }
 ?>
 @section("content")
-    <div style="margin: 20px auto; max-width: 1200px;">
+    <div style="margin: 0px auto; ">
         <div>
+            <section
+                    style="height: 100%;background: aqua">
+                @include("components.right")
+            </section>
             <h1 class="d-block mb-5 " style="text-align:center">IMGUR Clone</h1>
             @if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures < 5 )
                 <form id="imageForm" action="/addImage" method="post" class=" d-inline-block p-2 align-self-center"

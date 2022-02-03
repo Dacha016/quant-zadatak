@@ -4,8 +4,12 @@ if (!isset($_SESSION["id"])) {
 }
 ?>
 <?php $__env->startSection("content"); ?>
-    <div style="margin: 20px auto; max-width: 1200px;">
+    <div style="margin: 0px auto; ">
         <div>
+            <section
+                    style="height: 100%;background: aqua">
+                <?php echo $__env->make("components.right", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            </section>
             <h1 class="d-block mb-5 " style="text-align:center">IMGUR Clone</h1>
             <?php if($_SESSION["plan"] == "Free" && $monthlyNumberOfPictures < 5 ): ?>
                 <form id="imageForm" action="/addImage" method="post" class=" d-inline-block p-2 align-self-center"
