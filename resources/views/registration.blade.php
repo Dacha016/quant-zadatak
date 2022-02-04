@@ -57,8 +57,8 @@
             </select>
 
             <div class="m-3">
-                <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white"
-                                                                                  href="/home">Cancel</a></button>
+                <button class="btn btn-secondary d-inline-block" type="submit"><a style="color: white" href="/home">Cancel</a>
+                </button>
                 <button class="btn btn-success d-inline-block float-right" type="submit">Register</button>
             </div>
 

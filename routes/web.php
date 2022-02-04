@@ -63,3 +63,5 @@ $router->post("/addImage", "ImageController@create");
 $router->get("/profile/subscription", "SubscriptionController@subscription");
 $router->post("/profile/subscription", "SubscriptionController@subscription");
 $router->get("/subscription/{slug}", "SubscriptionController@indexSubscriptionList");
+
+$router->get("/ads", "AdController@index");

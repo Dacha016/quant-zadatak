@@ -253,7 +253,6 @@ class Gallery extends Model
 
         return $response;
 
-
     }
 
     /**
@@ -279,9 +278,6 @@ class Gallery extends Model
             "hidden" => $hidden,
             "nsfw" => $nsfw
         ];
-//        var_dump($galleryData);
-//        die();
-
 
         if (empty($galleryData["name"]) || empty($galleryData["description"])) {
 
@@ -332,9 +328,13 @@ class Gallery extends Model
         ];
 
         $redis = new Client();
+        $keys = $redis->keys("*galleries*");
 
-        if ($redis->keys("*galleries*")) {
-            $redis->del($redis->keys("*galleries*"));
+        if ($keys) {
+
+            foreach ($keys as $key) {
+                $redis->del($key);
+            }
         }
 
         return $response;

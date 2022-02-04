@@ -34,6 +34,11 @@
             <li class="nav-item active align-self-center">
                 <a class="nav-link" href="/profile/updateAccount"> Update account </a>
             </li>
+            @if($_SESSION["role"] == "admin")
+                <li class="nav-item active align-self-center">
+                    <a class="nav-link" href="/ads?page=1"> Ads statistic </a>
+                </li>
+            @endif
             <?php } else{?>
             <h3><a href="/home">Welcome Guest</a></h3>
             <li class="nav-item active align-self-center">
@@ -71,7 +76,7 @@
 </div>
 </body>
 <footer id="header-main" class="col-12"
-        style="background: linear-gradient( #00FFFF, #FFFFFF) ; position: absolute; bottom: 0">
+        style="background: linear-gradient( #00FFFF, #FFFFFF) ; ">
     @include("components.footer")
 </footer>
 

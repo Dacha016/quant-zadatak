@@ -127,3 +127,10 @@ set slug = concat(slug, '-', id);
 create index username_index on user (username);
 create index slug_index on image (slug);
 create index slug_index on gallery (slug);
+
+create table ads
+(
+    id         int unique auto_increment primary key,
+    advertiser varchar(90),
+    content    varchar(255)
+);
